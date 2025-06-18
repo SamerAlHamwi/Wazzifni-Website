@@ -54,6 +54,7 @@ class CircleStepWidget extends StatelessWidget {
             radius: 32,
             backgroundColor: const Color(0xFFf7941d),
             child: Text('$number',
+                textAlign: TextAlign.center,
                 style: const TextStyle(fontSize: 24, color: Colors.white, fontWeight: FontWeight.bold)),
           ),
           const SizedBox(height: 12),

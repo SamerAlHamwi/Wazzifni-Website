@@ -35,11 +35,17 @@ class _LanguageSwitcherState extends State<LanguageSwitcher> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((c){
-      final currentLocale = context.locale.languageCode.toUpperCase();
-      if (_languages.containsKey(currentLocale)) {
-        _currentLang = currentLocale;
-      }
+      getCurrentLanguage();
     });
+  }
+
+  getCurrentLanguage(){
+    final currentLocale = context.locale.languageCode.toUpperCase();
+    if (_languages.containsKey(currentLocale)) {
+      setState(() {
+        _currentLang = currentLocale;
+      });
+    }
   }
 
   @override

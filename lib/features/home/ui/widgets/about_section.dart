@@ -2,6 +2,7 @@
 
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 
 class AboutAppSection extends StatelessWidget {
@@ -12,8 +13,8 @@ class AboutAppSection extends StatelessWidget {
     final isMobile = MediaQuery.of(context).size.width < 600;
 
     Widget imageStack = SizedBox(
-      width: 320,
-      height: 290,
+      width: isMobile ? 65.w : 320,
+      height: 250,
       child: Stack(
         alignment: Alignment.center,
         children: [
@@ -23,7 +24,7 @@ class AboutAppSection extends StatelessWidget {
             child: Image.asset(
               'assets/images/mobile1.png',
               fit: BoxFit.cover,
-              width: 360,
+              width: isMobile ? 65.w : 320,
             ),
           ),
 
@@ -39,16 +40,15 @@ class AboutAppSection extends StatelessWidget {
         children: [
           imageStack,
           const SizedBox(height: 24),
-
-          const Text(
-            "عن التطبيق",
-            style: TextStyle(fontSize: 26, fontWeight: FontWeight.bold),
+          Text(
+            "about_app_title".tr(),
+            style: const TextStyle(fontSize: 26, fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 16),
-          const Text(
-            "وظفني هو تطبيق توظيف رقمي ذكي يربط الباحثين عن العمل بأصحاب الشركات بشكل مباشر وفعّال داخل العراق. يوفر واجهة استخدام سهلة تتيح إنشاء ملفات احترافية وتقديم سريع على الوظائف، مع التركيز على احتياجات سوق العمل المحلي.",
+          Text(
+           'about_app_description'.tr(),
             textAlign: TextAlign.center,
-            style: TextStyle(fontSize: 16),
+            style: const TextStyle(fontSize: 16),
           ),
         ],
       )
