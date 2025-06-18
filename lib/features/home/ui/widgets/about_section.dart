@@ -12,7 +12,7 @@ class AboutAppSection extends StatelessWidget {
     final isMobile = MediaQuery.of(context).size.width < 600;
 
     Widget imageStack = SizedBox(
-      width: 360,
+      width: 320,
       height: 290,
       child: Stack(
         alignment: Alignment.center,
