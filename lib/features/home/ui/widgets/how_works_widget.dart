@@ -58,7 +58,7 @@ class CircleStepWidget extends StatelessWidget {
                 style: const TextStyle(fontSize: 24, color: Colors.white, fontWeight: FontWeight.bold)),
           ),
           const SizedBox(height: 12),
-          Text(label, style: const TextStyle(fontSize: 16))
+          Text(label, textAlign: TextAlign.center, style: const TextStyle(fontSize: 16))
         ],
       ),
     );
