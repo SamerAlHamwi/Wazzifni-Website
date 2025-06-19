@@ -1,5 +1,3 @@
-
-
 import 'package:flutter/material.dart';
 import 'package:wazzifni_website/features/home/ui/home_screen.dart';
 import 'package:wazzifni_website/features/home/ui/widgets/drawer_widget.dart';
@@ -17,11 +15,23 @@ class RootScreen extends StatefulWidget {
 class _RootScreenState extends State<RootScreen> {
   int activeTap = 0;
 
-  final List<Widget> pages = const [
-    HomePage(),
-    PrivacyPolicyPage(),
-    TermsAndConditionsPage(),
-  ];
+  late List<Widget> pages;
+
+  @override
+  void initState() {
+    super.initState();
+    pages = [
+      HomePage(
+        onChangeTap: (index) {
+          setState(() {
+            activeTap = index;
+          });
+        },
+      ),
+      const PrivacyPolicyPage(),
+      const TermsAndConditionsPage(),
+    ];
+  }
 
   @override
   Widget build(BuildContext context) {

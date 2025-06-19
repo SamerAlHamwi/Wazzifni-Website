@@ -39,7 +39,7 @@ list(APPEND FLUTTER_LIBRARY_HEADERS
   "fl_binary_codec.h"
   "fl_binary_messenger.h"
   "fl_dart_project.h"
-  "fl_engine.h"
+  "flgine.h"
   "fl_json_message_codec.h"
   "fl_json_method_codec.h"
   "fl_message_codec.h"

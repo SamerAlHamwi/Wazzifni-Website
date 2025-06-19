@@ -14,22 +14,24 @@ import 'package:wazzifni_website/features/home/ui/widgets/why_wazzifni_section.d
 
 
 class HomePage extends StatelessWidget {
-  const HomePage({super.key});
+  const HomePage({super.key,required this.onChangeTap});
+
+  final Function(int) onChangeTap;
 
   @override
   Widget build(BuildContext context) {
-    return const SingleChildScrollView(
+    return SingleChildScrollView(
       child: Column(
         children: [
-          WazzifniWidget(),
-          WhyWazzifniSection(),
-          HowItWorksSection(),
-          TrainingServicesSection(),
-          AboutAppSection(),
-          AboutCompanySection(),
-          ContactSection(),
-          Divider(height: 1, thickness: 1),
-          Footer(),
+          const WazzifniWidget(),
+          const WhyWazzifniSection(),
+          const HowItWorksSection(),
+          const TrainingServicesSection(),
+          const AboutAppSection(),
+          const AboutCompanySection(),
+          const ContactSection(),
+          const Divider(height: 1, thickness: 1),
+          Footer(onChangeTap: onChangeTap,),
         ],
       ),
     );

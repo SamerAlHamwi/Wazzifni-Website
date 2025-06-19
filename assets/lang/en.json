@@ -19,10 +19,14 @@
     "service_1": "Vocational training programs for youth",
     "service_2": "Skills development courses for the labor market",
     "service_3": "Exclusive offers for app users",
-    "about_app_title": "About the App",
-    "about_app_description": "Wazzifni is a smart digital recruitment app that connects job seekers directly and efficiently with employers in Iraq. It provides an easy-to-use interface that allows users to create professional profiles and apply quickly to jobs, focusing on the local job market needs.",
-    "about_developer_title": "About the Developer",
-    "about_developer_description": "Wazzifni is an Iraq company registered in Najaf Governorate. It aims to develop technological solutions in the fields of employment and recruitment, and to organize the local labor market through a reliable platform that connects employers with job seekers.",
+
+    "about_app_title_en": "About the App",
+    "about_app_description_en": "\"Wazzifni\" is a smart digital employment application that connects job seekers directly with companies and institutions in Iraq efficiently.\nThe app features a user-friendly interface allowing users to build professional profiles, upload CVs, and apply for available jobs in minutes.\nIt focuses on local labor market needs and integrates recruitment, smart notifications, and supportive career services.",
+
+    "about_developer_title_en": "About the Developer",
+    "about_developer_description_en": "The app is developed by Employment Gateway Company for Recruitment and Manpower Services LLC, a registered Iraqi company based in Najaf.\nThe company provides digital solutions in recruitment and employment, aiming to organize and modernize the local labor market through a reliable platform for employers and job seekers.",
+
+
     "contact_info_title": "Contact Information",
     "contact_email_label": "Email",
     "contact_email_value": "info@wazzifni.com",
@@ -30,43 +34,60 @@
     "contact_phone_value": "964-7870883877",
     "contact_address_label": "Address",
     "contact_address_value": "Najaf – Al-Ghadeer District – Opposite the College of Administration and Economics",
+
     "privacy_intro": "Introduction",
-    "privacy_intro_text": "Employment Gateway Company is committed to protecting the privacy of Wazzfni app users.",
+    "privacy_intro_text": "Issued by: Employment Gateway Company for Recruitment and Manpower Services LLC",
+
     "privacy_definitions": "Definitions",
-    "privacy_definitions_text": "• 'Company': Employment Gateway Company.\n• 'App': The Wazzfni mobile app and website.\n• 'User': Job seeker or employer.\n• 'Personal Data': Any information that identifies the user.",
+    "privacy_definitions_text": "Article 1 – Definitions:\n1. \"Company\": Refers to Employment Gateway Company.\n2. \"App\": Refers to the Wazzfni mobile application and its website.\n3. \"User\": Any natural or legal person using the services, either as a job seeker or employer.\n4. \"Personal Data\": Any information that identifies or can identify the user.",
+
     "privacy_data_collection": "Scope of Data Collection",
-    "privacy_data_collection_text": "We collect the following data:\n• Full name, email address, phone number\n• CV and professional details\n• Geolocation (with user consent)\n• Usage data like IP address, device type, OS, and usage timestamps",
+    "privacy_data_collection_text": "Article 2 – Scope of Data Collection:\nThe Company only collects the following data within the limits of legal compliance and service requirements:\n• Full name, email address, phone number.\n• Professional and CV data.\n• Geolocation data (upon user approval).\n• Usage data (IP address, device type, OS, usage timestamps).",
+
     "privacy_data_usage": "Purpose of Data Use",
-    "privacy_data_usage_text": "• Enable access to services\n• Improve and personalize user experience\n• Notify about job and training opportunities\n• Fulfill legal obligations",
+    "privacy_data_usage_text": "Article 3 – Purpose of Data Use:\nCollected data is used to:\n1. Enable access and use of services.\n2. Personalize and improve user experience.\n3. Notify users of job opportunities and training programs.\n4. Fulfill legal obligations.",
+
     "privacy_data_sharing": "Data Sharing",
-    "privacy_data_sharing_text": "We do not share data with third parties without explicit consent, except:\n• Employers selected by the user\n• Legal authorities upon official request",
+    "privacy_data_sharing_text": "Article 4 – Data Sharing:\nThe Company does not sell or share data with third parties without explicit consent, except:\n• Employers selected by the user.\n• Legal or governmental authorities upon official request.",
+
     "privacy_data_protection": "Data Protection",
-    "privacy_data_protection_text": "We use technical and organizational measures to protect data, including encryption and SSL protocols.",
+    "privacy_data_protection_text": "Article 5 – Data Protection:\nThe Company implements technical and administrative measures to safeguard user data from loss, breach, or unauthorized use, including secure encryption and SSL protocols.",
+
     "privacy_user_rights": "User Rights",
-    "privacy_user_rights_text": "Users have the right to:\n• Access, modify, or delete their data\n• Object to marketing use\n• Withdraw consent at any time",
+    "privacy_user_rights_text": "Article 6 – User Rights:\nUsers have the right to:\n• Access, modify, or request deletion of their data.\n• Object to use of their data for marketing.\n• Withdraw consent to data processing at any time.",
+
     "privacy_cookies": "Cookies",
-    "privacy_cookies_text": "We may use cookies to enhance performance and personalize content. Users can disable them via browser settings.",
+    "privacy_cookies_text": "Article 7 – Cookies:\nCookies may be used to enhance performance and personalize content. Users may disable them via browser settings.",
+
     "privacy_modifications": "Amendments",
-    "privacy_modifications_text": "The company may update this policy at any time and will notify users via app or email.",
+    "privacy_modifications_text": "Article 8 – Amendments:\nThe Company reserves the right to update this policy at any time. Users will be notified of material changes via the app or email.",
+
     "privacy_law": "Governing Law",
-    "privacy_law_text": "This policy is governed by Iraqi data protection laws. Najaf courts have jurisdiction over disputes.",
+    "privacy_law_text": "Article 9 – Governing Law:\nThis policy is governed by Iraqi data protection laws. Najaf courts have exclusive jurisdiction over disputes.",
+
 
     "terms_acceptance": "Acceptance",
-    "terms_acceptance_text": "By using the 'Wazzfni' app, the user acknowledges reading and fully agreeing to these terms and conditions.",
-    "terms_eligibility": "User Eligibility",
-    "terms_eligibility_text": "The user must have full legal capacity. If the user is a minor, the app must be used under the supervision of a guardian.",
-    "terms_account_creation": "Account Creation",
-    "terms_account_creation_text": "The user commits to providing accurate information, not impersonating any entity, and not having more than one account unless legally justified.",
-    "terms_allowed_usage": "Permitted Use",
-    "terms_allowed_usage_text": "It is prohibited to upload or send illegal, fraudulent, or offensive content, attempt to breach app security, or use the app for unauthorized commercial purposes.",
-    "terms_ip_rights": "Intellectual Property Rights",
-    "terms_ip_rights_text": "All rights related to the content, design, trademarks, and logos within the app belong to the company. Copying or reuse is prohibited without written permission.",
-    "terms_termination": "Service Termination",
-    "terms_termination_text": "The company has the right to terminate or restrict any user's access if they violate the terms or cause material or moral harm to the company or other users.",
-    "terms_modifications": "Terms Modifications",
-    "terms_modifications_text": "The company reserves the right to modify the terms at any time without prior notice. The version published in the app or on the website is considered the official one.",
-    "terms_law": "Governing Law and Jurisdiction",
-    "terms_law_text": "These terms are governed by Iraqi law. The courts of Najaf governorate shall have jurisdiction over any disputes arising from them."
+    "terms_acceptance_text": "By using or browsing the Wazzfni app, users agree to comply with these terms.",
 
+    "terms_eligibility": "User Eligibility",
+    "terms_eligibility_text": "Users must have full legal capacity. Minors must use the app under guardian supervision.",
+
+    "terms_account_creation": "Account Creation",
+    "terms_account_creation_text": "Users agree to:\n- Provide accurate and truthful information.\n- Avoid impersonation.\n- Maintain only one account unless legally justified.",
+
+    "terms_allowed_usage": "Use Restrictions",
+    "terms_allowed_usage_text": "Users are prohibited from:\n- Uploading illegal, fraudulent, or harmful content.\n- Attempting to breach security or disrupt the service.\n- Using the app for unauthorized commercial purposes.",
+
+    "terms_ip_rights": "Intellectual Property Rights",
+    "terms_ip_rights_text": "All content, designs, logos, and technology are owned by the Company. Reproduction or reuse is prohibited without prior written consent.",
+
+    "terms_termination": "Service Termination",
+    "terms_termination_text": "The Company may suspend or terminate accounts for:\n- Violating terms or applicable laws.\n- Misuse or service disruption.\n- Causing harm to the Company or other users.",
+
+    "terms_modifications": "Terms Modifications",
+    "terms_modifications_text": "The Company reserves the right to amend these terms without prior notice. The latest version published on the app or website shall apply.",
+
+    "terms_law": "Governing Law and Jurisdiction",
+    "terms_law_text": "These terms are subject to the laws of Iraq. Najaf courts have exclusive jurisdiction over disputes."
 
 }

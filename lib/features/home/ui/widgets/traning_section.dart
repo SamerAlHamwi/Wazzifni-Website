@@ -92,6 +92,7 @@ class TrainingServicesSection extends StatelessWidget {
                 alignment: WrapAlignment.center,
                 children: services.map((service) {
                   return Container(
+                    height: 160,
                     width: isMobile ? screenWidth * 0.8 : 250,
                     padding: const EdgeInsets.all(16),
                     decoration: BoxDecoration(
