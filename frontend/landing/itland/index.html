@@ -1,0 +1,605 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <!-- viewport-fit=cover lets the safe-area insets used across the CSS work
+         on notched phones. -->
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <title>IT Land Iraq | بناء أنظمة عالية الجودة</title>
+    <meta name="description" content="IT Land Iraq — شركة تقنية عراقية متخصصة في بناء أنظمة برمجية وتطبيقات موبايل عالية الجودة للمؤسسات والشركات. اطّلع على معرض أعمالنا وتواصل معنا.">
+    <meta name="keywords" content="IT Land Iraq, تطوير أنظمة, تطبيقات موبايل, فلاتر, Flutter, برمجة, العراق, أنظمة مؤسسية, شركة برمجيات">
+    <meta name="author" content="IT Land Iraq">
+    <meta name="theme-color" content="#04182c">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link rel="canonical" href="https://web.wazzifni.net/itland/">
+
+    <!-- Open Graph / Social Media -->
+    <meta property="og:title" content="IT Land Iraq | بناء أنظمة عالية الجودة">
+    <meta property="og:description" content="شركة تقنية متخصصة في بناء أنظمة برمجية وتطبيقات موبايل عالية الجودة — 11 مشروعاً في 5 أسواق إقليمية.">
+    <meta property="og:type" content="website">
+    <meta property="og:locale" content="ar_IQ">
+    <meta property="og:url" content="https://web.wazzifni.net/itland/">
+    <meta name="twitter:card" content="summary">
+
+    <link rel="icon" href="assets/images/icon-180.png" sizes="180x180">
+    <link rel="apple-touch-icon" href="assets/images/icon-180.png">
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="css/main.css?v=1.0.0">
+
+    <!-- Marks the document as script-enabled so reveal-on-scroll only hides
+         content when JS is actually there to bring it back. -->
+    <script>document.documentElement.classList.add('js');</script>
+
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "name": "IT Land Iraq",
+      "alternateName": "آي تي لاند العراق",
+      "url": "https://web.wazzifni.net/itland/",
+      "slogan": "Building High-Quality Systems",
+      "description": "شركة تقنية متخصصة في بناء أنظمة برمجية وتطبيقات موبايل عالية الجودة للمؤسسات والشركات.",
+      "areaServed": ["IQ", "KW", "AE", "SY", "EG"],
+      "knowsAbout": ["Flutter", "Mobile Applications", "Enterprise Systems", "API Integration"]
+    }
+    </script>
+</head>
+<body>
+<a class="skip-link" href="#main">تخطَّ إلى المحتوى</a>
+
+<div class="scroll-progress" id="scroll-progress"></div>
+
+<!-- Navigation -->
+<nav class="navbar">
+    <div class="nav-container">
+        <a class="nav-logo" href="#home" aria-label="IT Land Iraq — أعلى الصفحة">
+            <span class="nav-logo-mark" aria-hidden="true">IT</span>
+            <span class="nav-logo-text">
+                <span class="nav-logo-name">IT Land Iraq</span>
+                <span class="nav-logo-sub">أنظمة عالية الجودة</span>
+            </span>
+        </a>
+
+        <ul class="nav-links" id="nav-menu">
+            <li><a href="#about">من نحن</a></li>
+            <li><a href="#services">خدماتنا</a></li>
+            <li><a href="#projects">أعمالنا</a></li>
+            <li><a href="#contact">تواصل معنا</a></li>
+            <li><a class="nav-home" href="/">← وظّفني</a></li>
+        </ul>
+
+        <a class="nav-btn" href="#contact">
+            💬 اطلب <span class="nav-btn-word">عرض سعر</span>
+        </a>
+
+        <button class="nav-toggle" type="button" id="nav-toggle"
+                aria-controls="nav-menu" aria-expanded="false" aria-label="فتح القائمة">
+            <span class="nav-toggle-bars"></span>
+        </button>
+    </div>
+</nav>
+<div class="nav-scrim" id="nav-scrim"></div>
+
+<main id="main">
+    <!-- Hero -->
+    <section class="hero" id="home">
+        <div class="hero-container">
+            <div class="hero-content">
+                <p class="hero-badge">🇮🇶 شركة تقنية عراقية</p>
+                <h1 class="hero-title">
+                    <span class="brand">IT Land Iraq</span>
+                    <span class="hero-tagline">Building High-Quality Systems</span>
+                </h1>
+                <p class="hero-subtitle">
+                    نبني أنظمة برمجية وتطبيقات موبايل تُصمَّم لتدوم: معمارية نظيفة، أداء سريع،
+                    وأمان يليق بالمؤسسات. من الفكرة الأولى حتى النشر على المتاجر والدعم بعده.
+                </p>
+                <div class="hero-buttons">
+                    <a class="btn btn-primary" href="#projects">🚀 شاهد أعمالنا</a>
+                    <a class="btn btn-outline" href="#services">🧩 خدماتنا</a>
+                </div>
+
+                <dl class="hero-metrics">
+                    <div>
+                        <dt class="hero-metric-label">مشروعاً منجزاً</dt>
+                        <dd class="hero-metric-value">11</dd>
+                    </div>
+                    <div>
+                        <dt class="hero-metric-label">تطبيقاً على المتاجر</dt>
+                        <dd class="hero-metric-value">9</dd>
+                    </div>
+                    <div>
+                        <dt class="hero-metric-label">أسواق إقليمية</dt>
+                        <dd class="hero-metric-value">5</dd>
+                    </div>
+                </dl>
+            </div>
+
+            <div class="hero-visual" aria-hidden="true">
+                <div class="hero-panel">
+                    <div class="hero-panel-bar">
+                        <span class="hero-panel-dot"></span>
+                        <span class="hero-panel-dot"></span>
+                        <span class="hero-panel-dot"></span>
+                        <span class="hero-panel-title">tech-stack.yaml</span>
+                    </div>
+                    <div class="hero-stack">
+                        <span class="hero-chip"><span aria-hidden="true">💙</span>Flutter</span>
+                        <span class="hero-chip"><span aria-hidden="true">🎯</span>Dart</span>
+                        <span class="hero-chip"><span aria-hidden="true">🔥</span>Firebase</span>
+                        <span class="hero-chip"><span aria-hidden="true">🔌</span>REST APIs</span>
+                        <span class="hero-chip"><span aria-hidden="true">🗄️</span>SQLite</span>
+                        <span class="hero-chip"><span aria-hidden="true">🤖</span>Android</span>
+                        <span class="hero-chip"><span aria-hidden="true">🍎</span>iOS</span>
+                        <span class="hero-chip"><span aria-hidden="true">🔐</span>Security</span>
+                        <span class="hero-chip"><span aria-hidden="true">⚙️</span>CI/CD</span>
+                    </div>
+                    <p class="hero-panel-note">
+                        <span aria-hidden="true">✅</span>
+                        كود مملوك بالكامل لعميلنا، موثّق، وجاهز لفريقه الداخلي.
+                    </p>
+
+                    <!-- Inside the panel so their offsets are measured against it
+                         rather than against the whole hero column. -->
+                    <div class="hero-float hero-float--1">
+                        <span class="hero-float-icon">📱</span>
+                        <span>
+                            <span class="hero-float-value">iOS + Android</span>
+                            <span class="hero-float-label">قاعدة كود واحدة</span>
+                        </span>
+                    </div>
+                    <div class="hero-float hero-float--2">
+                        <span class="hero-float-icon">🛡️</span>
+                        <span>
+                            <span class="hero-float-value">Enterprise</span>
+                            <span class="hero-float-label">أنظمة حكومية ومؤسسية</span>
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- About -->
+    <section class="section" id="about">
+        <div class="container">
+            <div class="section-header rv">
+                <span class="section-tag">من نحن</span>
+                <h2 class="section-title">نهندس البرمجيات، لا نكتفي بكتابتها</h2>
+                <p class="section-subtitle">
+                    فريق متخصص في تحويل متطلبات العمل إلى أنظمة قابلة للتوسّع والصيانة —
+                    من التطبيقات الاستهلاكية إلى الأنظمة المؤسسية والحكومية.
+                </p>
+            </div>
+
+            <div class="about-grid">
+                <article class="about-card rv">
+                    <div class="about-card-icon" aria-hidden="true">🎯</div>
+                    <h3 class="about-card-title">رسالتنا</h3>
+                    <p class="about-card-text">
+                        أن نمنح كل جهة نعمل معها نظاماً يعمل بصمت وثبات: سريع للمستخدم،
+                        واضح لفريقها التقني، وقابل للتطوير بعد سنوات من إطلاقه — لا مجرد
+                        تسليم يُغلق ملفه بعد أول إصدار.
+                    </p>
+                </article>
+
+                <article class="about-card about-card--vision rv">
+                    <div class="about-card-icon" aria-hidden="true">🔭</div>
+                    <h3 class="about-card-title">رؤيتنا</h3>
+                    <p class="about-card-text">
+                        أن نكون بيت الخبرة الأول في العراق لبناء الأنظمة الرقمية، وأن نثبت أن
+                        البرمجيات المصنوعة محلياً تنافس نظيرتها الإقليمية في الجودة والاعتمادية.
+                    </p>
+                </article>
+            </div>
+
+            <h3 class="sr-only">ما الذي يميّزنا</h3>
+            <div class="about-points" data-rv-group>
+                <div class="about-point rv">
+                    <span class="about-point-num" aria-hidden="true">01</span>
+                    <div>
+                        <h4 class="about-point-title">جودة هندسية</h4>
+                        <p class="about-point-text">
+                            معمارية واضحة، فصل للطبقات، ومراجعة كود قبل كل دمج — لأن كلفة
+                            الصيانة تُحسم في أول شهر من المشروع.
+                        </p>
+                    </div>
+                </div>
+                <div class="about-point rv">
+                    <span class="about-point-num" aria-hidden="true">02</span>
+                    <div>
+                        <h4 class="about-point-title">تسليم على دفعات</h4>
+                        <p class="about-point-text">
+                            نُصدر نسخة قابلة للتجربة كل أسبوعين، فترى تقدّم مشروعك بعينك بدل
+                            انتظار موعد تسليم واحد بعيد.
+                        </p>
+                    </div>
+                </div>
+                <div class="about-point rv">
+                    <span class="about-point-num" aria-hidden="true">03</span>
+                    <div>
+                        <h4 class="about-point-title">أمان بمعايير المؤسسات</h4>
+                        <p class="about-point-text">
+                            تشفير للبيانات، صلاحيات دقيقة، وتوقيع إلكتروني — خبرة مثبتة في
+                            أنظمة المراسلات الحكومية وإدارة الوثائق.
+                        </p>
+                    </div>
+                </div>
+                <div class="about-point rv">
+                    <span class="about-point-num" aria-hidden="true">04</span>
+                    <div>
+                        <h4 class="about-point-title">شراكة بعد الإطلاق</h4>
+                        <p class="about-point-text">
+                            متابعة الأداء، تحديثات المتاجر، وتدريب فريقك على الكود — الإطلاق
+                            بداية العمل وليس نهايته.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <h3 class="sr-only">قيمنا</h3>
+            <ul class="about-values rv">
+                <li class="about-value"><span aria-hidden="true">◆</span>الإتقان قبل السرعة</li>
+                <li class="about-value"><span aria-hidden="true">◆</span>شفافية في التقدّم والتكلفة</li>
+                <li class="about-value"><span aria-hidden="true">◆</span>ملكية كاملة للكود</li>
+                <li class="about-value"><span aria-hidden="true">◆</span>توثيق يفهمه فريقك</li>
+                <li class="about-value"><span aria-hidden="true">◆</span>تحسين مستمر</li>
+            </ul>
+        </div>
+    </section>
+
+    <!-- Services -->
+    <section class="section section--alt" id="services">
+        <div class="container">
+            <div class="section-header rv">
+                <span class="section-tag">خدماتنا</span>
+                <h2 class="section-title">ما الذي نبنيه لك؟</h2>
+                <p class="section-subtitle">
+                    خدمات متكاملة تغطي دورة حياة المنتج الرقمي من التحليل حتى التشغيل والدعم.
+                </p>
+            </div>
+
+            <div class="services-grid" data-rv-group>
+                <article class="service-card rv">
+                    <div class="service-icon" aria-hidden="true">📱</div>
+                    <h3 class="service-title">تطبيقات الموبايل</h3>
+                    <p class="service-text">
+                        تطبيقات أصلية الأداء لنظامي iOS وAndroid من قاعدة كود واحدة، مع النشر
+                        على المتاجر ومتابعة التحديثات.
+                    </p>
+                    <ul class="service-tags">
+                        <li>Flutter</li>
+                        <li>Dart</li>
+                        <li>App Store</li>
+                        <li>Google Play</li>
+                    </ul>
+                </article>
+
+                <article class="service-card rv">
+                    <div class="service-icon" aria-hidden="true">🏛️</div>
+                    <h3 class="service-title">الأنظمة المؤسسية</h3>
+                    <p class="service-text">
+                        أنظمة إدارة المراسلات والوثائق وسير العمل للجهات الحكومية والشركات
+                        الكبيرة، بصلاحيات وأرشفة وتوقيع إلكتروني.
+                    </p>
+                    <ul class="service-tags">
+                        <li>Workflow</li>
+                        <li>DMS</li>
+                        <li>e-Signature</li>
+                    </ul>
+                </article>
+
+                <article class="service-card rv">
+                    <div class="service-icon" aria-hidden="true">🔌</div>
+                    <h3 class="service-title">تكامل الأنظمة وواجهات API</h3>
+                    <p class="service-text">
+                        ربط تطبيقك بأنظمتك القائمة وببوابات الدفع والخرائط والمراسلة، مع
+                        توثيق كامل لكل واجهة.
+                    </p>
+                    <ul class="service-tags">
+                        <li>REST</li>
+                        <li>GraphQL</li>
+                        <li>WebSockets</li>
+                    </ul>
+                </article>
+
+                <article class="service-card rv">
+                    <div class="service-icon" aria-hidden="true">☁️</div>
+                    <h3 class="service-title">الخدمات السحابية والتشغيل</h3>
+                    <p class="service-text">
+                        بنية تحتية سحابية، إشعارات فورية، نسخ احتياطي، وخطوط نشر آلية تختصر
+                        زمن الإصدار إلى دقائق.
+                    </p>
+                    <ul class="service-tags">
+                        <li>Firebase</li>
+                        <li>CI/CD</li>
+                        <li>Monitoring</li>
+                    </ul>
+                </article>
+
+                <article class="service-card rv">
+                    <div class="service-icon" aria-hidden="true">🎨</div>
+                    <h3 class="service-title">تصميم تجربة المستخدم</h3>
+                    <p class="service-text">
+                        واجهات عربية أولاً، تدعم الاتجاه من اليمين لليسار بشكل صحيح، ومختبرة
+                        على أجهزة حقيقية قبل الإطلاق.
+                    </p>
+                    <ul class="service-tags">
+                        <li>UI/UX</li>
+                        <li>RTL</li>
+                        <li>Accessibility</li>
+                    </ul>
+                </article>
+
+                <article class="service-card rv">
+                    <div class="service-icon" aria-hidden="true">🛠️</div>
+                    <h3 class="service-title">الدعم والصيانة</h3>
+                    <p class="service-text">
+                        عقود دعم بمستويات استجابة واضحة، إصلاح الأعطال، ومواكبة تحديثات
+                        المنصات وسياسات المتاجر.
+                    </p>
+                    <ul class="service-tags">
+                        <li>SLA</li>
+                        <li>Bug Fixing</li>
+                        <li>Updates</li>
+                    </ul>
+                </article>
+            </div>
+        </div>
+    </section>
+
+    <!-- Projects -->
+    <section class="section" id="projects">
+        <div class="container">
+            <div class="section-header rv">
+                <span class="section-tag">معرض الأعمال</span>
+                <h2 class="section-title">مشاريع أطلقناها فعلاً</h2>
+                <p class="section-subtitle">
+                    أنظمة وتطبيقات تعمل اليوم بين أيدي المستخدمين في العراق والكويت والإمارات
+                    وسوريا ومصر — اضغط أي مشروع لزيارته على المتجر.
+                </p>
+            </div>
+
+            <!-- No .rv here: the toolbar is unhidden asynchronously once the
+                 filters are known, and a reveal animation queued while it is
+                 still [hidden] would never play. -->
+            <div class="projects-toolbar" data-projects-toolbar hidden>
+                <ul class="projects-filters" data-projects-filters
+                    aria-label="تصفية المشاريع حسب المجال"></ul>
+
+                <div class="projects-sort">
+                    <label for="projects-sort-select">ترتيب حسب</label>
+                    <select id="projects-sort-select" data-projects-sort disabled></select>
+                </div>
+            </div>
+
+            <!-- Populated by js/components/projects.js. It renders skeletons
+                 first, then the cards, an empty state, or an error state with a
+                 retry — the grid is never left blank without an explanation. -->
+            <div class="projects-grid" data-projects-grid></div>
+
+            <p class="sr-only" role="status" aria-live="polite" data-projects-status></p>
+
+            <noscript>
+                <div class="projects-state">
+                    <span class="projects-state-icon" aria-hidden="true">📂</span>
+                    <h3 class="projects-state-title">معرض الأعمال يحتاج تفعيل JavaScript</h3>
+                    <p class="projects-state-text">
+                        فعّل JavaScript في متصفحك لعرض المشاريع، أو تواصل معنا عبر واتساب
+                        وسنرسل لك ملف أعمالنا كاملاً.
+                    </p>
+                    <a class="btn btn-primary" href="https://wa.me/9647875005001" target="_blank" rel="noopener">
+                        💬 اطلب ملف الأعمال
+                    </a>
+                </div>
+            </noscript>
+        </div>
+    </section>
+
+    <!-- Contact -->
+    <section class="section contact" id="contact">
+        <div class="container">
+            <div class="section-header rv">
+                <span class="section-tag section-tag--gold">لنبدأ</span>
+                <h2 class="section-title">عندك فكرة أو نظام تريد بناءه؟</h2>
+                <p class="section-subtitle">
+                    أرسل لنا وصفاً مختصراً لمشروعك وسنعود إليك بخطة تنفيذ مبدئية وتقدير
+                    للمدة والتكلفة.
+                </p>
+            </div>
+
+            <div class="contact-grid">
+                <div class="contact-channels rv">
+                    <a class="contact-channel" href="https://wa.me/9647875005001" target="_blank" rel="noopener">
+                        <span class="contact-channel-icon" aria-hidden="true">💬</span>
+                        <span>
+                            <span class="contact-channel-label">واتساب — الأسرع للرد</span>
+                            <span class="contact-channel-value contact-channel-value--ltr">07875005001</span>
+                        </span>
+                    </a>
+
+                    <a class="contact-channel" href="mailto:info@wazzifni.net">
+                        <span class="contact-channel-icon" aria-hidden="true">✉️</span>
+                        <span>
+                            <span class="contact-channel-label">البريد الإلكتروني</span>
+                            <span class="contact-channel-value contact-channel-value--ltr">info@wazzifni.net</span>
+                        </span>
+                    </a>
+
+                    <a class="contact-channel" href="https://maps.app.goo.gl/uygd5NoXuiq14s2i9?g_st=ic"
+                       target="_blank" rel="noopener">
+                        <span class="contact-channel-icon" aria-hidden="true">📍</span>
+                        <span>
+                            <span class="contact-channel-label">المقر</span>
+                            <span class="contact-channel-value">شارع الغدير، فرات، النجف — العراق</span>
+                        </span>
+                    </a>
+
+                    <div class="contact-channel">
+                        <span class="contact-channel-icon" aria-hidden="true">🕘</span>
+                        <span>
+                            <span class="contact-channel-label">أوقات العمل</span>
+                            <span class="contact-channel-value">الأحد - الخميس، 9:00 صباحاً - 5:00 مساءً</span>
+                        </span>
+                    </div>
+
+                    <h3 class="sr-only">تابعنا</h3>
+                    <div class="contact-social">
+                        <a href="https://www.facebook.com/share/14XfHdMCbR8/?mibextid=wwXIfr" target="_blank" rel="noopener">
+                            <span aria-hidden="true">f</span> فيسبوك
+                        </a>
+                        <a href="https://www.instagram.com/wazzifni?igsh=MXN6ZzVoMWk2NjN5Yw%3D%3D&utm_source=qr" target="_blank" rel="noopener">
+                            <span aria-hidden="true">📸</span> انستغرام
+                        </a>
+                        <a href="https://www.linkedin.com/company/wazzifni-iraq/" target="_blank" rel="noopener">
+                            <span aria-hidden="true">in</span> لينكدإن
+                        </a>
+                    </div>
+                </div>
+
+                <form class="contact-form rv" id="inquiry-form">
+                    <h3 class="contact-form-title">أخبرنا عن مشروعك</h3>
+                    <p class="contact-form-note">
+                        الحقول المعلّمة بـ <span aria-hidden="true">*</span> مطلوبة. عند الإرسال
+                        تُفتح المحادثة على واتساب (أو بريدك) وبها رسالتك جاهزة.
+                    </p>
+
+                    <div class="field-row">
+                        <div class="field">
+                            <label for="f-name">الاسم <span aria-hidden="true">*</span></label>
+                            <input id="f-name" name="name" type="text" autocomplete="name"
+                                   placeholder="اسمك الكامل" required
+                                   aria-describedby="e-name">
+                            <p class="field-error" id="e-name" data-error-for="name"></p>
+                        </div>
+
+                        <div class="field">
+                            <label for="f-contact">هاتف أو بريد <span aria-hidden="true">*</span></label>
+                            <input id="f-contact" name="contact" type="text" inputmode="email"
+                                   autocomplete="email" placeholder="07XXXXXXXXX أو name@mail.com"
+                                   required aria-describedby="e-contact">
+                            <p class="field-error" id="e-contact" data-error-for="contact"></p>
+                        </div>
+                    </div>
+
+                    <div class="field-row">
+                        <div class="field">
+                            <label for="f-company">الجهة <span class="optional">(اختياري)</span></label>
+                            <input id="f-company" name="company" type="text"
+                                   autocomplete="organization" placeholder="اسم الشركة أو المؤسسة">
+                        </div>
+
+                        <div class="field">
+                            <label for="f-service">نوع الخدمة</label>
+                            <select id="f-service" name="service">
+                                <option value="تطبيق موبايل">تطبيق موبايل</option>
+                                <option value="نظام مؤسسي">نظام مؤسسي</option>
+                                <option value="تكامل أنظمة وواجهات API">تكامل أنظمة وواجهات API</option>
+                                <option value="خدمات سحابية وتشغيل">خدمات سحابية وتشغيل</option>
+                                <option value="تصميم تجربة مستخدم">تصميم تجربة مستخدم</option>
+                                <option value="دعم وصيانة">دعم وصيانة</option>
+                                <option value="غير ذلك">غير ذلك</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="field">
+                        <label for="f-message">تفاصيل المشروع <span aria-hidden="true">*</span></label>
+                        <textarea id="f-message" name="message" rows="5" required
+                                  placeholder="ما الذي تريد بناءه؟ من هم مستخدموه؟ وما الموعد المستهدف؟"
+                                  aria-describedby="e-message"></textarea>
+                        <p class="field-error" id="e-message" data-error-for="message"></p>
+                    </div>
+
+                    <div class="field">
+                        <label for="f-channel">أرسل عبر</label>
+                        <select id="f-channel" name="channel">
+                            <option value="whatsapp">واتساب</option>
+                            <option value="email">البريد الإلكتروني</option>
+                        </select>
+                    </div>
+
+                    <!-- Enabled by js/components/contact-form.js: the form has no
+                         server endpoint, it hands the message to WhatsApp or the
+                         mail client, so without JS it must not pretend to work. -->
+                    <button class="btn btn-primary btn--block" type="submit" disabled>📨 إرسال الطلب</button>
+
+                    <noscript>
+                        <p class="contact-form-note">
+                            إرسال النموذج يحتاج تفعيل JavaScript — يمكنك مراسلتنا مباشرة على
+                            <a href="https://wa.me/9647875005001" target="_blank" rel="noopener">واتساب</a>.
+                        </p>
+                    </noscript>
+                </form>
+            </div>
+        </div>
+    </section>
+</main>
+
+<!-- Footer -->
+<footer class="footer">
+    <div class="container">
+        <div class="footer-grid">
+            <div>
+                <div class="footer-logo">
+                    <span class="footer-logo-mark" aria-hidden="true">IT</span>
+                    <span>
+                        <span class="footer-logo-name">IT Land Iraq</span>
+                        <span class="footer-logo-sub">Building High-Quality Systems</span>
+                    </span>
+                </div>
+                <p class="footer-description">
+                    شركة تقنية تبني أنظمة برمجية وتطبيقات موبايل عالية الجودة للمؤسسات
+                    والشركات في العراق والمنطقة.
+                </p>
+            </div>
+
+            <nav aria-labelledby="footer-nav-title">
+                <h2 id="footer-nav-title">روابط سريعة</h2>
+                <ul class="footer-links">
+                    <li><a href="#about">من نحن</a></li>
+                    <li><a href="#services">خدماتنا</a></li>
+                    <li><a href="#projects">معرض الأعمال</a></li>
+                    <li><a href="#contact">تواصل معنا</a></li>
+                    <li><a href="/">🏠 منصة وظّفني</a></li>
+                    <li><a href="/course/">🎓 دورات وظّفني</a></li>
+                </ul>
+            </nav>
+
+            <div>
+                <h2 id="footer-contact-title">تواصل معنا</h2>
+                <ul class="footer-links" aria-labelledby="footer-contact-title">
+                    <li><a href="https://wa.me/9647875005001" target="_blank" rel="noopener">💬 واتساب: 07875005001</a></li>
+                    <li><a href="mailto:info@wazzifni.net">✉️ info@wazzifni.net</a></li>
+                    <li><a href="https://www.linkedin.com/company/wazzifni-iraq/" target="_blank" rel="noopener">💼 لينكدإن</a></li>
+                    <li><a href="https://maps.app.goo.gl/uygd5NoXuiq14s2i9?g_st=ic" target="_blank" rel="noopener">📍 النجف، العراق</a></li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="footer-bottom">
+            © 2025 IT Land Iraq — جميع الحقوق محفوظة · جزء من منظومة
+            <a href="/">وظّفني</a> 🇮🇶
+        </div>
+    </div>
+</footer>
+
+<!-- Floating actions -->
+<button class="back-to-top" type="button" id="back-to-top" aria-label="العودة إلى الأعلى" title="العودة إلى الأعلى">↑</button>
+
+<a href="https://wa.me/9647875005001" target="_blank" rel="noopener" class="whatsapp-button" aria-label="تواصل معنا عبر واتساب" title="تواصل معنا عبر واتساب">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" fill="#fff" aria-hidden="true">
+        <path d="M16 2C8.268 2 2 8.268 2 16c0 2.478.67 4.797 1.836 6.789L2 30l7.448-1.953A13.928 13.928 0 0 0 16 30c7.732 0 14-6.268 14-14S23.732 2 16 2zm0 25.6a11.54 11.54 0 0 1-5.88-1.607l-.42-.25-4.42 1.16 1.18-4.305-.274-.442A11.56 11.56 0 0 1 4.4 16C4.4 9.593 9.593 4.4 16 4.4S27.6 9.593 27.6 16 22.407 27.6 16 27.6zm6.34-8.64c-.347-.174-2.055-1.014-2.374-1.13-.318-.115-.55-.174-.781.174-.232.347-.897 1.13-1.1 1.362-.202.231-.405.26-.752.087-.347-.174-1.464-.54-2.788-1.72-1.03-.918-1.726-2.052-1.928-2.399-.202-.347-.022-.535.152-.708.156-.155.347-.405.52-.607.174-.202.232-.347.347-.578.116-.232.058-.434-.029-.607-.087-.174-.781-1.883-1.07-2.578-.282-.678-.569-.586-.781-.597l-.666-.011c-.232 0-.607.087-.925.434-.318.347-1.215 1.187-1.215 2.895s1.244 3.357 1.418 3.589c.174.231 2.45 3.74 5.935 5.244.83.358 1.477.572 1.982.732.833.265 1.591.228 2.19.138.668-.1 2.055-.84 2.345-1.651.289-.812.289-1.508.202-1.651-.086-.144-.318-.231-.665-.405z"/>
+    </svg>
+</a>
+
+<script src="js/main.js?v=1.0.0" type="module"></script>
+</body>
+</html>

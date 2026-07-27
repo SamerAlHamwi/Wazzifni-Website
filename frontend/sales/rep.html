@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>وظِّفني – واجهة المندوب</title>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&family=Tajawal:wght@300;400;500;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="css/variables.css" />
+    <link rel="stylesheet" href="css/style.css" />
+    <style>
+        #rep-main-content { display: none; }
+    </style>
+</head>
+<body>
+
+<!-- LOGIN OVERLAY -->
+<div id="rep-login-overlay" class="login-overlay">
+    <div class="login-box">
+        <div class="rep-logo-badge" style="margin-bottom: 20px;">
+            <img
+                src="images/logo.png"
+                alt="وظِّفني" />
+        </div>
+        <h2>🔒 دخول المندوب</h2>
+        <div class="form-group">
+            <label class="form-label">اسم المستخدم</label>
+            <input type="text" id="rep-login-user" class="form-input" placeholder="أدخل اسم المستخدم">
+        </div>
+        <div class="form-group">
+            <label class="form-label">كلمة المرور</label>
+            <input type="password" id="rep-login-pass" class="form-input" placeholder="أدخل كلمة المرور">
+        </div>
+        <button class="btn btn-primary btn-full" onclick="checkRepLogin()">تسجيل الدخول</button>
+        <div id="rep-login-err" style="color:var(--danger); margin-top:15px; font-size:13px; font-weight:600;"></div>
+    </div>
+</div>
+
+<div id="rep-main-content">
+    <!-- TOPBAR -->
+    <nav class="topbar">
+        <div class="topbar-brand">
+            <div class="topbar-logo">
+                <img
+                    src="images/logo.png"
+                    alt="وظِّفني" />
+            </div>
+            <div>
+                <div class="topbar-title">وظِّفني</div>
+                <div class="topbar-sub">نظام إدارة المندوبين</div>
+            </div>
+        </div>
+        <div style="margin-right:auto; padding-left:20px;">
+            <button class="btn btn-danger btn-sm" onclick="repLogout()">تسجيل خروج</button>
+        </div>
+    </nav>
+
+    <!-- REP PAGE -->
+    <div class="page active" id="page-rep">
+        <div class="rep-page">
+            <div class="rep-form-card">
+                <div class="rep-form-header">
+                    <div class="rep-logo-badge">
+                        <img
+                            src="images/logo.png"
+                            alt="وظِّفني" />
+                    </div>
+                    <h2>تسجيل زيارة ميدانية</h2>
+                    <p>أدخل بيانات الزيارة والشركة بالتفصيل</p>
+                </div>
+                <div class="rep-form-body">
+
+                    <div class="form-group">
+                        <label class="form-label">📅 التاريخ والوقت</label>
+                        <div class="datetime-display">
+                            <span style="font-size:16px;">🕐</span>
+                            <div>
+                                <div class="dt-text" id="rep-time-display">--</div>
+                                <div class="dt-date" id="rep-date-display">--</div>
+                            </div>
+                            <span id="rep-day-display" style="font-size:12px;color:var(--text-muted);font-weight:600;"></span>
+                        </div>
+                    </div>
+
+                    <div class="section-divider"><span>🏢 بيانات الشركة / العميل</span></div>
+
+                    <div class="form-group">
+                        <label class="form-label">اسم الشركة <span style="color:var(--danger)">*</span></label>
+                        <div class="input-with-icon"><span class="i-icon">🏢</span><input class="form-input" id="rep-company"
+                                                                                         placeholder="مثال: شركة النور للتوزيع" /></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">رقم الهاتف <span class="lbl-optional">(اختياري)</span></label>
+                        <div class="input-with-icon"><span class="i-icon">📞</span><input class="form-input" id="rep-phone"
+                                                                                         type="tel" placeholder="مثال: 07701234567" dir="ltr" /></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">البريد الإلكتروني <span class="lbl-optional">(اختياري)</span></label>
+                        <div class="input-with-icon"><span class="i-icon">✉️</span><input class="form-input" id="rep-email"
+                                                                                          type="email" placeholder="مثال: info@company.com" dir="ltr" /></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">العنوان <span class="lbl-optional">(اختياري)</span></label>
+                        <div class="input-with-icon"><span class="i-icon">📍</span><input class="form-input" id="rep-address"
+                                                                                         placeholder="مثال: بغداد، الكرادة، شارع..." /></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">📡 الموقع الجغرافي GPS <span class="lbl-optional">(اختياري)</span></label>
+                        <div class="gps-row">
+                            <input class="form-input" id="rep-gps" placeholder="اضغط الزر لتحديد موقعك تلقائياً..." readonly
+                                   dir="ltr" />
+                            <button class="btn-gps" id="btn-gps" onclick="getGPS()" title="تحديد موقعي">📡</button>
+                        </div>
+                        <div id="gps-status" style="font-size:11px;color:var(--text-muted);margin-top:4px;"></div>
+                    </div>
+
+                    <div class="section-divider"><span>✅ الإجراءات المنجزة</span></div>
+
+                    <div class="form-group" style="margin-bottom:0;">
+                        <div class="actions-check-list" id="rep-actions-list">
+                            <div style="padding:20px;text-align:center;color:var(--text-muted);font-size:13px;">لا توجد إجراءات. أضف
+                                إجراءات من لوحة الإدارة.</div>
+                        </div>
+                    </div>
+
+                    <div class="points-preview">
+                        <div>
+                            <div class="pp-label">النقاط المكتسبة</div>
+                            <div class="pp-val" id="rep-pts-val">0</div>
+                        </div>
+                        <div style="text-align:left;">
+                            <div class="pp-iqd">المبلغ</div>
+                            <div class="pp-val" id="rep-iqd-val">0 د.ع</div>
+                        </div>
+                    </div>
+
+                    <div class="section-divider" style="margin-top:20px;"><span>📝 ملاحظات</span></div>
+                    <div class="form-group" style="margin-bottom:0;">
+                        <input class="form-input" id="rep-notes" placeholder="أي تفاصيل إضافية عن الزيارة..." />
+                    </div>
+
+                    <button class="btn btn-accent btn-full"
+                            style="margin-top:20px;padding:14px;font-size:15px;border-radius:10px;" onclick="submitRepReport()">
+                        ✅ إرسال التقرير
+                    </button>
+                    <div id="rep-submit-msg"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- SUCCESS OVERLAY -->
+<div class="success-overlay" id="success-overlay">
+    <div class="success-box">
+        <div class="s-icon">🎉</div>
+        <h3>تم الإرسال بنجاح!</h3>
+        <p>تم تسجيل تقريرك وإرساله إلى لوحة الإدارة.</p>
+        <button class="btn btn-primary" onclick="closeSuccess()" style="width:100%;">حسناً</button>
+    </div>
+</div>
+
+<script src="js/state.js"></script>
+<script src="js/app.js"></script>
+<script src="js/rep.js"></script>
+<script>
+    // Rep Login check
+    if (sessionStorage.getItem('repData')) {
+        document.getElementById('rep-login-overlay').style.display = 'none';
+        document.getElementById('rep-main-content').style.display = 'block';
+    }
+</script>
+</body>
+</html>

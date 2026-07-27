@@ -1,0 +1,753 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>وظّفني — نظام إدارة التوظيف المتكامل</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800;900&family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/components.css">
+</head>
+<body>
+
+<!-- GLOBAL LOADER -->
+<div id="globalLoader" class="loader-wrap">
+    <div class="loader-box">
+        <div class="spinner"></div>
+        <span style="font-size: .85rem; font-weight: 700; color: var(--tx2)">جاري التحميل...</span>
+    </div>
+</div>
+
+<!-- SIDEBAR OVERLAY -->
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+<!-- LOGIN SCREEN -->
+<div id="loginScreen">
+    <div class="lc">
+        <div class="lc-logo-wrap"><div class="lc-logo">💼</div></div>
+        <div class="lc-title">وظّفني</div>
+        <div class="lc-sub">نظام إدارة التوظيف المتكامل</div>
+        <div class="lc-field">
+            <label>اسم المستخدم</label>
+            <input id="li-u" type="text" placeholder="أدخل اسم المستخدم"
+                   autocomplete="new-password" autocorrect="off" autocapitalize="off" spellcheck="false">
+        </div>
+        <div class="lc-field">
+            <label>كلمة المرور</label>
+            <input id="li-p" type="password" placeholder="أدخل كلمة المرور" autocomplete="new-password">
+        </div>
+        <button class="lc-btn" id="loginBtn">تسجيل الدخول ←</button>
+        <div id="li-err"></div>
+    </div>
+</div>
+
+<!-- TOPBAR -->
+<div class="topbar">
+    <div class="tb-brand">
+        <button class="tb-menu" id="menuBtn">☰</button>
+        <div class="tb-icon">💼</div>
+        <div class="tb-brand-text">
+            <div class="tb-name">وظّفني</div>
+            <div class="tb-sub">نظام إدارة التوظيف</div>
+        </div>
+    </div>
+    <div class="tb-center">
+        <div class="tb-date" id="tbDate"></div>
+        <div class="tb-user">
+            <div class="tb-av" id="tbAv" style="background:var(--orange)">م</div>
+            <div>
+                <div class="tb-nm" id="tbNm">—</div>
+                <div class="tb-rl rl-admin" id="tbRl">—</div>
+            </div>
+        </div>
+        <div class="tb-btns">
+            <button class="tb-btn tb-save" id="exportBtn" title="تصدير">💾</button>
+            <input type="file" id="importFile" style="display:none" accept=".json">
+            <button class="tb-btn tb-save" onclick="document.getElementById('importFile').click()" title="استيراد">📥</button>
+            <button class="tb-btn tb-out" id="logoutBtn">خروج ⬅</button>
+        </div>
+    </div>
+</div>
+<div class="brand-bar"></div>
+
+<div class="app">
+    <!-- SIDEBAR -->
+    <div class="sidebar" id="sidebar">
+        <div class="nav-sec-label">الرئيسية</div>
+        <div class="nav-item active" data-view="dashboard">
+            <span class="nav-ico">📊</span><span class="nav-lbl">لوحة التحكم</span>
+        </div>
+        <div class="nav-div"></div>
+        <div class="nav-sec-label">المتقدمون</div>
+        <div class="nav-item" data-view="applicants">
+            <span class="nav-ico">👥</span><span class="nav-lbl">جميع المتقدمين</span>
+            <span class="nav-badge" id="nb-all" style="display:none">0</span>
+        </div>
+        <div class="nav-item" data-view="accepted">
+            <span class="nav-ico">✅</span><span class="nav-lbl">المقبولون</span>
+        </div>
+        <div class="nav-item" data-view="rejected">
+            <span class="nav-ico">❌</span><span class="nav-lbl">المرفوضون</span>
+        </div>
+        <div class="nav-item" data-view="pending">
+            <span class="nav-ico">🔄</span><span class="nav-lbl">قيد المراجعة</span>
+        </div>
+        <div class="nav-div"></div>
+        <div class="nav-sec-label">المالية</div>
+        <div class="nav-item" data-view="payments">
+            <span class="nav-ico">💰</span><span class="nav-lbl">المدفوعات</span>
+            <span class="nav-badge" id="nb-pay" style="display:none">0</span>
+        </div>
+        <div class="nav-item" data-view="companies">
+            <span class="nav-ico">🏢</span><span class="nav-lbl">الشركات</span>
+        </div>
+        <div class="nav-div"></div>
+        <div class="nav-sec-label">الإدارة</div>
+        <div class="nav-item" data-view="reports">
+            <span class="nav-ico">📈</span><span class="nav-lbl">التقارير</span>
+        </div>
+        <div class="nav-item" data-view="alerts">
+            <span class="nav-ico">🔔</span><span class="nav-lbl">التنبيهات</span>
+            <span class="nav-badge" id="nb-alert" style="display:none">0</span>
+        </div>
+        <div class="nav-item" id="adminNav" data-view="admin">
+            <span class="nav-ico">⚙️</span><span class="nav-lbl">المستخدمون</span>
+        </div>
+        <div class="nav-item" data-view="notifications">
+            <span class="nav-ico">📱</span><span class="nav-lbl">إشعارات SMS</span>
+        </div>
+    </div>
+
+    <!-- CONTENT -->
+    <div class="content" id="content">
+        <!-- VIEW: DASHBOARD -->
+        <div id="v-dashboard" class="view">
+            <div class="ph">
+                <div>
+                    <div class="ph-t">لوحة التحكم</div>
+                    <div class="ph-s" id="dSub">—</div>
+                </div>
+                <div class="ph-a">
+                    <button class="btn btn-primary" onclick="openAddApp()">➕ إضافة متقدم</button>
+                </div>
+            </div>
+            <div class="pipeline" id="dPipe"></div>
+            <div class="stats" id="dStats"></div>
+            <div class="chart-row">
+                <div class="card">
+                    <div class="card-h"><div class="card-title">📊 تحليل الحالات</div></div>
+                    <div class="card-b" id="cStatus"></div>
+                </div>
+                <div class="card">
+                    <div class="card-h"><div class="card-title">💰 عمولات آخر 6 أشهر</div></div>
+                    <div class="card-b" style="padding-bottom:.5rem"><div class="bar-chart" id="cBars"></div></div>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-h">
+                    <div class="card-title">🕒 آخر المتقدمين المضافين</div>
+                    <button class="btn btn-ghost btn-xs" onclick="nav('applicants')">عرض الكل</button>
+                </div>
+                <div class="tw" style="border:none;box-shadow:none;border-radius:0">
+                    <table>
+                        <thead><tr><th>المتقدم</th><th>الوظيفة</th><th>الشركة</th><th>التاريخ</th><th>الحالة</th><th>تنبيه</th></tr></thead>
+                        <tbody id="dRecent"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- VIEW: APPLICANTS -->
+        <div id="v-applicants" class="view">
+            <div class="ph">
+                <div><div class="ph-t">جميع المتقدمين</div><div class="ph-s">إدارة كافة طلبات التوظيف</div></div>
+                <div class="ph-a"><button class="btn btn-primary" onclick="openAddApp()">➕ إضافة متقدم</button></div>
+            </div>
+            <div class="tw">
+                <div class="tb-bar">
+                    <div class="sr-wrap"><input type="text" placeholder="بحث بالاسم، الوظيفة، أو الهاتف..." oninput="renderApp()"></div>
+                </div>
+                <table>
+                    <thead><tr><th>الاسم الكامل</th><th>الهاتف</th><th>الوظيفة</th><th>الشركة</th><th>المقابلة</th><th>المباشرة</th><th>الاستقطاع</th><th>الإرسال</th><th>الحالة</th><th>ملاحظات</th><th>إجراءات</th></tr></thead>
+                    <tbody id="appTable"></tbody>
+                </table>
+                <div class="pag" id="appPag"></div>
+            </div>
+        </div>
+
+        <!-- VIEW: ACCEPTED -->
+        <div id="v-accepted" class="view">
+            <div class="ph">
+                <div><div class="ph-t">المقبولون</div><div class="ph-s">قائمة المتقدمين الذين تم قبولهم</div></div>
+                <div class="ph-a"><button class="btn btn-primary" onclick="openAddApp()">➕ إضافة متقدم</button></div>
+            </div>
+            <div class="tw">
+                <div class="tb-bar"><div class="sr-wrap"><input type="text" placeholder="بحث..." oninput="renderFlt('accepted')"></div></div>
+                <table>
+                    <thead><tr><th>الاسم الكامل</th><th>الهاتف</th><th>الوظيفة</th><th>الشركة</th><th>المقابلة</th><th>المباشرة</th><th>الاستقطاع</th><th>التنبيه</th><th>ملاحظات</th><th>إجراءات</th></tr></thead>
+                    <tbody id="accTable"></tbody>
+                </table>
+                <div class="pag" id="accPag"></div>
+            </div>
+        </div>
+
+        <!-- VIEW: REJECTED -->
+        <div id="v-rejected" class="view">
+            <div class="ph">
+                <div><div class="ph-t">المرفوضون</div><div class="ph-s">قائمة الطلبات المرفوضة</div></div>
+            </div>
+            <div class="tw">
+                <div class="tb-bar"><div class="sr-wrap"><input type="text" placeholder="بحث..." oninput="renderFlt('rejected')"></div></div>
+                <table>
+                    <thead><tr><th>الاسم الكامل</th><th>الهاتف</th><th>الوظيفة</th><th>الشركة</th><th>المقابلة</th><th>الحالة</th><th>ملاحظات</th><th>إجراءات</th></tr></thead>
+                    <tbody id="rejTable"></tbody>
+                </table>
+                <div class="pag" id="rejPag"></div>
+            </div>
+        </div>
+
+        <!-- VIEW: PENDING -->
+        <div id="v-pending" class="view">
+            <div class="ph">
+                <div><div class="ph-t">قيد المراجعة</div><div class="ph-s">طلبات لم يتم تحديد حالتها بعد</div></div>
+            </div>
+            <div class="tw">
+                <div class="tb-bar"><div class="sr-wrap"><input type="text" placeholder="بحث..." oninput="renderFlt('pending')"></div></div>
+                <table>
+                    <thead><tr><th>الاسم الكامل</th><th>الهاتف</th><th>الوظيفة</th><th>الشركة</th><th>المقابلة</th><th>الإرسال</th><th>ملاحظات</th><th>إجراءات</th></tr></thead>
+                    <tbody id="penTable"></tbody>
+                </table>
+                <div class="pag" id="penPag"></div>
+            </div>
+        </div>
+
+        <!-- VIEW: PAYMENTS -->
+        <div id="v-payments" class="view">
+            <div class="ph">
+                <div><div class="ph-t">المدفوعات والعمولات</div><div class="ph-s">تتبع المبالغ المستحصلة من الموظفين</div></div>
+                <div class="ph-a"><button class="btn btn-blue" onclick="openPayModal()">💰 تسجيل دفعة</button></div>
+            </div>
+            <div class="ps-bar" id="pSum"></div>
+            <div class="tw">
+                <div class="tb-bar">
+                    <div class="sr-wrap"><input type="text" placeholder="بحث باسم الموظف..." oninput="renderPay()"></div>
+                    <select class="fsel" id="fPay"><option value="">كل الحالات</option><option>مدفوع</option><option>متأخر</option><option>قريب</option></select>
+                </div>
+                <table>
+                    <thead><tr><th>الموظف</th><th>المبلغ</th><th>الشهر</th><th>تاريخ الدفع</th><th>الحالة</th><th>ملاحظات</th><th>إجراءات</th></tr></thead>
+                    <tbody id="payTable"></tbody>
+                </table>
+                <div class="pag" id="payPag"></div>
+            </div>
+        </div>
+
+        <!-- VIEW: COMPANIES -->
+        <div id="v-companies" class="view">
+            <div class="ph">
+                <div><div class="ph-t">الشركات الشريكة</div><div class="ph-s">إدارة بيانات الشركات وجهات التوظيف</div></div>
+                <div class="ph-a"><button class="btn btn-primary" onclick="openAddCo()">🏢 إضافة شركة</button></div>
+            </div>
+            <div class="tw">
+                <div class="tb-bar"><div class="sr-wrap"><input type="text" placeholder="بحث عن شركة..." oninput="renderCo()"></div></div>
+                <table>
+                    <thead><tr><th>اسم الشركة</th><th>القطاع</th><th>المسؤول</th><th>الهاتف</th><th>العنوان</th><th>إجراءات</th></tr></thead>
+                    <tbody id="coTable"></tbody>
+                </table>
+                <div class="pag" id="coPag"></div>
+            </div>
+        </div>
+
+        <!-- VIEW: REPORTS -->
+        <div id="v-reports" class="view">
+            <div class="ph">
+                <div><div class="ph-t">التقارير والإحصائيات</div><div class="ph-s">ملخص شامل للأداء المالي والعمليات</div></div>
+                <div class="ph-a"><button class="btn btn-ghost" onclick="window.print()">🖨️ طباعة التقرير</button></div>
+            </div>
+            <div class="rpt-sum" id="rSum"></div>
+            <div class="chart-row">
+                <div class="card"><div class="card-h"><div class="card-title">📈 نمو الإيرادات</div></div><div class="card-b"><div class="bar-chart" id="rBars" style="height:120px"></div></div></div>
+                <div class="card"><div class="card-h"><div class="card-title">📊 توزيع الحالات</div></div><div class="card-b" id="rStatus"></div></div>
+            </div>
+            <div class="card">
+                <div class="card-h"><div class="card-title">📋 تقييمات المتقدمين (Scorecards)</div></div>
+                <div class="tw">
+                    <table>
+                        <thead><tr><th>المتقدم</th><th>الوظيفة</th><th>الشركة</th><th>النتيجة</th><th>الحالة</th><th>إجراءات</th></tr></thead>
+                        <tbody id="rAppTable"></tbody>
+                    </table>
+                    <div class="pag" id="repAppPag"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- VIEW: ALERTS -->
+        <div id="v-alerts" class="view">
+            <div class="ph"><div><div class="ph-t">التنبيهات والمتابعة</div><div class="ph-s">متابعة الموظفين الذين تجاوزوا مدة الاستحقاق</div></div></div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.2rem">
+                <div><div style="font-size:.85rem;font-weight:800;margin-bottom:.8rem;color:var(--red)">🚨 تجاوزوا 25 يوم (عاجل)</div><div id="alOver"></div></div>
+                <div><div style="font-size:.85rem;font-weight:800;margin-bottom:.8rem;color:var(--orange)">🔔 قريبون من الاستحقاق (18-24 يوم)</div><div id="alNear"></div></div>
+            </div>
+        </div>
+
+        <!-- VIEW: ADMIN -->
+        <div id="v-admin" class="view">
+            <div class="ph">
+                <div><div class="ph-t">إدارة المستخدمين</div><div class="ph-s">التحكم في الحسابات وصلاحيات الوصول</div></div>
+                <div class="ph-a"><button class="btn btn-primary" onclick="openAddUser()">👤 إضافة مستخدم</button></div>
+            </div>
+            <div class="user-grid" id="userGrid"></div>
+            <div class="pag" id="userPag"></div>
+            <div class="card" style="margin-top:1.5rem">
+                <div class="card-h"><div class="card-title">📜 سجل النشاطات الأخير</div></div>
+                <div id="logList"></div>
+                <div class="pag" id="logPag"></div>
+            </div>
+        </div>
+
+        <!-- VIEW: NOTIFICATIONS -->
+        <div id="v-notifications" class="view">
+            <div class="ph"><div><div class="ph-t">إعدادات الإشعارات</div><div class="ph-s">ربط النظام مع بوابة VerifyWay لإرسال إشعارات SMS</div></div></div>
+            <div class="notif-panel" id="smsStatusPanel">
+                <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.2rem">
+                    <div style="font-weight:800;font-size:1rem">📱 ربط بوابة SMS (VerifyWay)</div>
+                    <div id="smsStatus" class="ej-status ej-off">❌ غير مفعّل</div>
+                </div>
+                <div class="ej-key-field">
+                    <div class="fi"><label>API Key</label><input id="sms-key" type="password" placeholder="أدخل مفتاح الـ API"></div>
+                    <div class="fi"><label>Sender ID</label><input id="sms-sender" type="text" placeholder="Wazzifni"></div>
+                </div>
+                <div class="ej-key-field">
+                    <div class="fi"><label>رقم هاتف المسؤول</label><input id="sms-phone" type="text" placeholder="9647818049186"></div>
+                </div>
+                <div style="display:flex;gap:8px;margin-top:1rem">
+                    <button class="btn btn-primary" onclick="saveSMSConfig()">💾 حفظ وتفعيل</button>
+                    <button class="btn btn-ghost" onclick="sendTestSMS()">🧪 إرسال تجربة</button>
+                    <button class="btn btn-danger btn-sm" onclick="clearSMSConfig()" style="margin-right:auto">مسح الإعدادات</button>
+                </div>
+            </div>
+            <div class="card" style="margin-bottom:1.2rem">
+                <div class="card-h"><div class="card-title">⚙️ تفضيلات الإشعارات التلقائية</div></div>
+                <div class="card-b">
+                    <div class="notif-row"><div class="notif-lbl">إضافة متقدم جديد<div class="notif-hint">إرسال تنبيه عند إضافة أي متقدم جديد</div></div><label class="toggle"><input type="checkbox" id="nt-new" checked><div class="ttrack"></div></label></div>
+                    <div class="notif-row"><div class="notif-lbl">قبول متقدم<div class="notif-hint">تنبيه عند تغيير الحالة إلى "مقبول"</div></div><label class="toggle"><input type="checkbox" id="nt-accept" checked><div class="ttrack"></div></label></div>
+                    <div class="notif-row"><div class="notif-lbl">رفض متقدم<div class="notif-hint">تنبيه عند تغيير الحالة إلى "مرفوض"</div></div><label class="toggle"><input type="checkbox" id="nt-reject" checked><div class="ttrack"></div></label></div>
+                    <div class="notif-row"><div class="notif-lbl">تسجيل دفعة<div class="notif-hint">تنبيه عند استلام مبالغ مالية</div></div><label class="toggle"><input type="checkbox" id="nt-payment" checked><div class="ttrack"></div></label></div>
+                    <div class="notif-row"><div class="notif-lbl">تجاوز المدة (🚨)<div class="notif-hint">تنبيه يومي عن الموظفين الذين تجاوزوا 25 يوم</div></div><label class="toggle"><input type="checkbox" id="nt-overdue" checked><div class="ttrack"></div></label></div>
+                    <button class="btn btn-blue btn-sm" style="margin-top:1rem" onclick="saveNotifPrefs()">حفظ التفضيلات</button>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-h"><div class="card-title">🕒 سجل الإشعارات المرسلة</div><button class="btn btn-ghost btn-xs" onclick="clearSMSLog()">مسح السجل</button></div>
+                <div id="smsLog"></div>
+                <div class="pag" id="smsLogPag"></div>
+            </div>
+        </div>
+
+        <!-- VIEW: NO ACCESS -->
+        <div id="v-noaccess" class="view">
+            <div class="empty">
+                <div class="ei">🔒</div>
+                <h3>عذراً، لا تملك صلاحية الوصول</h3>
+                <p>يرجى التواصل مع مدير النظام لطلب الصلاحيات المطلوبة.</p>
+                <button class="btn btn-primary" style="margin-top:1rem" onclick="nav('dashboard')">العودة للرئيسية</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- MODALS -->
+<div class="overlay" id="aModal">
+  <div class="modal" style="width:780px;max-width:98vw;padding:0;overflow:hidden;display:flex;flex-direction:column">
+    <div class="mh" style="padding:1.2rem 1.7rem .8rem;margin-bottom:0">
+      <div class="mh-t"><div class="mh-ico">👤</div><span id="aMdlTitle">إضافة متقدم جديد</span></div>
+      <div class="mx" data-close="aModal">✕</div>
+    </div>
+
+    <!-- TABS -->
+    <div style="display:flex;gap:0;padding:0 1.7rem;border-bottom:1px solid var(--border);background:var(--surf2)">
+      <button id="tab-info" onclick="switchTab('info')" style="padding:10px 20px;border:none;background:none;font-family:Cairo,sans-serif;font-size:.82rem;font-weight:800;color:var(--blue);border-bottom:2px solid var(--blue);margin-bottom:-1px;cursor:pointer">👤 بيانات المتقدم</button>
+      <button id="tab-sc" onclick="switchTab('sc')" style="padding:10px 20px;border:none;background:none;font-family:Cairo,sans-serif;font-size:.82rem;font-weight:800;color:var(--tx2);border-bottom:2px solid transparent;margin-bottom:-1px;cursor:pointer">📋 تقييم الكفاءة</button>
+    </div>
+
+    <div style="flex:1;overflow-y:auto;padding:1.5rem 1.7rem">
+        <!-- TAB: INFO -->
+        <div id="tabInfo">
+          <div class="fg">
+            <div class="fi full"><label>الاسم الكامل *</label><input id="a-n" type="text" placeholder="اسم المتقدم الكامل"></div>
+            <div class="fi"><label>رقم الهاتف</label><input id="a-ph" type="text" placeholder="9647XXXXXXXXX"></div>
+            <div class="fi"><label>عنوان السكن</label><input id="a-ad" type="text" placeholder="المنطقة / الحي"></div>
+            <div class="fi"><label>نوع الوظيفة</label><input id="a-j" type="text" placeholder="المسمى الوظيفي"></div>
+            <div class="fi"><label>الشركة</label><input id="a-co" type="text" placeholder="اكتب اسم الشركة..." autocomplete="off"></div>
+            <div class="fi"><label>تاريخ المقابلة</label><input id="a-id" type="date"></div>
+            <div class="fi"><label>حالة الإرسال</label>
+              <select id="a-s"><option value="">— اختر —</option><option>تم الإرسال</option><option>لم يتم الإرسال</option></select>
+            </div>
+            <div class="fi"><label>حالة القبول</label>
+              <select id="a-st"><option value="">— اختر —</option><option>مقبول</option><option>مرفوض</option><option>قيد المراجعة</option></select>
+            </div>
+            <div class="fi"><label>مبلغ الاستقطاع الشهري (د.ع)</label><input id="a-d" type="number" placeholder="0" min="0"></div>
+            <div class="fi"><label>تاريخ المباشرة</label><input id="a-sd" type="date"></div>
+            <div class="fi full"><label>ملاحظات</label><input id="a-no" type="text" placeholder="أي ملاحظة إضافية"></div>
+          </div>
+        </div>
+
+        <!-- TAB: SCORECARD -->
+        <div id="tabSC" style="display:none">
+          <div class="sc-page">
+            <!-- HEADER -->
+            <div class="hdr">
+              <div class="hdr-orb1"></div><div class="hdr-orb2"></div>
+              <div class="hdr-inner">
+                <div class="hdr-top">
+                  <div class="sc-brand">
+                    <div class="sc-brand-row">
+                      <div class="sc-brand-icon">💼</div>
+                      <div class="sc-brand-name">وظّ<em>فني</em></div>
+                    </div>
+                    <div class="sc-brand-sub">Wazzfni · Recruitment Platform</div>
+                  </div>
+                  <div class="hdr-badge">
+                    <div class="hdr-badge-top">Scorecard</div>
+                    <div class="hdr-badge-main">Candidate<br>Job Fit</div>
+                  </div>
+                </div>
+                <div class="hdr-divider"></div>
+                <div class="hdr-title-row">
+                  <div class="hdr-title-ar">بطاقة تقييم المرشح للوظيفة</div>
+                  <div class="hdr-pills">
+                    <span class="hdr-pill">5 معايير</span>
+                    <span class="hdr-pill">25 نقطة</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="hdr-bar"></div>
+
+            <!-- RECRUITER -->
+            <div class="rec-strip">
+              <div class="rec-icon">👤</div>
+              <span class="rec-label">مسؤول التوظيف:</span>
+              <input type="text" id="sc2-rn" class="rec-input" placeholder="أدخل الاسم الكامل">
+            </div>
+
+            <!-- PROGRESS -->
+            <div class="prog-wrap">
+              <div class="prog-top">
+                <span class="prog-label">تقدم التقييم</span>
+                <span class="prog-count">تم تقييم <span id="sc2-dc">0</span> من 5</span>
+              </div>
+              <div class="prog-bar-bg"><div class="prog-bar-fill" id="sc2-pbf"></div></div>
+              <div class="prog-steps">
+                <div class="ps active" id="sc2-ps1">1</div>
+                <div class="pl"><div class="pl-f" id="sc2-pl1"></div></div>
+                <div class="ps" id="sc2-ps2">2</div>
+                <div class="pl"><div class="pl-f" id="sc2-pl2"></div></div>
+                <div class="ps" id="sc2-ps3">3</div>
+                <div class="pl"><div class="pl-f" id="sc2-pl3"></div></div>
+                <div class="ps" id="sc2-ps4">4</div>
+                <div class="pl"><div class="pl-f" id="sc2-pl4"></div></div>
+                <div class="ps" id="sc2-ps5">5</div>
+              </div>
+            </div>
+
+            <!-- BODY -->
+            <div class="sc-body">
+
+              <!-- S1 -->
+              <div class="sec" id="sc2-s1">
+                <div class="sec-head">
+                  <div class="sec-num-bg"><div class="sec-n">01</div><div class="sec-n-sub">Fit</div></div>
+                  <div class="sec-meta"><div class="sec-en">Candidate–Job Fit</div><div class="sec-ar">التوافق مع الوظيفة</div></div>
+                  <div class="sec-chk-wrap"><div class="sec-chk">✓</div></div>
+                </div>
+                <div class="sec-desc">مدى توافق خبرة المرشح ومهاراته مع متطلبات الوظيفة المطلوبة.</div>
+                <div class="chips-zone">
+                  <div class="chips-hint">اختر مستوى التقييم</div>
+                  <div class="chips" data-sec="1">
+                    <div class="chip" data-v="1"><div class="chip-n">1</div><div class="chip-t">غير مناسب</div></div>
+                    <div class="chip" data-v="2"><div class="chip-n">2</div><div class="chip-t">محدود</div></div>
+                    <div class="chip" data-v="3"><div class="chip-n">3</div><div class="chip-t">مقبول</div></div>
+                    <div class="chip" data-v="4"><div class="chip-n">4</div><div class="chip-t">جيد</div></div>
+                    <div class="chip" data-v="5"><div class="chip-n">5</div><div class="chip-t">مطابق</div></div>
+                  </div>
+                </div>
+                <div class="sec-score-bar" id="sc2-sb1"><span class="ssb-label">التقييم:</span><div class="ssb-stars" id="sc2-st1"></div><span class="ssb-val" id="sc2-sv1"></span></div>
+              </div>
+
+              <!-- S2 -->
+              <div class="sec" id="sc2-s2">
+                <div class="sec-head">
+                  <div class="sec-num-bg"><div class="sec-n">02</div><div class="sec-n-sub">Tech</div></div>
+                  <div class="sec-meta"><div class="sec-en">Technical Skills</div><div class="sec-ar">المهارات الفنية</div></div>
+                  <div class="sec-chk-wrap"><div class="sec-chk">✓</div></div>
+                </div>
+                <div class="sec-desc">تقييم المهارات المهنية والتقنية المطلوبة لأداء مهام الوظيفة بكفاءة.</div>
+                <div class="chips-zone">
+                  <div class="chips-hint">اختر مستوى التقييم</div>
+                  <div class="chips" data-sec="2">
+                    <div class="chip" data-v="1"><div class="chip-n">1</div><div class="chip-t">ضعيفة</div></div>
+                    <div class="chip" data-v="2"><div class="chip-n">2</div><div class="chip-t">محدودة</div></div>
+                    <div class="chip" data-v="3"><div class="chip-n">3</div><div class="chip-t">مقبولة</div></div>
+                    <div class="chip" data-v="4"><div class="chip-n">4</div><div class="chip-t">جيدة</div></div>
+                    <div class="chip" data-v="5"><div class="chip-n">5</div><div class="chip-t">ممتازة</div></div>
+                  </div>
+                </div>
+                <div class="sec-score-bar" id="sc2-sb2"><span class="ssb-label">التقييم:</span><div class="ssb-stars" id="sc2-st2"></div><span class="ssb-val" id="sc2-sv2"></span></div>
+              </div>
+
+              <!-- S3 -->
+              <div class="sec" id="sc2-s3">
+                <div class="sec-head">
+                  <div class="sec-num-bg"><div class="sec-n">03</div><div class="sec-n-sub">Comm</div></div>
+                  <div class="sec-meta"><div class="sec-en">Communication Skills</div><div class="sec-ar">مهارات التواصل</div></div>
+                  <div class="sec-chk-wrap"><div class="sec-chk">✓</div></div>
+                </div>
+                <div class="sec-desc">قدرة المرشح على التعبير والتواصل الفعّال أثناء المقابلة وإيصال أفكاره.</div>
+                <div class="chips-zone">
+                  <div class="chips-hint">اختر مستوى التقييم</div>
+                  <div class="chips" data-sec="3">
+                    <div class="chip" data-v="1"><div class="chip-n">1</div><div class="chip-t">ضعيفة</div></div>
+                    <div class="chip" data-v="2"><div class="chip-n">2</div><div class="chip-t">محدودة</div></div>
+                    <div class="chip" data-v="3"><div class="chip-n">3</div><div class="chip-t">مقبولة</div></div>
+                    <div class="chip" data-v="4"><div class="chip-n">4</div><div class="chip-t">جيدة</div></div>
+                    <div class="chip" data-v="5"><div class="chip-n">5</div><div class="chip-t">ممتازة</div></div>
+                  </div>
+                </div>
+                <div class="sec-score-bar" id="sc2-sb3"><span class="ssb-label">التقييم:</span><div class="ssb-stars" id="sc2-st3"></div><span class="ssb-val" id="sc2-sv3"></span></div>
+              </div>
+
+              <!-- S4 -->
+              <div class="sec" id="sc2-s4">
+                <div class="sec-head">
+                  <div class="sec-num-bg"><div class="sec-n">04</div><div class="sec-n-sub">Salary</div></div>
+                  <div class="sec-meta"><div class="sec-en">Salary Fit</div><div class="sec-ar">توافق الراتب</div></div>
+                  <div class="sec-chk-wrap"><div class="sec-chk">✓</div></div>
+                </div>
+                <div class="sec-desc">مدى توافق التوقعات المالية للمرشح مع الميزانية المخصصة للوظيفة.</div>
+                <div class="chips-zone">
+                  <div class="chips-hint">اختر مستوى التقييم</div>
+                  <div class="chips" data-sec="4">
+                    <div class="chip" data-v="1"><div class="chip-n">1</div><div class="chip-t">غير متوافق</div></div>
+                    <div class="chip" data-v="2"><div class="chip-n">2</div><div class="chip-t">ضعيف</div></div>
+                    <div class="chip" data-v="3"><div class="chip-n">3</div><div class="chip-t">مقبول</div></div>
+                    <div class="chip" data-v="4"><div class="chip-n">4</div><div class="chip-t">جيد</div></div>
+                    <div class="chip" data-v="5"><div class="chip-n">5</div><div class="chip-t">متوافق</div></div>
+                  </div>
+                </div>
+                <div class="sec-score-bar" id="sc2-sb4"><span class="ssb-label">التقييم:</span><div class="ssb-stars" id="sc2-st4"></div><span class="ssb-val" id="sc2-sv4"></span></div>
+              </div>
+
+              <!-- S5 -->
+              <div class="sec" id="sc2-s5">
+                <div class="sec-head">
+                  <div class="sec-num-bg"><div class="sec-n">05</div><div class="sec-n-sub">Risk</div></div>
+                  <div class="sec-meta"><div class="sec-en">Retention Risk</div><div class="sec-ar">احتمالية الاستمرار</div></div>
+                  <div class="sec-chk-wrap"><div class="sec-chk">✓</div></div>
+                </div>
+                <div class="sec-desc">تقييم احتمالية بقاء المرشح في الوظيفة وعدم تركها في فترة قصيرة.</div>
+                <div class="chips-zone">
+                  <div class="chips-hint">اختر مستوى التقييم</div>
+                  <div class="chips" data-sec="5">
+                    <div class="chip" data-v="1"><div class="chip-n">1</div><div class="chip-t">خطر مرتفع</div></div>
+                    <div class="chip" data-v="2"><div class="chip-n">2</div><div class="chip-t">مرتفع</div></div>
+                    <div class="chip" data-v="3"><div class="chip-n">3</div><div class="chip-t">متوسط</div></div>
+                    <div class="chip" data-v="4"><div class="chip-n">4</div><div class="chip-t">منخفض</div></div>
+                    <div class="chip" data-v="5"><div class="chip-n">5</div><div class="chip-t">منخفض جداً</div></div>
+                  </div>
+                </div>
+                <div class="sec-score-bar" id="sc2-sb5"><span class="ssb-label">التقييم:</span><div class="ssb-stars" id="sc2-st5"></div><span class="ssb-val" id="sc2-sv5"></span></div>
+              </div>
+
+              <!-- TOTAL -->
+              <div class="tot-card" id="totCard">
+                <div class="tot-topbar"><div class="tot-topbar-fill" id="sc2-ttf"></div></div>
+                <div class="tot-body">
+                  <div class="tot-left">
+                    <div class="tot-sub">المجموع الكلي النهائي</div>
+                    <div class="tot-status" id="totStatus">أكمل جميع معايير التقييم للحصول على النتيجة</div>
+                    <div class="tot-track"><div class="tot-track-fill" id="sc2-tmf"></div></div>
+                    <div class="vp-row">
+                      <div class="vp vp-re" id="sc2-vp1"><div class="vp-r">0 – 10</div><div class="vp-l">غير مناسب</div></div>
+                      <div class="vp vp-ye" id="sc2-vp2"><div class="vp-r">11 – 15</div><div class="vp-l">للمراجعة</div></div>
+                      <div class="vp vp-bl" id="sc2-vp3"><div class="vp-r">16 – 20</div><div class="vp-l">مناسب</div></div>
+                      <div class="vp vp-gr" id="sc2-vp4"><div class="vp-r">21 – 25</div><div class="vp-l">مرشح قوي</div></div>
+                    </div>
+                  </div>
+                  <div class="tot-right">
+                    <div class="tot-num" id="totNum">0</div>
+                    <div class="tot-den">/ 25</div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- DECISION -->
+              <div class="blk">
+                <div class="blk-hd"><span class="blk-hd-ar">قرار مسؤول التوظيف</span><span class="blk-hd-en">Recruiter Decision</span></div>
+                <div class="dec-list">
+                  <div class="dec-item" data-dec="send">
+                    <div class="dec-radio"><div class="dec-dot"></div></div>
+                    <span class="dec-emoji">🚀</span>
+                    <div class="dec-info"><span class="dec-lbl">إرسال المرشح للشركة</span><span class="dec-sub">المرشح جاهز للمقابلة النهائية</span></div>
+                  </div>
+                  <div class="dec-item" data-dec="keep">
+                    <div class="dec-radio"><div class="dec-dot"></div></div>
+                    <span class="dec-emoji">📂</span>
+                    <div class="dec-info"><span class="dec-lbl">الاحتفاظ به في قاعدة البيانات</span><span class="dec-sub">يُحتفظ به لفرص مستقبلية مناسبة</span></div>
+                  </div>
+                  <div class="dec-item" data-dec="reject">
+                    <div class="dec-radio"><div class="dec-dot"></div></div>
+                    <span class="dec-emoji">✖️</span>
+                    <div class="dec-info"><span class="dec-lbl">رفض الترشيح</span><span class="dec-sub">المرشح لا يستوفي المتطلبات الأساسية</span></div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- NOTES -->
+              <div class="blk">
+                <div class="blk-hd"><span class="blk-hd-ar">الملاحظات</span><span class="blk-hd-en">Notes & Remarks</span></div>
+                <div class="notes-wrap">
+                  <textarea class="notes-ta" id="sc2-ntx" maxlength="500" placeholder="أدخل ملاحظاتك وتعليقاتك على المرشح هنا..."></textarea>
+                  <div class="notes-count" id="sc2-nc">0 / 500</div>
+                </div>
+              </div>
+
+              <!-- INFO BLOCK -->
+              <div class="sig-block">
+                <div class="sig-hd"><span class="sig-hd-ar">بيانات مسؤول التوظيف</span><span class="sig-hd-en">Recruiter Info</span></div>
+                <div class="sig-grid">
+                  <div class="sf"><span class="sf-lbl">تاريخ التقييم</span><input type="date" class="sf-in" id="sc2-dtf" style="direction:ltr;"></div>
+                </div>
+              </div>
+
+            </div><!-- /sc-body -->
+
+            <!-- FOOTER -->
+            <div class="sc-footer">
+              <div class="sc-foot-brand">وظّ<em>فني</em></div>
+              <div class="sc-foot-en">Candidate · Job Fit · Scorecard<br>HR Evaluation Form</div>
+            </div>
+          </div>
+        </div>
+    </div>
+
+    <div class="mf" style="padding:1rem 1.7rem;margin-top:0">
+      <button class="btn btn-ghost" data-close="aModal">إلغاء</button>
+      <button class="btn btn-primary" id="saveApplicantBtn">💾 حفظ البيانات والتقييم</button>
+    </div>
+  </div><!-- modal -->
+</div><!-- overlay -->
+
+<div class="overlay" id="cModal">
+    <div class="modal modal-sm">
+        <div class="mh">
+            <div class="mh-t"><div class="mh-ico">🏢</div><span id="cMdlTitle">إضافة شركة</span></div>
+            <div class="mx" data-close="cModal">✕</div>
+        </div>
+        <div class="fg">
+            <div class="fi full"><label>اسم الشركة *</label><input id="c-n" type="text" placeholder="اسم الشركة أو المؤسسة"></div>
+            <div class="fi"><label>القطاع</label><input id="c-s" type="text" placeholder="مثال: تقنية، مطاعم، صحة"></div>
+            <div class="fi"><label>اسم المسؤول</label><input id="c-c" type="text" placeholder="الشخص المسؤول"></div>
+            <div class="fi"><label>رقم الهاتف</label><input id="c-p" type="text" placeholder="رقم التواصل"></div>
+            <div class="fi full"><label>العنوان</label><input id="c-a" type="text" placeholder="موقع الشركة"></div>
+            <div class="fi full"><label>ملاحظات</label><input id="c-no" type="text" placeholder="أي معلومات إضافية"></div>
+        </div>
+        <div class="mf">
+            <button class="btn btn-ghost" data-close="cModal">إلغاء</button>
+            <button class="btn btn-primary" id="saveCompanyBtn">💾 حفظ</button>
+        </div>
+    </div>
+</div>
+
+<div class="overlay" id="pModal">
+    <div class="modal modal-sm">
+        <div class="mh">
+            <div class="mh-t"><div class="mh-ico">💰</div><span id="pMdlTitle">تسجيل دفعة</span></div>
+            <div class="mx" data-close="pModal">✕</div>
+        </div>
+        <div class="fg">
+            <div class="fi full"><label>الموظف *</label><select id="p-e"><option value="">— اختر الموظف —</option></select></div>
+            <div class="fi"><label>المبلغ (د.ع) *</label><input id="p-a" type="number" placeholder="0" min="0"></div>
+            <div class="fi"><label>الشهر</label><input id="p-m" type="month"></div>
+            <div class="fi"><label>تاريخ الدفع</label><input id="p-dt" type="date"></div>
+            <div class="fi full"><label>الحالة</label>
+                <select id="p-st"><option>مدفوع</option><option>متأخر</option><option>قريب</option></select>
+            </div>
+            <div class="fi full"><label>ملاحظة</label><input id="p-no" type="text" placeholder="أي ملاحظة إضافية"></div>
+        </div>
+        <div class="mf">
+            <button class="btn btn-ghost" data-close="pModal">إلغاء</button>
+            <button class="btn btn-primary" id="savePaymentBtn">💾 حفظ</button>
+        </div>
+    </div>
+</div>
+
+<div class="overlay" id="uModal">
+    <div class="modal">
+        <div class="mh">
+            <div class="mh-t"><div class="mh-ico">⚙️</div><span id="uMdlTitle">إضافة مستخدم</span></div>
+            <div class="mx" data-close="uModal">✕</div>
+        </div>
+        <div class="fg">
+            <div class="fi full"><label>الاسم الكامل *</label><input id="u-n" type="text" placeholder="الاسم الكامل"></div>
+            <div class="fi"><label>اسم المستخدم *</label><input id="u-u" type="text" placeholder="username" dir="ltr"></div>
+            <div class="fi"><label>كلمة المرور</label><input id="u-p" type="password" placeholder="6 أحرف على الأقل" dir="ltr"></div>
+            <div class="fi"><label>المسمى الوظيفي</label><input id="u-t" type="text" placeholder="مثال: موظف HR"></div>
+            <div class="fi"><label>الحالة</label>
+                <select id="u-a"><option value="true">✅ نشط</option><option value="false">⛔ موقوف</option></select>
+            </div>
+        </div>
+        <div style="margin:1rem 0 .5rem">
+            <div style="font-size:.74rem;font-weight:700;color:var(--tx2);margin-bottom:.5rem">🎭 قالب سريع</div>
+            <div class="role-btns">
+                <button class="rb rb-a" data-role="admin">👑 مسؤول كامل</button>
+                <button class="rb rb-e" data-role="editor">✏️ محرر</button>
+                <button class="rb rb-v" data-role="viewer">👁️ مشاهد فقط</button>
+            </div>
+        </div>
+        <div class="perms-panel">
+            <div class="pp-t">🔐 الصلاحيات التفصيلية</div>
+            <div class="perm-row"><div class="perm-lbl">➕ إضافة <span class="perm-hint">— متقدمين ودفعات</span></div><label class="toggle"><input type="checkbox" id="p-add"><div class="ttrack"></div></label></div>
+            <div class="perm-row"><div class="perm-lbl">✏️ تعديل <span class="perm-hint">— تعديل السجلات</span></div><label class="toggle"><input type="checkbox" id="p-edit"><div class="ttrack"></div></label></div>
+            <div class="perm-row"><div class="perm-lbl">🗑️ حذف <span class="perm-hint">— حذف السجلات</span></div><label class="toggle"><input type="checkbox" id="p-del"><div class="ttrack"></div></label></div>
+            <div class="perm-row"><div class="perm-lbl">💰 المدفوعات <span class="perm-hint">— صفحة المدفوعات</span></div><label class="toggle"><input type="checkbox" id="p-pay"><div class="ttrack"></div></label></div>
+            <div class="perm-row"><div class="perm-lbl">📈 التقارير <span class="perm-hint">— التقارير المالية</span></div><label class="toggle"><input type="checkbox" id="p-rep"><div class="ttrack"></div></label></div>
+            <div class="perm-row"><div class="perm-lbl">⚙️ الإدارة <span class="perm-hint">— إدارة المستخدمين</span></div><label class="toggle"><input type="checkbox" id="p-adm"><div class="ttrack"></div></label></div>
+        </div>
+        <div class="mf">
+            <button class="btn btn-ghost" data-close="uModal">إلغاء</button>
+            <button class="btn btn-primary" id="saveUserBtn">💾 حفظ</button>
+        </div>
+    </div>
+</div>
+
+<div class="overlay" id="gsModal">
+    <div class="modal modal-sm">
+        <div class="mh"><div class="mh-t">🔍 البحث السريع</div><div class="mx" data-close="gsModal">✕</div></div>
+        <div class="sr-wrap" style="margin-bottom:1rem"><input id="gsInput" type="text" placeholder="ابحث في كل البيانات..." oninput="runGSearch()"></div>
+        <div id="gsResults"></div>
+    </div>
+</div>
+
+<div class="overlay" id="cfModal">
+    <div class="cfbox">
+        <span class="cf-ico" id="cfIcon">🗑️</span>
+        <div class="cf-t" id="cfTl">تأكيد الحذف</div>
+        <div class="cf-m" id="cfMsg">هل أنت متأكد؟ لا يمكن التراجع.</div>
+        <div class="cf-a">
+            <button class="btn btn-ghost" data-close="cfModal">إلغاء</button>
+            <button class="btn btn-danger" id="cfBtn">تأكيد</button>
+        </div>
+    </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="js/api.js"></script>
+<script src="js/data.js"></script>
+<script src="js/utils.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/ui.js"></script>
+<script src="js/notifications.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>

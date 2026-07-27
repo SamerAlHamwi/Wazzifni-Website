@@ -1,0 +1,39 @@
+version: '3.8'
+
+services:
+  # Unified MongoDB (Sales + HR + Course)
+  mongodb:
+    image: mongo:latest
+    container_name: wazzifni-system-mongodb
+    restart: always
+    volumes:
+      - mongo_data:/data/db
+    networks:
+      - wazzifni-system-shared
+
+  # Unified Backend (Sales + HR + Course)
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: wazzifni-system-backend
+    restart: always
+    environment:
+      - MONGODB_URI=mongodb://mongodb:27017/wazifni
+      - PORT=3000
+      - NODE_ENV=production
+      - JWT_SECRET=d4ce03105bdc3640bbd4ef6e6bac8b3c007c0d8426ce388b5039278071aaa5339602ed64a691b285619fb85d33fe3a61669eab2f364215252a768dc05085b9e9
+      - JWT_EXPIRE=7d
+    depends_on:
+      - mongodb
+    volumes:
+      - ./backend/uploads:/usr/src/app/uploads
+    networks:
+      - wazzifni-system-shared
+
+volumes:
+  mongo_data:
+
+networks:
+  wazzifni-system-shared:
+    external: true

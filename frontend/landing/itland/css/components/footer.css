@@ -1,0 +1,101 @@
+/* =============================================================================
+   Footer
+   ============================================================================= */
+.footer {
+  padding-block: clamp(2.2rem, 6vw, 3.5rem) calc(1.5rem + var(--safe-b));
+  background: #02101f;
+  border-top: 1px solid var(--border);
+}
+
+.footer-grid {
+  display: grid;
+  gap: clamp(1.5rem, 5vw, 2.5rem);
+}
+
+.footer-logo {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin-bottom: 0.8rem;
+}
+
+.footer-logo-mark {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  background: var(--grad);
+  color: #fff;
+  font-weight: 900;
+  font-size: 0.9rem;
+}
+
+.footer-logo-name {
+  display: block;
+  font-size: 1.1rem;
+  font-weight: 900;
+  color: #fff;
+  unicode-bidi: isolate;
+}
+
+.footer-logo-sub {
+  display: block;
+  font-size: 0.72rem;
+  color: var(--muted);
+  unicode-bidi: isolate;
+}
+
+.footer-description {
+  max-width: 46ch;
+  font-size: var(--fs-sm);
+  color: var(--muted);
+  line-height: 1.9;
+}
+
+.footer h2 {
+  margin-bottom: 0.8rem;
+  font-size: var(--fs-sm);
+  font-weight: 800;
+  color: #fff;
+  letter-spacing: 0.02em;
+}
+
+.footer-links li + li {
+  margin-top: 0.15rem;
+}
+
+.footer-links a {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  min-height: 36px;
+  font-size: var(--fs-sm);
+  color: var(--muted);
+  transition: color var(--t-fast);
+}
+
+.footer-links a:hover {
+  color: var(--gold);
+}
+
+.footer-bottom {
+  margin-top: clamp(1.5rem, 5vw, 2.5rem);
+  padding-top: 1.2rem;
+  border-top: 1px solid var(--border);
+  text-align: center;
+  font-size: var(--fs-xs);
+  color: var(--muted);
+  line-height: 1.9;
+}
+
+.footer-bottom a {
+  color: var(--blue-bright);
+}
+
+/* --------------------------------------------------------- tablet & up ---- */
+@media (min-width: 700px) {
+  .footer-grid {
+    grid-template-columns: 1.5fr 1fr 1fr;
+  }
+}

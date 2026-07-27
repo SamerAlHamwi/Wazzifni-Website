@@ -1,0 +1,208 @@
+/* =============================================================================
+   Cross-cutting responsive concerns.
+
+   Layout breakpoints live next to the component they affect (mobile-first,
+   min-width only). This file is only for rules that cut across components:
+   motion preferences, very small screens, landscape phones, forced colours and
+   print.
+   ============================================================================= */
+
+/* ------------------------------------------------------- reduced motion --- */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  /* Reveal-on-scroll must not leave content invisible when motion is off.
+     `html.js` rather than `.js`: this file is @imported ahead of the .js .rv
+     rule in main.css, so at equal specificity that later rule would win. */
+  html.js .rv {
+    opacity: 1;
+    transform: none;
+  }
+
+  /* The skeleton sweep and the floating hero badges are decorative loops; with
+     motion off they hold still rather than flashing once. */
+  .hero-float,
+  .skeleton-media,
+  .skeleton-line,
+  .skeleton-chip {
+    animation: none !important;
+  }
+
+  .skeleton-media,
+  .skeleton-line,
+  .skeleton-chip {
+    background: rgba(255, 255, 255, 0.08);
+  }
+}
+
+/* --------------------------------------------------------- small phones --- */
+/* iPhone SE / Galaxy A-series at 320-360px: shave the last of the padding so
+   cards keep a readable content width. */
+@media (max-width: 360px) {
+  :root {
+    --gutter: 0.85rem;
+  }
+
+  .hero-buttons .btn {
+    width: 100%;
+  }
+
+  .hero-metrics {
+    gap: 0.35rem;
+  }
+
+  .project-body {
+    padding-inline: 0.95rem;
+  }
+
+  .hero-float--1,
+  .hero-float--2 {
+    display: none;
+  }
+}
+
+/* ----------------------------------------------------- landscape phones --- */
+/* Short viewports: drop the hero's vertical breathing room so the headline and
+   CTAs still fit on screen. */
+@media (max-height: 520px) and (orientation: landscape) {
+  .hero {
+    padding-block: calc(var(--nav-h) + 1.2rem) 1.8rem;
+  }
+
+  .hero-container {
+    grid-template-columns: 1.1fr 0.9fr;
+    align-items: center;
+    gap: 1.5rem;
+  }
+
+  .hero-content {
+    text-align: start;
+  }
+
+  .hero-subtitle {
+    margin-inline: 0;
+  }
+
+  .hero-buttons {
+    justify-content: flex-start;
+    margin-top: 1rem;
+  }
+
+  .hero-metrics,
+  .hero-float {
+    display: none;
+  }
+
+  .nav-links {
+    max-height: calc(100dvh - var(--nav-h));
+  }
+}
+
+/* -------------------------------------------------------- forced colors --- */
+/* Windows high-contrast mode drops background images, which would erase every
+   border built out of a translucent colour. */
+@media (forced-colors: active) {
+  .filter-chip,
+  .project-card,
+  .service-card,
+  .about-card,
+  .contact-channel,
+  .hero-panel {
+    border: 1px solid CanvasText;
+  }
+
+  .filter-chip.is-active {
+    background: Highlight;
+    color: HighlightText;
+    forced-color-adjust: none;
+  }
+}
+
+/* ---------------------------------------------------------------- print --- */
+@media print {
+  .navbar,
+  .nav-scrim,
+  .scroll-progress,
+  .whatsapp-button,
+  .back-to-top,
+  .hero-visual,
+  .projects-toolbar,
+  .contact-form,
+  .skip-link {
+    display: none !important;
+  }
+
+  /* Dark-on-light for ink, and no page-wide background wash. */
+  body,
+  .hero,
+  .contact,
+  .section--alt,
+  .footer {
+    background: #fff !important;
+    color: #111 !important;
+  }
+
+  .hero::before {
+    display: none;
+  }
+
+  .section-title,
+  .hero-title,
+  .project-title,
+  .service-title,
+  .about-card-title,
+  .contact-channel-value,
+  .footer-logo-name {
+    color: #000 !important;
+  }
+
+  .section-subtitle,
+  .project-desc,
+  .service-text,
+  .about-card-text,
+  .footer-description {
+    color: #333 !important;
+  }
+
+  html.js .rv {
+    opacity: 1;
+    transform: none;
+  }
+
+  .projects-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .project-card,
+  .service-card,
+  .about-card {
+    border: 1px solid #bbb;
+    box-shadow: none;
+    break-inside: avoid;
+  }
+
+  /* Descriptions are truncated on screen to keep the grid even; on paper there
+     is no grid to protect, so print the whole thing. */
+  .project-desc {
+    display: block;
+    overflow: visible;
+  }
+
+  /* A printed link is useless without its target. */
+  .project-cta[href]::after {
+    content: ' (' attr(href) ')';
+    font-size: 0.7rem;
+    word-break: break-all;
+  }
+}

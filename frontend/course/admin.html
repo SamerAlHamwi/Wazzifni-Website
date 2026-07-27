@@ -1,0 +1,720 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>إدارة الدورات - وظفني</title>
+
+    <!-- Added Base Path for URL compatibility -->
+    <base href="/course/">
+
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&family=Tajawal:wght@300;400;500;700;800&display=swap" rel="stylesheet">
+
+    <!-- CSS Files with versioning for cache busting -->
+    <link rel="stylesheet" href="css/variables.css?v=1.0.2">
+    <link rel="stylesheet" href="css/main.css?v=1.0.2">
+    <link rel="stylesheet" href="css/components.css?v=1.0.2">
+    <link rel="stylesheet" href="css/responsive.css?v=1.0.2">
+    <link rel="stylesheet" href="css/admin.css?v=1.0.2">
+
+    <!-- External Libraries -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+        /* Extra styles for Appbar modifications */
+        body.admin-mode.admin-logged-in .admin-appbar-links,
+        body.admin-mode.admin-logged-in .admin-appbar-user {
+            display: flex !important;
+        }
+
+        body.admin-mode.admin-logged-in .user-appbar-links {
+            display: none !important;
+        }
+
+        .admin-appbar-links .admin-nav-item {
+            color: rgba(255, 255, 255, 0.7);
+            border-color: transparent;
+            border-bottom: 1px solid transparent;
+        }
+
+        .admin-appbar-links .admin-nav-item.active,
+        .admin-appbar-links .admin-nav-item:hover {
+            color: white !important;
+            border-color: transparent !important;
+            border-bottom-color: transparent !important;
+            background: linear-gradient(135deg, var(--sky), var(--blue)) !important;
+            box-shadow: 0 4px 15px rgba(0, 182, 231, 0.4) !important;
+        }
+
+        /* Modal specific adjustments */
+        #registerModal .modal {
+            max-width: 650px !important;
+            width: 95%;
+            padding: 2rem;
+            overflow-x: hidden;
+        }
+
+        .registration-form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            text-align: right;
+            width: 100%;
+        }
+
+        .registration-form-grid .form-group {
+            width: 100%;
+        }
+
+        .registration-form-grid .form-group input,
+        .registration-form-grid .form-group select {
+            width: 100%;
+            box-sizing: border-box;
+            max-width: 100%;
+        }
+
+        @media (max-width: 600px) {
+            .registration-form-grid {
+                grid-template-columns: 1fr;
+            }
+            .registration-form-grid .form-group.span-2 {
+                grid-column: span 1 !important;
+            }
+            #registerModal .modal {
+                padding: 1.5rem;
+            }
+        }
+
+        .span-2 {
+            grid-column: span 2;
+        }
+
+        /* Applicant Status Badges & Actions */
+        .applicant-status-wrap {
+            margin-right: auto;
+        }
+        .badge {
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            display: inline-block;
+            white-space: nowrap;
+        }
+        .badge.green { background: #dcfce7 !important; color: #166534 !important; }
+        .badge.red { background: #fee2e2 !important; color: #991b1b !important; }
+        .badge.blue { background: #dbeafe !important; color: #1e40af !important; }
+        .badge.orange { background: #fef3c7 !important; color: #92400e !important; }
+
+        /* Status Toggle Style */
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 46px;
+            height: 24px;
+        }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 24px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked + .slider {
+            background-color: #10b981;
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(22px);
+        }
+
+        .applicant-card-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem;
+            border-top: 1px solid #f1f5f9;
+            gap: 0.5rem;
+            background: #fafafa;
+        }
+
+        .action-btn-sm {
+            padding: 6px 10px;
+            border-radius: 8px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Cairo', sans-serif;
+            transition: all 0.2s;
+            color: white;
+            flex: 1;
+        }
+
+        .btn-success { background: #10b981; }
+        .btn-success:hover { background: #059669; }
+        .btn-danger { background: #ef4444; }
+        .btn-danger:hover { background: #dc2626; }
+
+        .btn-whatsapp { background: #25d366; flex: 0 0 40px; min-width: 40px; }
+        .btn-call { background: #3b82f6; flex: 0 0 40px; min-width: 40px; }
+        .btn-delete-small {
+            background: #f1f5f9;
+            color: #ef4444;
+            border: 1px solid #e2e8f0;
+            padding: 4px 8px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+        .btn-delete-small:hover { background: #fee2e2; }
+    </style>
+</head>
+<body class="admin-mode">
+
+<!-- Loading Overlay -->
+<div id="loadingOverlay" class="loading-overlay" style="display:none;">
+    <div class="spinner"></div>
+</div>
+
+<!-- Navigation -->
+<nav>
+    <div style="display:flex; align-items:center; gap:2rem;">
+        <div class="logo-wrap">
+            <!-- logo path adjusted via base tag or absolute -->
+            <img src="../sales/images/logo.png" alt="Wazzifni Logo" class="logo-img">
+            <div>
+                <div class="logo">وظفني</div>
+                <div class="logo-subtitle">إدارة الدورات التدريبية</div>
+            </div>
+        </div>
+
+        <!-- Admin Nav Links in Appbar -->
+        <div class="admin-appbar-links" style="display: none; gap: 0.5rem; align-items: center;">
+            <button class="nav-tab admin-nav-item active" data-admin-view="dashboard">الإحصائيات</button>
+            <button class="nav-tab admin-nav-item" data-admin-view="courses">إدارة الدورات</button>
+            <button class="nav-tab admin-nav-item" data-admin-view="applicants">المتقدمين</button>
+            <button class="nav-tab admin-nav-item" data-admin-view="users">إدارة المسؤولين</button>
+        </div>
+    </div>
+
+    <div style="display:flex; align-items:center; gap:1.5rem;">
+        <div class="nav-tabs user-appbar-links">
+            <button class="nav-tab active" data-view="user">🎓 الدورات</button>
+            <button class="nav-tab" data-view="admin">⚙️ إدارة الدورات</button>
+        </div>
+
+        <!-- Admin User Info -->
+        <div class="admin-appbar-user" style="display: none; align-items: center; gap: 1rem;">
+            <span id="headerUserName" style="color: white; font-weight: bold; font-size: 0.9rem;">مدير النظام</span>
+            <button class="logout-link" id="adminLogoutBtn" style="color: #fca5a5; background: none; border: none; font-weight: bold; cursor: pointer; font-family: 'Cairo', sans-serif;">تسجيل الخروج</button>
+            <button class="nav-tab" data-view="user" style="padding: 0.4rem 1rem; border: 1px solid rgba(255,255,255,0.3); background: transparent; color: white;">🔙 عودة</button>
+        </div>
+    </div>
+</nav>
+
+<!-- User View -->
+<div id="userView" class="view">
+    <div class="page-header">
+        <h1>الدورات التدريبية المتاحة</h1>
+        <p>اكتشف أفضل الدورات واحجز مقعدك الآن</p>
+    </div>
+    <div id="userStats" class="stats-bar"></div>
+    <div class="search-bar">
+        <input type="text" id="searchInput" placeholder="🔍 ابحث عن دورة...">
+        <button class="filter-btn active" data-filter="all">الكل</button>
+        <button class="filter-btn" data-filter="free">مجانية</button>
+        <button class="filter-btn" data-filter="paid">مدفوعة</button>
+        <button class="filter-btn" data-filter="open">متاحة</button>
+    </div>
+    <div id="userCoursesList" class="cards-grid"></div>
+    <!-- Pagination for User View -->
+    <div id="userPagination" class="pagination"></div>
+</div>
+
+<!-- Admin View -->
+<div id="adminView" class="view active">
+    <!-- Premium Admin Login Screen -->
+    <div id="loginScreen" style="display: none;">
+        <div class="login-wrapper">
+            <div class="login-visual">
+                <div class="visual-content">
+                    <div class="visual-logo">💼</div>
+                    <h2>نظام وظّفني</h2>
+                    <p>أهلاً بك في لوحة الإدارة المتكاملة. قم بتسجيل الدخول لمتابعة الدورات والمتقدمين.</p>
+                </div>
+            </div>
+            <div class="login-form-area">
+                <div class="lc">
+                    <div class="lc-header">
+                        <div class="lc-title">تسجيل الدخول</div>
+                        <div class="lc-sub">أدخل بياناتك للوصول إلى لوحة التحكم</div>
+                    </div>
+                    <div class="lc-fields">
+                        <div class="lc-field">
+                            <label>البريد الإلكتروني</label>
+                            <div class="input-with-icon">
+                                <span class="input-icon">✉️</span>
+                                <input id="li-e" type="email" placeholder="admin@wazzifni.com"
+                                       autocomplete="email" autocorrect="off" autocapitalize="off" spellcheck="false">
+                            </div>
+                        </div>
+                        <div class="lc-field">
+                            <label>كلمة المرور</label>
+                            <div class="input-with-icon">
+                                <span class="input-icon">🔒</span>
+                                <input id="li-p" type="password" placeholder="••••••••" autocomplete="current-password">
+                            </div>
+                        </div>
+                    </div>
+                    <button class="lc-btn" id="loginBtn">دخول لوحة التحكم ←</button>
+                    <div id="li-err"></div>
+                </div>
+                <div class="login-footer">
+                    &copy;  Wazzifni Program. جميع الحقوق محفوظة.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="adminContainer" class="admin-container">
+        <!-- Admin Content Area -->
+        <main class="admin-main">
+            <!-- 1. Dashboard Page -->
+            <div id="adminDashboard" class="admin-sub-view active">
+                <div class="page-header">
+                    <h1>لوحة الإحصائيات</h1>
+                    <p>ملخص عام لأداء المنصة والمتابعات</p>
+                </div>
+                <div id="adminStats" class="stats-bar"></div>
+                <div class="dashboard-grid">
+                    <div class="dashboard-card">
+                        <div class="card-header-flex" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem;">
+                            <h3 style="margin:0">📈 نمو التسجيلات</h3>
+                            <select id="regGrowthPeriod" class="filter-select-sm" style="padding: 4px 8px; border-radius: 8px; border: 1px solid var(--border); font-size: 0.8rem; outline: none;">
+                                <option value="7d">آخر 7 أيام</option>
+                                <option value="30d" selected>آخر 30 يوم</option>
+                                <option value="90d">آخر 3 أشهر</option>
+                                <option value="1y">آخر سنة</option>
+                            </select>
+                        </div>
+                        <div id="registrationGrowthContainer" class="growth-chart-container" style="height: 250px; position: relative;">
+                            <canvas id="registrationGrowthChart"></canvas>
+                        </div>
+                    </div>
+                    <div class="dashboard-card">
+                        <div class="card-header-flex" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem;">
+                            <h3 style="margin:0">🆕 آخر المتقدمين</h3>
+                            <button class="btn btn-ghost btn-sm" data-admin-view="applicants">عرض الكل</button>
+                        </div>
+                        <div id="latestApplicants" class="latest-list">
+                            <p style="color: var(--muted); margin-top: 1rem; text-align: center;">جاري تحميل البيانات...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 2. All Courses Page -->
+            <div id="adminCourses" class="admin-sub-view">
+                <div class="page-header">
+                    <div style="display:flex; justify-content:space-between; align-items:center; width:100%;">
+                        <div>
+                            <h1>إدارة الدورات</h1>
+                            <p>أضف وأدر دوراتك التدريبية بسهولة</p>
+                        </div>
+                        <button class="btn btn-primary" id="toggleAddCourseBtn">➕ إضافة دورة جديدة</button>
+                    </div>
+                </div>
+
+                <!-- Add/Edit Course Form -->
+                <div id="courseFormContainer" style="display:none; margin-bottom: 2rem;">
+                    <div class="form-card">
+                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem;">
+                            <h2 id="formTitle" style="margin:0;">➕ إضافة دورة جديدة</h2>
+                            <button class="btn btn-ghost btn-sm" id="closeFormBtn">✕</button>
+                        </div>
+                        <input type="hidden" id="editId">
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label>اسم الدورة / المادة</label>
+                                <input type="text" id="courseName" placeholder="مثال: تصميم الجرافيك الاحترافي">
+                            </div>
+                            <div class="form-group">
+                                <label>اسم الأستاذ</label>
+                                <input type="text" id="teacherName" placeholder="مثال: د. أحمد محمد">
+                            </div>
+                            <div class="form-group">
+                                <label>تاريخ البدء</label>
+                                <input type="date" id="startDate">
+                            </div>
+                            <div class="form-group">
+                                <label>عدد المقاعد</label>
+                                <input type="number" id="seats" placeholder="مثال: 30" min="1">
+                            </div>
+                            <div class="form-group">
+                                <label>نوع الدورة</label>
+                                <select id="courseType">
+                                    <option value="free">مجانية 🟢</option>
+                                    <option value="paid">مدفوعة 🟡</option>
+                                </select>
+                            </div>
+                            <div class="form-group" id="priceField">
+                                <label>السعر (دينار)</label>
+                                <input type="number" id="price" placeholder="مثال: 50000" min="0">
+                            </div>
+                            <div class="form-group full">
+                                <label>تفاصيل الدورة</label>
+                                <textarea id="courseDesc" placeholder="اكتب وصفاً شاملاً للدورة..."></textarea>
+                            </div>
+                            <div class="form-group full">
+                                <label>صورة الأستاذ</label>
+                                <div class="img-upload-area" id="uploadArea">
+                                    <input type="file" id="teacherImgFile" accept="image/*">
+                                    <div id="uploadPlaceholder">
+                                        <div class="icon">📷</div>
+                                        <p>انقر لاختيار صورة الأستاذ</p>
+                                    </div>
+                                    <div id="uploadPreview" style="display:none">
+                                        <img id="imgPreviewEl" class="img-preview" src="" alt="">
+                                        <p style="font-size:0.8rem;color:var(--success)">✅ تم اختيار الصورة</p>
+                                    </div>
+                                </div>
+                                <input type="hidden" id="teacherImg">
+                            </div>
+                        </div>
+                        <div class="form-actions">
+                            <button class="btn btn-primary" id="saveCourseBtn">💾 حفظ الدورة</button>
+                            <button class="btn btn-ghost" id="resetFormBtn">↺ إلغاء</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Courses Table Section -->
+                <div class="table-card">
+                    <p class="section-title">📋 قائمة الدورات المنشورة</p>
+                    <table class="courses-table" id="adminCoursesTable">
+                        <thead>
+                        <tr>
+                            <th>الدورة</th>
+                            <th>الأستاذ</th>
+                            <th>التاريخ</th>
+                            <th>المقاعد</th>
+                            <th>النوع</th>
+                            <th>الحالة</th>
+                            <th>إجراءات</th>
+                        </tr>
+                        </thead>
+                        <tbody id="adminTableBody"></tbody>
+                    </table>
+                    <div class="mobile-list" id="adminMobileList"></div>
+                    <!-- Pagination for Admin Courses -->
+                    <div id="adminPagination" class="pagination" style="padding: 1rem;"></div>
+                    <div id="adminEmpty" class="empty-state" style="display:none">
+                        <div class="icon">📭</div>
+                        <h3>لا توجد دورات بعد</h3>
+                        <p>ابدأ بإضافة دورتك الأولى من الأعلى</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 3. Applicants Page -->
+            <div id="adminApplicants" class="admin-sub-view">
+                <div class="page-header">
+                    <div style="display:flex; justify-content:space-between; align-items:center; width:100%;">
+                        <div>
+                            <h1>المتقدمون للدورات</h1>
+                            <p>متابعة الطلاب المسجلين في كافة الدورات</p>
+                        </div>
+                        <button class="btn btn-primary btn-sm" id="exportApplicantsBtn">📥 تصدير CSV</button>
+                    </div>
+                </div>
+
+                <div id="applicantsStats" class="stats-bar" style="margin-bottom:1.5rem;"></div>
+
+                <div id="applicantsFilters" class="applicants-filters">
+                    <input type="text" id="appSearchInput" placeholder="🔍 ابحث بالاسم أو الهاتف...">
+                    <select id="appCourseFilter">
+                        <option value="all">📚 كل الدورات</option>
+                    </select>
+                    <select id="appTypeFilter">
+                        <option value="all">💰 كل الأنواع</option>
+                        <option value="free">🟢 مجانية</option>
+                        <option value="paid">🟡 مدفوعة</option>
+                    </select>
+                    <select id="appStatusFilter">
+                        <option value="all">🔖 كل الحالات</option>
+                        <option value="pending">⏳ قيد الانتظار</option>
+                        <option value="approved">✅ مقبول</option>
+                        <option value="rejected">❌ مرفوض</option>
+                        <option value="contacted">📞 تم التواصل</option>
+                    </select>
+                    <select id="appGenderFilter">
+                        <option value="all">🚻 كل الأجناس</option>
+                        <option value="male">👨 ذكر</option>
+                        <option value="female">👩 أنثى</option>
+                    </select>
+                    <select id="appSortFilter">
+                        <option value="newest">🕐 الأحدث أولاً</option>
+                        <option value="oldest">🕐 الأقدم أولاً</option>
+                        <option value="name">🔤 الاسم</option>
+                    </select>
+                </div>
+                <div id="applicantsCardsGrid" class="applicants-grid"></div>
+                <div id="applicantsEmpty" class="empty-state" style="display:none">
+                    <div class="icon">👤</div>
+                    <h3>لا يوجد متقدمون</h3>
+                    <p>عند تسجيل الطلاب في الدورات ستظهر بياناتهم هنا</p>
+                </div>
+            </div>
+
+            <!-- 4. Course Details Page (Admin View) -->
+            <div id="adminCourseDetail" class="admin-sub-view">
+                <div class="page-header">
+                    <button class="btn btn-ghost btn-sm" style="margin-bottom: 1rem;" id="backToCoursesBtn">🔙 العودة للدورات</button>
+                    <h1 id="adminDetailTitle">تفاصيل الدورة</h1>
+                    <p id="adminDetailTeacher"></p>
+                </div>
+                <!-- This will be populated dynamically -->
+                <div id="adminCourseDetailContent"></div>
+            </div>
+
+            <!-- 5. Users Management Page -->
+            <div id="adminUsers" class="admin-sub-view">
+                <div class="page-header">
+                    <div style="display:flex; justify-content:space-between; align-items:center; width:100%;">
+                        <div>
+                            <h1>إدارة المسؤولين</h1>
+                            <p>التحكم في حسابات مدراء النظام وصلاحياتهم</p>
+                        </div>
+                        <button class="btn btn-primary" id="openAddUserBtn">👤 إضافة مدير جديد</button>
+                    </div>
+                </div>
+
+                <div class="table-card">
+                    <table class="courses-table">
+                        <thead>
+                        <tr>
+                            <th>الاسم</th>
+                            <th>البريد الإلكتروني</th>
+                            <th>الهاتف</th>
+                            <th>الدور</th>
+                            <th>الحالة</th>
+                            <th>إجراءات</th>
+                        </tr>
+                        </thead>
+                        <tbody id="usersTableBody"></tbody>
+                    </table>
+                    <div id="usersEmpty" class="empty-state" style="display:none">
+                        <div class="icon">👥</div>
+                        <h3>لا يوجد مسؤولون بعد</h3>
+                        <p>ابدأ بإضافة مدير جديد للنظام</p>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+</div>
+
+<!-- Register Modal -->
+<div class="modal-overlay" id="registerModal">
+    <div class="modal">
+        <h2>📝 التسجيل في الدورة</h2>
+        <div class="modal-course-info" id="modalCourseInfo"></div>
+
+        <div class="registration-form-grid">
+            <div class="form-group span-2">
+                <label>الاسم الكامل</label>
+                <input type="text" id="regName" placeholder="أدخل اسمك الكامل">
+            </div>
+            <div class="form-group">
+                <label>رقم الهاتف</label>
+                <input type="tel" id="regPhone" placeholder="07XXXXXXXXX">
+            </div>
+            <div class="form-group">
+                <label>البريد الإلكتروني (اختياري)</label>
+                <input type="email" id="regEmail" placeholder="example@email.com">
+            </div>
+
+            <div class="form-group">
+                <label>الجنس</label>
+                <select id="regGender">
+                    <option value="" disabled selected>اختر الجنس</option>
+                    <option value="male">ذكر (Male)</option>
+                    <option value="female">أنثى (Female)</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>المحافظة</label>
+                <select id="regGovernorate">
+                    <option value="" disabled selected>اختر المحافظة</option>
+                    <option value="النجف">النجف (Najaf)</option>
+                    <option value="بغداد">بغداد (Baghdad)</option>
+                    <option value="البصرة">البصرة (Basra)</option>
+                    <option value="نينوى">نينوى (Nineveh)</option>
+                    <option value="أربيل">أربيل (Erbil)</option>
+                    <option value="السليمانية">السليمانية (Sulaymaniyah)</option>
+                    <option value="دهوك">دهوك (Duhok)</option>
+                    <option value="كركوك">كركوك (Kirkuk)</option>
+                    <option value="الأنبار">الأنبار (Anbar)</option>
+                    <option value="بابل">بابل (Babil)</option>
+                    <option value="كربلاء">كربلاء (Karbala)</option>
+                    <option value="القادسية">القادسية (Qadisiyah)</option>
+                    <option value="واسط">واسط (Wasit)</option>
+                    <option value="صلاح الدين">صلاح الدين (Salah Al-Din)</option>
+                    <option value="ديالى">ديالى (Diyala)</option>
+                    <option value="ميسان">ميسان (Maysan)</option>
+                    <option value="المثنى">المثنى (Muthanna)</option>
+                    <option value="ذي قار">ذي قار (Dhi Qar)</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>التحصيل الدراسي</label>
+                <select id="regEducationLevel">
+                    <option value="" disabled selected>اختر التحصيل</option>
+                    <option value="بدون شهادة">بدون شهادة (No Formal Education)</option>
+                    <option value="ابتدائي">ابتدائي (Primary School)</option>
+                    <option value="متوسط">متوسط (Middle School)</option>
+                    <option value="إعدادي">إعدادي (High School)</option>
+                    <option value="دبلوم">دبلوم (Diploma)</option>
+                    <option value="بكالوريوس">بكالوريوس (Bachelor’s Degree)</option>
+                    <option value="ماجستير">ماجستير (Master’s Degree)</option>
+                    <option value="دكتوراه">دكتوراه (PhD)</option>
+                </select>
+            </div>
+
+            <div class="form-group span-2">
+                <label>شنو تخصصك؟</label>
+                <input type="text" id="regStudyDescription" placeholder="أدخل تخصصك الدراسي">
+            </div>
+
+            <div class="form-group span-2">
+                <label>الوظيفة الحالية</label>
+                <select id="regCurrentJob">
+                    <option value="" disabled selected>اختر الوظيفة</option>
+                    <option value="طالب">طالب (Student)</option>
+                    <option value="موظف">موظف (Employee)</option>
+                    <option value="عاطل">عاطل (Unemployed)</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="modal-actions" style="margin-top: 20px;">
+            <button class="btn btn-success" id="confirmRegisterBtn" style="width: 100%;">✅ تأكيد التسجيل</button>
+            <button class="btn btn-ghost" id="closeModalBtn" style="width: 100%; margin-top: 10px;">إلغاء</button>
+        </div>
+    </div>
+</div>
+
+<!-- Course Detail Modal (for User View) -->
+<div class="modal-overlay" id="courseDetailModal">
+    <div class="modal course-detail-modal" style="background: white; border-radius: 20px; overflow: hidden; max-width: 700px; width: 95%;">
+        <div class="cdm-header" style="background: linear-gradient(135deg, var(--navy), var(--blue)); padding: 2rem; color: white; position: relative;">
+            <button class="close-detail-btn" id="closeDetailBtn" style="position: absolute; top: 1rem; right: 1rem; background: rgba(255,255,255,0.2); border: none; color: white; border-radius: 50%; width: 30px; height: 30px; cursor: pointer;">✕</button>
+            <div class="cdm-header-content" style="display: flex; align-items: center; gap: 1.5rem;">
+                <img id="cdmTeacherImg" src="" alt="" class="cdm-teacher-img" style="width: 80px; height: 80px; border-radius: 50%; border: 3px solid rgba(255,255,255,0.3);">
+                <div>
+                    <div id="cdmCourseName" class="cdm-course-name" style="font-size: 1.5rem; font-weight: 800;"></div>
+                    <div id="cdmTeacherName" class="cdm-teacher-name" style="opacity: 0.9;"></div>
+                </div>
+            </div>
+        </div>
+        <div class="cdm-body" style="padding: 2rem; max-height: 60vh; overflow-y: auto;">
+            <div id="cdmStats" class="cdm-stats" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-bottom: 2rem;"></div>
+            <div class="cdm-description">
+                <div class="cdm-section-title" style="font-weight: 800; margin-bottom: 1rem; border-right: 4px solid var(--sky); padding-right: 10px;">📄 وصف الدورة</div>
+                <div id="cdmDesc" class="cdm-desc-text" style="line-height: 1.8; color: #444;"></div>
+            </div>
+            <div id="cdmRegistrantsWrap" class="cdm-registrants" style="display: none; margin-top: 2rem;">
+                <div class="cdm-section-title" style="font-weight: 800; margin-bottom: 1rem; border-right: 4px solid var(--sky); padding-right: 10px;">👥 المتقدمون</div>
+                <div id="cdmRegistrants" class="cdm-registrants-list"></div>
+            </div>
+            <div id="cdmFooterBtns" class="cdm-footer" style="margin-top: 2rem; text-align: center;"></div>
+        </div>
+    </div>
+</div>
+
+<!-- User Modal -->
+<div class="modal-overlay" id="userModal">
+    <div class="modal" style="max-width: 500px;">
+        <h2 id="userModalTitle">👤 إضافة مدير جديد</h2>
+        <div class="registration-form-grid" style="grid-template-columns: 1fr;">
+            <input type="hidden" id="userId">
+            <div class="form-group">
+                <label>الاسم الكامل</label>
+                <input type="text" id="userName" placeholder="الاسم الكامل">
+            </div>
+            <div class="form-group">
+                <label>البريد الإلكتروني</label>
+                <input type="email" id="userEmail" placeholder="email@example.com">
+            </div>
+            <div class="form-group">
+                <label>رقم الهاتف</label>
+                <input type="tel" id="userPhone" placeholder="07XXXXXXXXX">
+            </div>
+            <div class="form-group">
+                <label>كلمة المرور</label>
+                <input type="password" id="userPassword" placeholder="كلمة المرور">
+            </div>
+            <div class="form-group" style="display: flex; align-items: center; justify-content: space-between; padding: 10px; background: #f8fafc; border-radius: 8px;">
+                <label style="margin-bottom: 0;">الحالة (نشط / معطل)</label>
+                <label class="toggle-switch">
+                    <input type="checkbox" id="userIsActive" checked>
+                    <span class="slider"></span>
+                </label>
+            </div>
+            <!-- Role is hidden because we only add admins here -->
+            <input type="hidden" id="userRole" value="admin">
+        </div>
+        <div class="modal-actions" style="margin-top: 20px;">
+            <button class="btn btn-primary" id="saveUserBtn" style="width: 100%;">💾 حفظ المدير</button>
+            <button class="btn btn-ghost" id="closeUserModalBtn" style="width: 100%; margin-top: 10px;">إلغاء</button>
+        </div>
+    </div>
+</div>
+
+<!-- Toast Container -->
+<div class="toast-container" id="toastContainer"></div>
+
+<!-- JavaScript Files with versioning for cache busting -->
+<script src="js/models/Course.js?v=1.0.2"></script>
+<script src="js/services/ApiService.js?v=1.0.2"></script>
+<script src="js/services/CourseService.js?v=1.0.2"></script>
+<script src="js/services/UserService.js?v=1.0.2"></script>
+<script src="js/services/RegistrationService.js?v=1.0.2"></script>
+<script src="js/services/StorageService.js?v=1.0.2"></script>
+<script src="js/services/UtilsService.js?v=1.0.2"></script>
+<script src="js/views/UserView.js?v=1.0.2"></script>
+<script src="js/views/AdminView.js?v=1.0.2"></script>
+<script src="js/views/ModalView.js?v=1.0.2"></script>
+<script src="js/controllers/MainController.js?v=1.0.2"></script>
+<script src="js/app.js?v=1.0.2"></script>
+</body>
+</html>

@@ -1,0 +1,128 @@
+/* =============================================================================
+   Cross-cutting responsive concerns.
+
+   Layout breakpoints live next to the component they affect (mobile-first,
+   min-width only). This file is only for rules that cut across components:
+   motion preferences, very small screens, landscape phones and print.
+   ============================================================================= */
+
+/* ------------------------------------------------------- reduced motion --- */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  /* Reveal-on-scroll must not leave content invisible when motion is off. */
+  .js .rv {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* --------------------------------------------------------- small phones --- */
+/* iPhone SE / Galaxy A-series at 320-360px: shave the last bit of padding so
+   two-up grids keep their cards above the 140px readable width. */
+@media (max-width: 360px) {
+  :root {
+    --gutter: 0.85rem;
+  }
+
+  .categories-grid {
+    gap: 0.45rem;
+  }
+
+  .category-card {
+    padding-inline: 0.6rem;
+  }
+
+  .hero-buttons .btn {
+    font-size: 0.78rem;
+  }
+}
+
+/* ----------------------------------------------------- landscape phones --- */
+/* Short viewports: drop the hero's vertical breathing room and shrink the
+   phone mockup so the headline and CTAs still fit on screen. */
+@media (max-height: 520px) and (orientation: landscape) {
+  .hero {
+    padding-block: calc(var(--nav-h) + 1rem) 1.5rem;
+  }
+
+  .hero-container {
+    grid-template-columns: 1.2fr 0.8fr;
+    align-items: center;
+    gap: 1.5rem;
+  }
+
+  .hero-content {
+    text-align: start;
+  }
+
+  .hero-subtitle {
+    margin-inline: 0;
+  }
+
+  .phone-frame {
+    width: min(28vw, 150px);
+  }
+
+  .float-card {
+    display: none;
+  }
+
+  .nav-links {
+    max-height: calc(100dvh - var(--nav-h));
+  }
+}
+
+/* ---------------------------------------------------------------- print --- */
+@media print {
+  .navbar,
+  .nav-scrim,
+  .hero-phone,
+  .whatsapp-button,
+  .back-to-top,
+  .scroll-progress,
+  .modal,
+  .download,
+  .footer {
+    display: none !important;
+  }
+
+  body {
+    background: #fff;
+  }
+
+  .js .rv {
+    opacity: 1;
+    transform: none;
+  }
+
+  .hero {
+    min-height: auto;
+    padding: 20px;
+    background: none;
+  }
+
+  .hero h1,
+  .hero h1 em,
+  .hero-subtitle {
+    color: #000;
+  }
+
+  .jobs-grid,
+  .reviews-grid {
+    grid-auto-flow: row;
+    grid-template-columns: 1fr 1fr;
+    overflow: visible;
+  }
+}

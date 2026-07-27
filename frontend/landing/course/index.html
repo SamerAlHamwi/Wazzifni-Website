@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wazzifni</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&family=Tajawal:wght@300;400;500;700;800&display=swap" rel="stylesheet">
+
+    <!-- CSS Files (Absolute paths to ensure they work regardless of sub-route) -->
+    <link rel="stylesheet" href="/course/css/variables.css?v=1.0.0">
+    <link rel="stylesheet" href="/course/css/main.css?v=1.0.0">
+    <link rel="stylesheet" href="/course/css/components.css?v=1.0.0">
+    <link rel="stylesheet" href="/course/css/responsive.css?v=1.0.0">
+</head>
+<body>
+
+<!-- Loading Overlay -->
+<div id="loadingOverlay" class="loading-overlay" style="display:none;">
+    <div class="spinner"></div>
+</div>
+
+<!-- Navigation -->
+<nav>
+    <div style="display:flex; align-items:center; gap:2rem;">
+        <div class="logo-wrap">
+            <img src="/course/assets/images/logo.png" alt="Wazzifni Logo" class="logo-img">
+            <div>
+                <div class="logo">Wazzifni</div>
+            </div>
+        </div>
+    </div>
+
+    <div style="display:flex; align-items:center; gap:1.5rem;">
+        <div class="nav-tabs user-appbar-links">
+            <button class="nav-tab active" data-view="user">🎓 الدورات</button>
+        </div>
+    </div>
+</nav>
+
+<!-- User View -->
+<div id="userView" class="view active">
+    <div class="page-header">
+        <h1>الدورات التدريبية المتاحة</h1>
+        <p>اكتشف أفضل الدورات واحجز مقعدك الآن</p>
+    </div>
+    <div id="userStats" class="stats-bar"></div>
+    <div class="search-bar">
+        <input type="text" id="searchInput" placeholder="🔍 ابحث عن دورة...">
+        <button class="filter-btn active" data-filter="all">الكل</button>
+        <button class="filter-btn" data-filter="free">مجانية</button>
+        <button class="filter-btn" data-filter="paid">مدفوعة</button>
+        <button class="filter-btn" data-filter="open">متاحة</button>
+    </div>
+    <div id="userCoursesList" class="cards-grid"></div>
+    <!-- Pagination for User View -->
+    <div id="userPagination" class="pagination"></div>
+</div>
+
+<!-- Course Detail Modal (for User View) -->
+<div class="modal-overlay" id="courseDetailModal">
+    <div class="modal course-detail-modal">
+        <div class="cdm-header">
+            <button class="close-detail-btn" id="closeDetailBtn">✕</button>
+            <div class="cdm-header-content">
+                <img id="cdmTeacherImg" src="" alt="" class="cdm-teacher-img">
+                <div>
+                    <div id="cdmCourseName" class="cdm-course-name"></div>
+                    <div id="cdmTeacherName" class="cdm-teacher-name"></div>
+                </div>
+            </div>
+        </div>
+        <div class="cdm-body">
+            <div id="cdmStats" class="cdm-stats"></div>
+            <div class="cdm-description">
+                <div class="cdm-section-title">📄 وصف الدورة</div>
+                <div id="cdmDesc" class="cdm-desc-text"></div>
+            </div>
+            <div id="cdmRegistrantsWrap" class="cdm-registrants" style="display:none">
+                <div class="cdm-section-title">👥 المتقدمون</div>
+                <div id="cdmRegistrants" class="cdm-registrants-list"></div>
+            </div>
+            <div id="cdmFooterBtns" class="cdm-footer"></div>
+        </div>
+    </div>
+</div>
+
+<!-- Toast Container -->
+<div class="toast-container" id="toastContainer"></div>
+
+<!-- JavaScript Files -->
+<script src="/course/js/models/Course.js?v=1.0.0"></script>
+<script src="/course/js/services/ApiService.js?v=1.0.0"></script>
+<script src="/course/js/services/CourseService.js?v=1.0.0"></script>
+<script src="/course/js/services/RegistrationService.js?v=1.0.0"></script>
+<script src="/course/js/services/StorageService.js?v=1.0.0"></script>
+<script src="/course/js/services/UtilsService.js?v=1.0.0"></script>
+<script src="/course/js/views/UserView.js?v=1.0.0"></script>
+<script src="/course/js/views/ModalView.js?v=1.0.0"></script>
+<script src="/course/js/controllers/MainController.js?v=1.0.0"></script>
+<script src="/course/js/app.js?v=1.0.0"></script>
+</body>
+</html>

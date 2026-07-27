@@ -1,0 +1,102 @@
+/* =============================================================================
+   Services — icon-led grid of what the company builds.
+   ============================================================================= */
+.services-grid {
+  display: grid;
+  gap: var(--grid-gap);
+}
+
+.service-card {
+  position: relative;
+  padding: clamp(1.2rem, 3.6vw, 1.8rem);
+  border-radius: var(--r-lg);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  overflow: hidden;
+  transition: transform var(--t-fast), border-color var(--t-fast), box-shadow var(--t-fast);
+}
+
+.service-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  inset-inline: 0;
+  height: 3px;
+  background: var(--grad);
+  opacity: 0;
+  transition: opacity var(--t-fast);
+}
+
+.service-icon {
+  display: grid;
+  place-items: center;
+  width: 52px;
+  height: 52px;
+  margin-bottom: 1rem;
+  border-radius: 16px;
+  background: linear-gradient(145deg, rgba(53, 181, 240, 0.2), rgba(0, 74, 140, 0.25));
+  border: 1px solid rgba(53, 181, 240, 0.28);
+  font-size: 1.5rem;
+  line-height: 1;
+  transition: transform var(--t);
+}
+
+.service-title {
+  font-size: var(--fs-h3);
+  font-weight: 800;
+  color: #fff;
+  margin-bottom: 0.45rem;
+}
+
+.service-text {
+  font-size: var(--fs-sm);
+  color: var(--muted);
+  line-height: 1.8;
+}
+
+.service-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  margin-top: 0.9rem;
+}
+
+.service-tags li {
+  padding: 0.2rem 0.6rem;
+  border-radius: var(--r-pill);
+  background: rgba(53, 181, 240, 0.1);
+  border: 1px solid rgba(53, 181, 240, 0.22);
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: #bfe2f7;
+  unicode-bidi: isolate;
+}
+
+@media (hover: hover) {
+  .service-card:hover {
+    transform: translateY(-6px);
+    border-color: var(--border-strong);
+    box-shadow: var(--glow);
+  }
+
+  .service-card:hover::before {
+    opacity: 1;
+  }
+
+  .service-card:hover .service-icon {
+    transform: scale(1.08) rotate(-6deg);
+  }
+}
+
+/* --------------------------------------------------------- tablet & up ---- */
+@media (min-width: 640px) {
+  .services-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1040px) {
+  .services-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}

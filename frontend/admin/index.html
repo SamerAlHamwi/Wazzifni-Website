@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>وظِّفني – اختيار النظام</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&family=Tajawal:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #2563eb;
+            --secondary-color: #4f46e5;
+            --bg-color: #f8fafc;
+            --text-color: #1e293b;
+        }
+
+        body {
+            font-family: 'Cairo', 'Tajawal', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .container {
+            text-align: center;
+            background: white;
+            padding: 2.5rem;
+            border-radius: 1.5rem;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            max-width: 800px;
+            width: 90%;
+        }
+
+        h1 {
+            margin-bottom: 2rem;
+            font-size: 2rem;
+            color: var(--text-color);
+        }
+
+        .choices {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1rem;
+        }
+
+        .choice-card {
+            padding: 2rem 1.5rem;
+            border: 2px solid #f1f5f9;
+            border-radius: 1rem;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            text-decoration: none;
+            color: inherit;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background-color: #ffffff;
+        }
+
+        .choice-card:hover {
+            border-color: var(--primary-color);
+            transform: translateY(-8px);
+            background-color: #f8faff;
+            box-shadow: 0 10px 15px -3px rgba(37, 99, 235, 0.1);
+        }
+
+        .choice-card i {
+            font-size: 3.5rem;
+            display: block;
+            margin-bottom: 1.25rem;
+        }
+
+        .choice-card span {
+            font-weight: 700;
+            font-size: 1.1rem;
+            line-height: 1.4;
+        }
+
+        .logo {
+            width: 120px;
+            margin-bottom: 1.5rem;
+        }
+
+        @media (max-width: 640px) {
+            .choices {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <img src="../sales/images/logo.png" alt="وظِّفني" class="logo" onerror="this.src='https://via.placeholder.com/120?text=Wazzifni'">
+        <h1>اختر النظام للدخول</h1>
+        <div class="choices">
+            <a href="../sales/index.html" class="choice-card">
+                <i>📊</i>
+                <span>إدارة المبيعات<br>(Sales Admin)</span>
+            </a>
+            <a href="../hr/index.html" class="choice-card">
+                <i>💼</i>
+                <span>إدارة التوظيف<br>(HR Admin)</span>
+            </a>
+            <a href="../course/admin.html" class="choice-card">
+                <i>🎓</i>
+                <span>إدارة الدورات<br>(Course Admin)</span>
+            </a>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,25 @@
+:root {
+    --sky: #00B6E7;
+    --blue: #0087C6;
+    --navy: #002F58;
+    --orange: #F68A29;
+    --gold: #FFB43C;
+    --fire: #FF6700;
+    --black: #000000;
+    --gray: #E0E0E0;
+    --white: #FFFFFF;
+    --bg: #f0f6fb;
+    --text: #1a2a3a;
+    --muted: #7a93aa;
+    --border: #cde4f0;
+    --primary: #f0f6fb;
+    --secondary: #ffffff;
+    --accent: #0087C6;
+    --gold2: #FFB43C;
+    --text-muted: #7a93aa;
+    --card-bg: #ffffff;
+    --success: #00c896;
+    --danger: #ff4757;
+    --free: #00c896;
+    --paid: #F68A29;
+}

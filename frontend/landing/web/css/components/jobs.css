@@ -1,0 +1,253 @@
+/* =============================================================================
+   Jobs — swipeable card rail on phones, grid from 700px up
+   ============================================================================= */
+.jobs {
+  padding-block: var(--section-y);
+  background: var(--surface);
+}
+
+/* Six stacked job cards cost ~700px of scroll on a phone. A snap rail with a
+   peeking next card keeps the section under one screen and still shows there
+   is more to see. */
+.jobs-grid {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: 82%;
+  gap: 0.7rem;
+  max-width: var(--maxw);
+  margin-inline: auto;
+  margin-bottom: 1.25rem;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scroll-padding-inline-start: var(--gutter);
+  overscroll-behavior-x: contain;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+
+.jobs-grid::-webkit-scrollbar {
+  display: none;
+}
+
+.job-card,
+.shimmer-card {
+  scroll-snap-align: start;
+}
+
+.job-card {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  padding: 1rem;
+  text-align: start;
+  background: var(--bg);
+  border: 1.5px solid var(--border);
+  border-radius: var(--r-md);
+  cursor: pointer;
+  transition: transform var(--t-fast), border-color var(--t-fast), box-shadow var(--t-fast);
+}
+
+.job-card:active {
+  transform: scale(0.99);
+}
+
+.job-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.job-title {
+  font-size: var(--fs-sm);
+  font-weight: 700;
+  color: var(--navy);
+  line-height: 1.5;
+}
+
+.job-badge {
+  flex: 0 0 auto;
+  background: rgba(0, 135, 198, 0.1);
+  color: var(--blue);
+  padding: 0.2rem 0.65rem;
+  border-radius: var(--r-pill);
+  font-size: var(--fs-xs);
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.job-company {
+  font-size: var(--fs-sm);
+  color: var(--muted);
+  margin-bottom: 0.3rem;
+}
+
+.job-level {
+  font-size: var(--fs-xs);
+  color: var(--muted);
+  margin-bottom: 0.7rem;
+}
+
+.job-footer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.25rem 0.6rem;
+  margin-top: auto;
+  padding-top: 0.6rem;
+  border-top: 1px solid var(--border);
+}
+
+.job-location {
+  font-size: var(--fs-xs);
+  color: var(--muted);
+}
+
+.job-salary {
+  font-size: var(--fs-xs);
+  font-weight: 700;
+  color: var(--orange);
+}
+
+.job-date {
+  font-size: var(--fs-xs);
+  color: var(--muted);
+  margin-inline-start: auto;
+}
+
+.jobs-more {
+  text-align: center;
+}
+
+.jobs-more p {
+  font-size: var(--fs-sm);
+  color: var(--muted);
+  margin-bottom: 0.9rem;
+}
+
+.jobs-more .btn {
+  width: 100%;
+}
+
+.jobs-empty {
+  grid-column: 1 / -1;
+  padding: 2rem 1rem;
+  text-align: center;
+  color: var(--muted);
+}
+
+@media (hover: hover) {
+  .job-card:hover {
+    border-color: var(--blue);
+    transform: translateY(-3px);
+    box-shadow: 0 14px 32px rgba(0, 135, 198, 0.12);
+  }
+}
+
+@media (min-width: 560px) {
+  .jobs-grid {
+    grid-auto-columns: 46%;
+  }
+
+  .jobs-more .btn {
+    width: auto;
+  }
+}
+
+@media (min-width: 700px) {
+  .jobs-grid {
+    grid-auto-flow: row;
+    grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+    grid-auto-columns: auto;
+    gap: 1.1rem;
+    margin-bottom: 2rem;
+    overflow: visible;
+    scroll-snap-type: none;
+  }
+
+  /* Undoes the .bleed offsets once the rail becomes a normal grid. Needs two
+     classes to outrank .bleed, which is defined after this file in main.css. */
+  .jobs-grid.bleed {
+    margin-inline: auto;
+    padding-inline: 0;
+  }
+
+  .job-card {
+    padding: 1.4rem;
+    border-radius: 18px;
+  }
+}
+
+/* ------------------------------------------------------- shimmer loading -- */
+.shimmer-card {
+  padding: 1rem;
+  background: var(--bg);
+  border: 1.5px solid var(--border);
+  border-radius: var(--r-md);
+  overflow: hidden;
+}
+
+.shimmer-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+}
+
+.shimmer-line {
+  position: relative;
+  height: 14px;
+  width: 100%;
+  background: #e2ecf3;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.shimmer-line.title {
+  height: 18px;
+  width: 70%;
+}
+
+.shimmer-line.company {
+  height: 14px;
+  width: 50%;
+}
+
+.shimmer-line.level {
+  height: 12px;
+  width: 40%;
+}
+
+.shimmer-row {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.shimmer-line::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  transform: translateX(-100%);
+  background-image: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0) 0,
+    rgba(255, 255, 255, 0.4) 20%,
+    rgba(255, 255, 255, 0.8) 60%,
+    rgba(255, 255, 255, 0)
+  );
+  animation: shimmer 1.6s infinite;
+}
+
+@keyframes shimmer {
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+@media (min-width: 700px) {
+  .shimmer-card {
+    padding: 1.4rem;
+    border-radius: 18px;
+  }
+}

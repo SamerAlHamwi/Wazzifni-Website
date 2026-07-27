@@ -1,0 +1,193 @@
+/* =============================================================================
+   Path — three entry points. Wide list rows on phones, big tiles on desktop.
+   ============================================================================= */
+.path {
+  padding-block: var(--section-y);
+  background: var(--surface);
+}
+
+.path-grid {
+  display: grid;
+  gap: var(--grid-gap);
+  max-width: 900px;
+  margin-inline: auto;
+}
+
+.path-card {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  width: 100%;
+  padding: 1.05rem 1.1rem;
+  text-align: start;
+  background: var(--bg);
+  border: 2px solid var(--border);
+  border-radius: var(--r-lg);
+  box-shadow: var(--shadow-sm);
+  cursor: pointer;
+  overflow: hidden;
+  transition: transform var(--t-fast), border-color var(--t-fast), box-shadow var(--t-fast);
+}
+
+.path-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  inset-inline: 0;
+  height: 5px;
+  background: var(--grad);
+  opacity: 0;
+  transition: opacity var(--t-fast);
+}
+
+.path-card:active {
+  transform: scale(0.99);
+}
+
+.path-icon {
+  flex: 0 0 auto;
+  font-size: 2.2rem;
+  line-height: 1;
+  filter: drop-shadow(0 6px 12px rgba(0, 135, 198, 0.15));
+  transition: transform var(--t);
+}
+
+.path-body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  min-width: 0;
+}
+
+.path-title {
+  font-size: var(--fs-h3);
+  font-weight: 900;
+  color: var(--navy);
+}
+
+.path-desc {
+  font-size: var(--fs-sm);
+  color: var(--muted);
+  line-height: 1.65;
+}
+
+.path-badge {
+  align-self: flex-start;
+  background: var(--grad-gold);
+  color: #fff;
+  padding: 0.15rem 0.7rem;
+  border-radius: var(--r-pill);
+  font-size: var(--fs-xs);
+  font-weight: 700;
+  margin-bottom: 0.2rem;
+}
+
+/* IT Land Iraq — the company's own card, so it carries the brand blue rather
+   than the gold "coming soon" treatment the other badges use. */
+.path-badge--tech {
+  background: var(--grad);
+}
+
+.path-card--tech {
+  border-color: rgba(0, 135, 198, 0.45);
+}
+
+.path-card--tech .path-title {
+  /* Latin name inside an RTL document: keep the bidi algorithm off it. */
+  unicode-bidi: isolate;
+}
+
+@media (hover: hover) {
+  .path-card:hover {
+    transform: translateY(-6px);
+    border-color: var(--blue);
+    background: var(--surface);
+    box-shadow: var(--shadow-lg);
+  }
+
+  .path-card:hover::before {
+    opacity: 1;
+  }
+
+  .path-card:hover .path-icon {
+    transform: scale(1.12) rotate(8deg);
+  }
+}
+
+/* -------------------------------------------------------- tablet & up ---- */
+/* Three tiles across from 760px. The grid widens past the 900px it needed for
+   two cards so each tile keeps a readable column, and the desktop padding is a
+   little tighter than the old two-up layout to pay for the extra card. */
+@media (min-width: 760px) {
+  .path-grid {
+    grid-template-columns: repeat(3, 1fr);
+    max-width: 1140px;
+    gap: 1.2rem;
+  }
+
+  .path-card {
+    flex-direction: column;
+    justify-content: center;
+    gap: 1rem;
+    padding: 2.2rem 1.4rem;
+    text-align: center;
+    border-radius: 34px;
+  }
+
+  .path-card::before {
+    height: 8px;
+  }
+
+  .path-icon {
+    font-size: 3.2rem;
+  }
+
+  .path-body {
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .path-title {
+    font-size: clamp(1.15rem, 2.2vw, 1.75rem);
+  }
+
+  .path-desc {
+    font-size: 0.95rem;
+    max-width: 30ch;
+  }
+
+  .path-badge {
+    position: absolute;
+    top: 16px;
+    inset-inline-end: 16px;
+    margin: 0;
+    padding: 0.3rem 0.9rem;
+    font-size: 0.74rem;
+    box-shadow: var(--shadow-md);
+    z-index: 2;
+  }
+}
+
+@media (min-width: 1000px) {
+  .path-grid {
+    gap: 1.8rem;
+  }
+
+  .path-card {
+    aspect-ratio: 1 / 1;
+    padding: 2.5rem 1.8rem;
+    border-radius: 40px;
+  }
+
+  .path-icon {
+    font-size: 4rem;
+  }
+
+  .path-badge {
+    top: 20px;
+    inset-inline-end: 20px;
+    padding: 0.35rem 1.1rem;
+    font-size: 0.8rem;
+  }
+}

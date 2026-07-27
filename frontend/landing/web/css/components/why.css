@@ -1,0 +1,92 @@
+/* =============================================================================
+   Why us — icon + text rows on phones, cards from 760px up
+   ============================================================================= */
+.why-us {
+  padding-block: var(--section-y);
+  background: var(--bg);
+}
+
+.features-grid {
+  display: grid;
+  gap: 0.6rem;
+  max-width: var(--maxw);
+  margin-inline: auto;
+}
+
+.feature-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.85rem;
+  padding: 0.95rem 1rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r-md);
+  transition: transform var(--t-fast), box-shadow var(--t-fast);
+}
+
+.feature-card .feature-icon {
+  flex: 0 0 auto;
+  width: 42px;
+  height: 42px;
+  display: grid;
+  place-items: center;
+  border-radius: 12px;
+  background: var(--grad);
+  font-size: 1.2rem;
+}
+
+.feature-title {
+  font-size: var(--fs-h3);
+  font-weight: 700;
+  color: var(--navy);
+  margin-bottom: 0.15rem;
+}
+
+.feature-description {
+  font-size: var(--fs-sm);
+  color: var(--muted);
+  line-height: 1.6;
+}
+
+@media (hover: hover) {
+  .feature-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-md);
+  }
+}
+
+@media (min-width: 560px) {
+  .features-grid {
+    grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
+    gap: 1rem;
+  }
+}
+
+@media (min-width: 760px) {
+  .features-grid {
+    gap: 1.2rem;
+  }
+
+  .feature-card {
+    flex-direction: column;
+    gap: 0;
+    padding: 1.7rem;
+    border-radius: 18px;
+  }
+
+  .feature-card .feature-icon {
+    width: 50px;
+    height: 50px;
+    border-radius: 14px;
+    font-size: 1.4rem;
+    margin-bottom: 1rem;
+  }
+
+  .feature-title {
+    margin-bottom: 0.35rem;
+  }
+
+  .feature-description {
+    line-height: 1.75;
+  }
+}

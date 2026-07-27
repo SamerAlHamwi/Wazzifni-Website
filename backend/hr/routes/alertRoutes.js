@@ -1,0 +1,10 @@
+const express = require('express');
+const alertController = require('../controllers/alertController');
+const { protect } = require('../middleware/authMiddleware');
+
+const router = express.Router();
+
+router.use(protect);
+router.get('/', alertController.getAlerts);
+
+module.exports = router;

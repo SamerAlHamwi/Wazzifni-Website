@@ -1,0 +1,226 @@
+@media (max-width: 768px) {
+    nav {
+        padding: 0 0.8rem;
+        height: auto;
+        min-height: 60px;
+        flex-wrap: wrap;
+        gap: 0.4rem;
+        padding-top: 0.5rem;
+        padding-bottom: 0.5rem;
+    }
+
+    .logo-wrap {
+        gap: 0.5rem;
+    }
+
+    .logo {
+        font-size: 1.1rem;
+    }
+
+    .logo-img {
+        width: 32px !important;
+        height: 32px !important;
+    }
+
+    .nav-tabs {
+        gap: 0.3rem;
+    }
+
+    .nav-tab {
+        padding: 0.35rem 0.7rem;
+        font-size: 0.75rem;
+    }
+
+    .view {
+        padding: 0.8rem;
+    }
+
+    .page-header {
+        margin-bottom: 1.5rem;
+        padding-bottom: 1rem;
+    }
+
+    .page-header h1 {
+        font-size: 1.3rem;
+    }
+
+    .page-header p {
+        font-size: 0.85rem;
+    }
+
+    .stats-bar {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 0.6rem;
+        margin-bottom: 1.2rem;
+    }
+
+    .stat-card {
+        padding: 0.8rem 0.6rem;
+    }
+
+    .stat-card .num {
+        font-size: 1.5rem;
+    }
+
+    .stat-card .label {
+        font-size: 0.72rem;
+    }
+
+    .form-card {
+        padding: 1rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .form-card h2 {
+        font-size: 1.1rem;
+        margin-bottom: 1rem;
+    }
+
+    .form-grid {
+        grid-template-columns: 1fr;
+        gap: 0.8rem;
+    }
+
+    .form-group.full {
+        grid-column: 1;
+    }
+
+    .section-title {
+        font-size: 1rem;
+        margin-bottom: 0.8rem;
+    }
+
+    .search-bar {
+        gap: 0.5rem;
+        margin-bottom: 1.2rem;
+    }
+
+    .search-bar input {
+        min-width: 100%;
+        font-size: 0.9rem;
+        padding: 0.65rem 1rem;
+    }
+
+    .filter-btn {
+        padding: 0.55rem 0.8rem;
+        font-size: 0.78rem;
+    }
+
+    .cards-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+
+    .card-header {
+        padding: 1rem;
+        gap: 0.75rem;
+    }
+
+    .teacher-img {
+        width: 44px;
+        height: 44px;
+    }
+
+    .card-title {
+        font-size: 1rem;
+    }
+
+    .card-body {
+        padding: 0.9rem 1rem;
+    }
+
+    .card-footer {
+        padding: 0.75rem 1rem;
+        gap: 0.5rem;
+    }
+
+    .price-tag {
+        font-size: 1rem;
+    }
+
+    .btn {
+        padding: 0.6rem 1.2rem;
+        font-size: 0.82rem;
+    }
+
+    .btn-sm {
+        padding: 0.35rem 0.75rem;
+        font-size: 0.75rem;
+    }
+
+    .courses-table {
+        display: none;
+    }
+
+    .mobile-list {
+        display: block;
+    }
+
+    .modal {
+        padding: 1.2rem;
+        border-radius: 14px;
+        max-width: 98vw;
+    }
+
+    .modal h2 {
+        font-size: 1.1rem;
+        margin-bottom: 1rem;
+    }
+
+    .modal-actions {
+        flex-direction: column;
+        gap: 0.6rem;
+    }
+
+    .modal-actions .btn {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .applicants-filters {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+    .applicants-filters input,
+    .applicants-filters select {
+        width: 100%;
+    }
+
+    .applicants-grid {
+        grid-template-columns: 1fr !important;
+    }
+
+    .toast {
+        font-size: 0.82rem;
+        padding: 0.7rem 1rem;
+        white-space: normal;
+        max-width: 90vw;
+        text-align: center;
+    }
+}
+
+@media (max-width: 480px) {
+    .stats-bar {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .cards-grid {
+        grid-template-columns: 1fr;
+    }
+
+    nav {
+        flex-direction: column;
+        align-items: stretch;
+        padding: 0.5rem 0.75rem;
+        height: auto;
+    }
+
+    .nav-tabs {
+        justify-content: center;
+    }
+
+    .logo-wrap {
+        justify-content: center;
+    }
+}

@@ -1,0 +1,139 @@
+/* =============================================================================
+   Footer — two link columns from 400px, single stack below
+   ============================================================================= */
+.footer {
+  background: var(--navy-deep);
+  color: rgba(255, 255, 255, 0.6);
+  /* Extra bottom room so the floating WhatsApp button never lands on text. */
+  padding-block: clamp(2.25rem, 7vw, 3.4rem) calc(4.5rem + var(--safe-b));
+}
+
+/* Two link columns from the smallest phone up. Stacking all three blocks costs
+   ~240px of scroll, and the two lists are short enough to sit side by side even
+   at 320px. */
+.footer-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1.5rem 1rem;
+  max-width: var(--maxw);
+  margin: 0 auto 1.75rem;
+}
+
+.footer-info {
+  grid-column: 1 / -1;
+}
+
+.footer-logo {
+  font-size: 1.5rem;
+  font-weight: 900;
+  color: #fff;
+  margin-bottom: 0.5rem;
+}
+
+.footer-logo span {
+  color: var(--gold);
+}
+
+.footer-description {
+  font-size: var(--fs-sm);
+  line-height: 1.8;
+  max-width: 44ch;
+}
+
+.footer-links h4,
+.footer-contact h4 {
+  color: #fff;
+  font-weight: 700;
+  font-size: var(--fs-sm);
+  margin-bottom: 0.6rem;
+}
+
+.footer-links ul,
+.footer-contact ul {
+  display: grid;
+  gap: 0.1rem;
+}
+
+.footer-links a,
+.footer-contact a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 34px;
+  color: rgba(255, 255, 255, 0.55);
+  font-size: var(--fs-sm);
+  line-height: 1.5;
+  transition: color var(--t-fast);
+}
+
+.footer-links a:hover,
+.footer-contact a:hover {
+  color: var(--gold);
+}
+
+.social-links {
+  display: flex;
+  gap: 0.6rem;
+  margin-top: 0.9rem;
+}
+
+.social-link {
+  flex: 0 0 auto;
+  width: 40px;
+  height: 40px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+  font-size: 0.85rem;
+  font-weight: 700;
+  transition: background var(--t-fast);
+}
+
+.social-link:hover {
+  background: var(--blue);
+}
+
+.footer-bottom {
+  max-width: var(--maxw);
+  margin-inline: auto;
+  padding-top: 1.4rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  text-align: center;
+  font-size: var(--fs-xs);
+  line-height: 1.7;
+}
+
+@media (min-width: 900px) {
+  .footer {
+    padding-block: 55px calc(28px + var(--safe-b));
+  }
+
+  .footer-grid {
+    grid-template-columns: 2fr 1fr 1fr;
+    gap: 2.5rem;
+    margin-bottom: 2.5rem;
+  }
+
+  .footer-info {
+    grid-column: auto;
+  }
+
+  .footer-logo {
+    font-size: 1.7rem;
+  }
+
+  .footer-links ul,
+  .footer-contact ul {
+    gap: 0.35rem;
+  }
+
+  .footer-links a,
+  .footer-contact a {
+    min-height: 0;
+  }
+
+  .footer-bottom {
+    padding-top: 1.8rem;
+  }
+}

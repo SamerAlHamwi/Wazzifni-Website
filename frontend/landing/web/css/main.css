@@ -1,0 +1,436 @@
+/* =============================================================================
+   Wazzifni landing — core stylesheet
+   Mobile-first: every component file below styles the phone layout first and
+   only adds desktop rules inside min-width queries. Nothing here should need a
+   max-width override, so responsive.css is limited to cross-cutting concerns.
+   ============================================================================= */
+@import url('components/nav.css');
+@import url('components/hero.css');
+@import url('components/path.css');
+@import url('components/categories.css');
+@import url('components/why.css');
+@import url('components/employers.css');
+@import url('components/jobs.css');
+@import url('components/steps.css');
+@import url('components/trust.css');
+@import url('components/download.css');
+@import url('components/footer.css');
+@import url('components/modal.css');
+@import url('components/legal.css');
+@import url('responsive.css');
+
+/* ---------------------------------------------------------------- tokens -- */
+:root {
+  /* Brand */
+  --blue: #0087C6;
+  --navy: #004080;
+  --navy-deep: #001e3c;
+  --orange: #F68A29;
+  --gold: #FFB43C;
+
+  /* Surfaces & text */
+  --bg: #f0f6fb;
+  --surface: #fff;
+  --ink: #1a2a3a;
+  --muted: #6a8aa0;
+  --border: #cde4f0;
+
+  --grad: linear-gradient(135deg, #004a8c 0%, #0078b8 50%, #0099d4 100%);
+  --grad-gold: linear-gradient(135deg, #F68A29, #FFB43C);
+
+  --shadow-sm: 0 4px 12px rgba(0, 64, 128, 0.1);
+  --shadow-md: 0 8px 24px rgba(0, 64, 128, 0.15);
+  --shadow-lg: 0 16px 36px rgba(0, 64, 128, 0.2);
+
+  /* Radii */
+  --r-sm: 12px;
+  --r-md: 16px;
+  --r-lg: 22px;
+  --r-xl: 28px;
+  --r-pill: 999px;
+
+  /* Layout. --gutter is the only horizontal padding on the page; sections own
+     vertical rhythm through --section-y so no section can double up on it. */
+  --nav-h: 58px;
+  --maxw: 1200px;
+  --gutter: clamp(1rem, 4.5vw, 2rem);
+  --section-y: clamp(2.5rem, 8vw, 5rem);
+  --grid-gap: clamp(0.6rem, 2.2vw, 1.2rem);
+  --safe-b: env(safe-area-inset-bottom, 0px);
+
+  /* Type. Every size is fluid so phones get a compact scale without a stack of
+     max-width overrides fighting the desktop values. */
+  --fs-display: clamp(1.7rem, 6.6vw, 3.4rem);
+  --fs-h2: clamp(1.35rem, 4.6vw, 2.5rem);
+  --fs-h3: clamp(0.98rem, 2.9vw, 1.12rem);
+  --fs-body: clamp(0.92rem, 2.6vw, 1.02rem);
+  --fs-sm: clamp(0.8rem, 2.3vw, 0.88rem);
+  --fs-xs: clamp(0.72rem, 2vw, 0.78rem);
+
+  /* Minimum comfortable touch target (WCAG 2.5.8). */
+  --tap: 44px;
+
+  --ease: cubic-bezier(0.4, 0, 0.2, 1);
+  --t-fast: 0.18s var(--ease);
+  --t: 0.28s var(--ease);
+}
+
+@media (min-width: 900px) {
+  :root {
+    --nav-h: 68px;
+  }
+}
+
+/* ------------------------------------------------------------------ base -- */
+*,
+*::before,
+*::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+  /* Keeps anchored sections clear of the fixed navbar. */
+  scroll-padding-top: calc(var(--nav-h) + 12px);
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  font-family: 'Cairo', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  direction: rtl;
+  background: var(--bg);
+  color: var(--ink);
+  line-height: 1.65;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  /* Stops iOS from bouncing the page behind fixed overlays. */
+  overscroll-behavior-y: none;
+}
+
+img,
+svg {
+  display: block;
+  max-width: 100%;
+}
+
+ul {
+  list-style: none;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button {
+  font: inherit;
+  color: inherit;
+  background: none;
+  border: 0;
+  cursor: pointer;
+  /* Removes the 300ms tap delay and the grey flash on iOS. */
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+
+:focus-visible {
+  outline: 3px solid var(--gold);
+  outline-offset: 2px;
+  border-radius: 6px;
+}
+
+.container {
+  width: 100%;
+  max-width: var(--maxw);
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+
+/* Lets a horizontal rail bleed to both screen edges while its first and last
+   cards still line up with the surrounding text. */
+.bleed {
+  margin-inline: calc(var(--gutter) * -1);
+  padding-inline: var(--gutter);
+}
+
+.skip-link {
+  position: absolute;
+  inset-inline-start: 50%;
+  top: -100px;
+  transform: translateX(50%);
+  z-index: 1200;
+  background: var(--gold);
+  color: var(--navy-deep);
+  font-weight: 700;
+  padding: 0.7rem 1.4rem;
+  border-radius: 0 0 var(--r-md) var(--r-md);
+  transition: top var(--t);
+}
+
+.skip-link:focus {
+  top: 0;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* ------------------------------------------------------- reveal on scroll -- */
+/* Hidden only once JS has confirmed it is running (html.js is set inline in the
+   head), so a failed module load leaves the page readable instead of blank. */
+.js .rv {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.5s var(--ease), transform 0.5s var(--ease);
+}
+
+.js .rv.show {
+  opacity: 1;
+  transform: none;
+}
+
+/* --------------------------------------------------------- section header -- */
+.section-header {
+  text-align: center;
+  margin-bottom: clamp(1.5rem, 5vw, 3rem);
+}
+
+.section-tag {
+  display: inline-block;
+  background: rgba(0, 135, 198, 0.1);
+  color: var(--blue);
+  padding: 0.3rem 0.9rem;
+  border-radius: var(--r-pill);
+  font-size: var(--fs-xs);
+  font-weight: 700;
+  margin-bottom: 0.7rem;
+  border: 1px solid rgba(0, 135, 198, 0.25);
+}
+
+.section-tag--gold {
+  background: rgba(255, 180, 60, 0.15);
+  color: var(--gold);
+  border-color: rgba(255, 180, 60, 0.35);
+}
+
+.section-title {
+  font-size: var(--fs-h2);
+  font-weight: 900;
+  color: var(--navy);
+  line-height: 1.3;
+  text-wrap: balance;
+}
+
+.section-title--light {
+  color: #fff;
+}
+
+.section-subtitle {
+  font-size: var(--fs-body);
+  color: var(--muted);
+  max-width: 46ch;
+  line-height: 1.8;
+  margin: 0.7rem auto 0;
+}
+
+.section-subtitle--light {
+  color: rgba(255, 255, 255, 0.72);
+}
+
+/* --------------------------------------------------------------- buttons -- */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  min-height: var(--tap);
+  padding: 0.7rem 1.5rem;
+  border-radius: var(--r-pill);
+  font-weight: 700;
+  font-size: var(--fs-sm);
+  line-height: 1.2;
+  text-align: center;
+  cursor: pointer;
+  font-family: inherit;
+  border: none;
+  transition: transform var(--t-fast), box-shadow var(--t-fast), background var(--t-fast);
+}
+
+.btn--block {
+  width: 100%;
+}
+
+.btn-primary {
+  background: var(--orange);
+  color: #fff;
+}
+
+.btn-secondary {
+  background: rgba(255, 255, 255, 0.12);
+  color: #fff;
+  border: 1.5px solid rgba(255, 255, 255, 0.3);
+}
+
+.btn-outline {
+  background: transparent;
+  color: var(--gold);
+  border: 1.5px solid var(--gold);
+}
+
+.btn:active {
+  transform: scale(0.97);
+}
+
+/* Hover lift is desktop-only: on touch devices :hover sticks after a tap. */
+@media (hover: hover) {
+  .btn-primary:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 28px rgba(246, 138, 41, 0.5);
+  }
+
+  .btn-secondary:hover {
+    background: rgba(255, 255, 255, 0.22);
+    transform: translateY(-2px);
+  }
+
+  .btn-outline:hover {
+    background: rgba(255, 180, 60, 0.12);
+    transform: translateY(-2px);
+  }
+}
+
+/* --------------------------------------------- floating controls & toasts -- */
+.scroll-progress {
+  position: fixed;
+  top: var(--nav-h);
+  inset-inline: 0;
+  height: 3px;
+  z-index: 900;
+  background: var(--grad-gold);
+  transform: scaleX(0);
+  transform-origin: right center;
+  pointer-events: none;
+}
+
+.whatsapp-button,
+.back-to-top {
+  position: fixed;
+  left: 14px;
+  z-index: 940;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: transform var(--t), opacity var(--t), visibility var(--t);
+}
+
+.whatsapp-button {
+  bottom: calc(14px + var(--safe-b));
+  width: 52px;
+  height: 52px;
+  background: #25D366;
+  box-shadow: 0 6px 20px rgba(37, 211, 102, 0.45);
+}
+
+.whatsapp-button svg {
+  width: 28px;
+  height: 28px;
+}
+
+.back-to-top {
+  bottom: calc(76px + var(--safe-b));
+  width: 44px;
+  height: 44px;
+  font-size: 1.15rem;
+  background: var(--navy);
+  color: #fff;
+  border: 2px solid var(--gold);
+  box-shadow: var(--shadow-md);
+  opacity: 0;
+  visibility: hidden;
+}
+
+.back-to-top.visible {
+  opacity: 1;
+  visibility: visible;
+}
+
+@media (min-width: 768px) {
+  .whatsapp-button,
+  .back-to-top {
+    left: 24px;
+  }
+
+  .whatsapp-button {
+    width: 58px;
+    height: 58px;
+  }
+
+  .back-to-top {
+    bottom: calc(94px + var(--safe-b));
+    width: 50px;
+    height: 50px;
+  }
+}
+
+@media (hover: hover) {
+  .whatsapp-button:hover {
+    transform: scale(1.1);
+  }
+
+  .back-to-top:hover {
+    background: var(--blue);
+  }
+}
+
+.toast {
+  position: fixed;
+  top: calc(var(--nav-h) + 12px);
+  left: 50%;
+  z-index: 1100;
+  transform: translateX(-50%);
+  max-width: min(90vw, 420px);
+  padding: 0.8rem 1.4rem;
+  border-radius: var(--r-pill);
+  color: #fff;
+  font-weight: 600;
+  font-size: var(--fs-sm);
+  text-align: center;
+  box-shadow: var(--shadow-md);
+  animation: toast-in 0.3s var(--ease);
+}
+
+.toast--success {
+  background: #1c9c4d;
+}
+
+.toast--error {
+  background: #d33b3b;
+}
+
+.toast--leaving {
+  animation: toast-out 0.25s var(--ease) forwards;
+}
+
+@keyframes toast-in {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -16px);
+  }
+}
+
+@keyframes toast-out {
+  to {
+    opacity: 0;
+    transform: translate(-50%, -16px);
+  }
+}

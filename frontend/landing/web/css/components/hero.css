@@ -1,0 +1,282 @@
+/* =============================================================================
+   Hero — stacked and compact on phones, split layout from 900px up
+   ============================================================================= */
+.hero {
+  position: relative;
+  overflow: hidden;
+  background: var(--grad);
+  /* No 100vh on phones: the address bar makes it taller than the screen and
+     pushes the CTAs below the fold. */
+  padding: calc(var(--nav-h) + 1.4rem) var(--gutter) clamp(2rem, 7vw, 3.5rem);
+}
+
+.hero::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse 60% 70% at 80% 30%, rgba(255, 180, 60, 0.08) 0%, transparent 65%),
+    radial-gradient(ellipse 50% 60% at 10% 80%, rgba(0, 180, 220, 0.1) 0%, transparent 60%);
+}
+
+.hero-container {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  gap: clamp(1.75rem, 6vw, 3rem);
+  width: 100%;
+  max-width: var(--maxw);
+  margin-inline: auto;
+}
+
+.hero-content {
+  text-align: center;
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  background: rgba(255, 180, 60, 0.15);
+  border: 1px solid rgba(255, 180, 60, 0.4);
+  color: var(--gold);
+  padding: 0.3rem 0.85rem;
+  border-radius: var(--r-pill);
+  font-size: var(--fs-xs);
+  font-weight: 700;
+  margin-bottom: 0.9rem;
+}
+
+.badge::before {
+  content: '●';
+  font-size: 0.45rem;
+  animation: blink 2s infinite;
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.2; }
+}
+
+.hero h1 {
+  font-size: var(--fs-display);
+  font-weight: 900;
+  color: #fff;
+  line-height: 1.25;
+  text-wrap: balance;
+  margin-bottom: 0.7rem;
+}
+
+.hero h1 em {
+  color: var(--gold);
+  font-style: normal;
+}
+
+.hero-subtitle {
+  font-size: var(--fs-body);
+  color: rgba(255, 255, 255, 0.8);
+  line-height: 1.8;
+  max-width: 42ch;
+  margin: 0 auto clamp(1.25rem, 4vw, 2.2rem);
+}
+
+/* Primary CTA gets the full width, the two secondary actions share a row —
+   three stacked full-width buttons cost ~90px of extra scroll for nothing. */
+.hero-buttons {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.55rem;
+}
+
+.hero-buttons > :first-child {
+  grid-column: 1 / -1;
+}
+
+.hero-buttons .btn {
+  width: 100%;
+  padding-inline: 0.75rem;
+}
+
+/* ----------------------------------------------------------------- phone -- */
+.hero-phone {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.phone-mockup {
+  position: relative;
+}
+
+.phone-frame {
+  width: min(52vw, 200px);
+  aspect-ratio: 260 / 500;
+  background: #001833;
+  border-radius: 34px;
+  border: 2px solid rgba(255, 255, 255, 0.15);
+  box-shadow: 0 30px 60px rgba(0, 0, 0, 0.45);
+  position: relative;
+  transform: rotate(-4deg);
+}
+
+.phone-frame::before {
+  content: '';
+  position: absolute;
+  top: 11px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 58px;
+  height: 4px;
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 10px;
+  z-index: 2;
+}
+
+.phone-screen {
+  position: absolute;
+  inset: 6px;
+  border-radius: 29px;
+  overflow: hidden;
+}
+
+.phone-screen img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top;
+}
+
+/* ---------------------------------------------------------- float cards -- */
+.float-card {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  background: #fff;
+  border-radius: 12px;
+  padding: 7px 10px;
+  box-shadow: 0 10px 26px rgba(0, 0, 0, 0.22);
+}
+
+.card-1 {
+  top: 34px;
+  left: -20px;
+  animation: float 4s ease-in-out infinite;
+}
+
+.card-2 {
+  bottom: 48px;
+  right: -22px;
+  animation: float 4s ease-in-out infinite 2s;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-7px); }
+}
+
+.card-number {
+  font-size: 0.85rem;
+  font-weight: 900;
+  color: var(--navy);
+  line-height: 1.2;
+}
+
+.card-label {
+  font-size: 0.6rem;
+  color: var(--muted);
+  line-height: 1.3;
+}
+
+.card-icon {
+  font-size: 1.05rem;
+}
+
+/* --------------------------------------------------------------- tablet -- */
+@media (min-width: 600px) {
+  .hero-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.7rem;
+  }
+
+  .hero-buttons .btn {
+    width: auto;
+    padding-inline: 1.6rem;
+  }
+}
+
+/* -------------------------------------------------------------- desktop -- */
+@media (min-width: 900px) {
+  .hero {
+    display: flex;
+    align-items: center;
+    min-height: 100svh;
+    padding-block: calc(var(--nav-h) + 2rem) 3.5rem;
+  }
+
+  .hero-container {
+    grid-template-columns: 1fr 1fr;
+    align-items: center;
+    gap: 3rem;
+  }
+
+  .hero-content {
+    text-align: start;
+  }
+
+  .hero-subtitle {
+    margin-inline: 0;
+  }
+
+  .hero-buttons {
+    justify-content: flex-start;
+  }
+
+  .phone-frame {
+    width: 260px;
+    border-radius: 40px;
+    box-shadow: 0 40px 80px rgba(0, 0, 0, 0.5);
+  }
+
+  .phone-frame::before {
+    top: 13px;
+    width: 75px;
+    height: 5px;
+  }
+
+  .phone-screen {
+    inset: 7px;
+    border-radius: 34px;
+  }
+
+  .float-card {
+    gap: 8px;
+    padding: 10px 14px;
+    border-radius: 14px;
+  }
+
+  .card-1 {
+    top: 55px;
+    left: -38px;
+  }
+
+  .card-2 {
+    bottom: 70px;
+    right: -48px;
+  }
+
+  .card-number {
+    font-size: 1rem;
+  }
+
+  .card-label {
+    font-size: 0.62rem;
+  }
+
+  .card-icon {
+    font-size: 1.3rem;
+  }
+}

@@ -1,0 +1,602 @@
+/* admin.css - Enhanced UI & Pro Login Edition */
+
+:root {
+    --admin-bg: #f8fafc;
+    --admin-card: #ffffff;
+    --accent: #0ea5e9;
+    --accent-light: #e0f2fe;
+    --accent-dark: #0284c7;
+    --text-main: #1e293b;
+    --text-muted: #64748b;
+    --border-color: #e2e8f0;
+    --shadow-sm: 0 1px 3px 0 rgb(0 0 0 / 0.1);
+    --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+    --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+    --success: #10b981;
+    --danger: #ef4444;
+}
+
+/* ---------- Admin Container ---------- */
+.admin-container {
+    display: none;
+    min-height: 100vh;
+    background: var(--admin-bg);
+}
+
+.admin-container.logged-in {
+    display: flex;
+    flex-direction: column;
+}
+
+/* ---------- Sub-views handling ---------- */
+.admin-sub-view {
+    display: none;
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+.admin-sub-view.active {
+    display: block;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(4px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* ---------- Admin Top Navigation ---------- */
+.admin-top-nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: white;
+    padding: 1rem 2.5rem;
+    border-bottom: 1px solid var(--border-color);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+.admin-nav-links {
+    display: flex;
+    gap: 1.5rem;
+}
+
+.admin-nav-item {
+    background: none;
+    border: none;
+    padding: 0.5rem 0;
+    font-weight: 700;
+    color: var(--text-muted);
+    cursor: pointer;
+    font-family: 'Cairo', sans-serif;
+    font-size: 1rem;
+    transition: all 0.2s;
+    border-bottom: 2px solid transparent;
+}
+
+.admin-nav-item:hover {
+    color: var(--accent);
+}
+
+.admin-nav-item.active {
+    color: var(--accent);
+    border-bottom-color: var(--accent);
+}
+
+.admin-nav-user {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+}
+
+#headerUserName {
+    font-weight: 700;
+    color: var(--text-main);
+    font-size: 0.9rem;
+}
+
+.logout-link {
+    background: none;
+    border: none;
+    color: var(--danger);
+    font-weight: 700;
+    cursor: pointer;
+    font-family: 'Cairo', sans-serif;
+    font-size: 0.9rem;
+    padding: 0;
+}
+
+.logout-link:hover {
+    text-decoration: underline;
+}
+
+/* ---------- Main Content Area ---------- */
+.admin-main {
+    flex: 1;
+    padding: 2.5rem;
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+    .admin-main {
+        padding: 1.5rem;
+    }
+    .admin-top-nav {
+        padding: 1rem 1.5rem;
+        flex-direction: column;
+        gap: 1rem;
+        align-items: flex-start;
+    }
+}
+
+/* ---------- Dashboard Cards ---------- */
+.stats-bar {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1.25rem;
+    margin-bottom: 2rem;
+}
+
+.stat-card {
+    background: white;
+    border-radius: 16px;
+    padding: 1.5rem;
+    box-shadow: var(--shadow-sm);
+    border: 1px solid var(--border-color);
+}
+
+.stat-card .num {
+    font-size: 2rem;
+    font-weight: 800;
+    color: var(--text-main);
+    font-family: 'Tajawal', sans-serif;
+}
+
+.stat-card .label {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    font-weight: 600;
+}
+
+/* ---------- Pro Login Screen ---------- */
+#loginScreen {
+    position: fixed;
+    inset: 0;
+    background: #f1f5f9;
+    z-index: 2000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+}
+
+.login-wrapper {
+    background: white;
+    width: 100%;
+    max-width: 900px;
+    min-height: 540px;
+    display: flex;
+    border-radius: 24px;
+    overflow: hidden;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15);
+}
+
+.login-visual {
+    flex: 1.1;
+    background: var(--accent);
+    padding: 3rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.login-visual::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+}
+
+.visual-logo { font-size: 4.5rem; margin-bottom: 1.5rem; }
+.login-visual h2 { font-size: 2.25rem; font-weight: 900; margin-bottom: 1rem; font-family: 'Tajawal'; }
+.login-visual p { font-size: 1rem; opacity: 0.9; line-height: 1.6; max-width: 320px; margin: 0 auto; }
+
+.login-form-area {
+    flex: 1;
+    padding: 3.5rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    background: #ffffff;
+}
+
+.lc-header { margin-bottom: 2rem; }
+.lc-title { font-size: 1.75rem; font-weight: 800; color: var(--text-main); margin-bottom: 0.5rem; font-family: 'Tajawal'; }
+.lc-sub { color: var(--text-muted); font-size: 0.9rem; }
+
+.lc-fields { display: flex; flex-direction: column; gap: 1.25rem; margin-bottom: 1.5rem; }
+.lc-field label { display: block; font-size: 0.85rem; font-weight: 700; color: var(--text-main); margin-bottom: 0.5rem; }
+
+.input-with-icon {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.input-icon {
+    position: absolute;
+    right: 1rem;
+    color: var(--text-muted);
+    font-size: 1.1rem;
+}
+
+.input-with-icon input {
+    width: 100%;
+    padding: 0.75rem 2.8rem 0.75rem 1rem;
+    border-radius: 12px;
+    border: 1.5px solid var(--border-color);
+    font-family: 'Cairo', sans-serif;
+    font-size: 0.95rem;
+    transition: all 0.2s;
+    outline: none;
+}
+
+.input-with-icon input:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 4px var(--accent-light);
+}
+
+/* Pro Buttons */
+.lc-btn {
+    width: 100%;
+    padding: 0.9rem;
+    border-radius: 12px;
+    border: none;
+    background: var(--accent);
+    color: white;
+    font-weight: 700;
+    font-size: 1rem;
+    font-family: 'Cairo', sans-serif;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    box-shadow: 0 4px 6px -1px rgba(14, 165, 233, 0.2);
+}
+
+.lc-btn:hover {
+    background: var(--accent-dark);
+    transform: translateY(-2px);
+    box-shadow: 0 10px 15px -3px rgba(14, 165, 233, 0.3);
+}
+
+.lc-btn:active {
+    transform: translateY(0);
+}
+
+.lc-divider {
+    display: flex;
+    align-items: center;
+    margin: 1.5rem 0;
+    color: var(--text-muted);
+    font-size: 0.8rem;
+}
+
+.lc-divider::before, .lc-divider::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border-color);
+}
+
+.lc-divider span {
+    padding: 0 1rem;
+    font-weight: 600;
+}
+
+.btn-ghost-premium {
+    width: 100%;
+    padding: 0.75rem;
+    border-radius: 12px;
+    border: 1.5px solid var(--border-color);
+    background: #f8fafc;
+    color: var(--text-main);
+    font-weight: 600;
+    font-size: 0.9rem;
+    font-family: 'Cairo', sans-serif;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.btn-ghost-premium:hover {
+    background: #f1f5f9;
+    border-color: #cbd5e1;
+    color: var(--accent-dark);
+}
+
+#li-err {
+    color: var(--danger);
+    font-size: 0.85rem;
+    font-weight: 600;
+    margin-top: 0.75rem;
+    text-align: center;
+    min-height: 1.2rem;
+}
+
+.login-footer {
+    margin-top: 2rem;
+    text-align: center;
+    font-size: 0.75rem;
+    color: var(--text-muted);
+}
+
+/* ---------- Tables ---------- */
+.courses-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.courses-table th {
+    text-align: right;
+    padding: 1rem;
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    font-weight: 700;
+    background: #f8fafc;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.courses-table td {
+    padding: 1rem;
+    border-bottom: 1px solid #f1f5f9;
+    color: var(--text-main);
+    font-size: 0.95rem;
+}
+
+/* ---------- User Management ---------- */
+.badge {
+    padding: 0.25rem 0.75rem;
+    border-radius: 50px;
+    font-size: 0.75rem;
+    font-weight: 700;
+}
+
+.badge-admin { background: #fee2e2; color: #ef4444; }
+.badge-editor { background: #fef3c7; color: #d97706; }
+.badge-viewer { background: #e0f2fe; color: #0284c7; }
+
+.status-dot {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    margin-left: 5px;
+}
+
+.status-dot.active { background: var(--success); }
+.status-dot.inactive { background: #94a3b8; }
+
+.modal-overlay.active {
+    display: flex;
+}
+
+/* ---------- Applicant Card Pro Design ---------- */
+.applicant-card {
+    background: white;
+    border-radius: 20px;
+    border: 1px solid var(--border-color);
+    padding: 1.5rem;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+    box-shadow: var(--shadow-sm);
+    position: relative;
+    overflow: hidden;
+    text-align: right;
+}
+
+.applicant-card:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-lg);
+    border-color: var(--accent);
+}
+
+.applicant-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 4px;
+    height: 100%;
+    background: var(--accent);
+    opacity: 0.8;
+}
+
+.applicant-card-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.applicant-avatar {
+    width: 52px;
+    height: 52px;
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: 800;
+    font-size: 1.2rem;
+    font-family: 'Tajawal';
+    flex-shrink: 0;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.applicant-info-main {
+    flex: 1;
+    min-width: 0;
+}
+
+.applicant-name {
+    font-size: 1.1rem;
+    font-weight: 800;
+    color: var(--text-main);
+    font-family: 'Tajawal';
+    margin-bottom: 2px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.applicant-date {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    font-weight: 600;
+}
+
+.applicant-card-body {
+    display: flex;
+    flex-direction: column;
+    gap: 0.85rem;
+}
+
+.applicant-course-box {
+    background: #f8fafc;
+    border: 1px solid #f1f5f9;
+    border-radius: 12px;
+    padding: 0.75rem 1rem;
+}
+
+.course-label {
+    font-size: 0.65rem;
+    color: var(--text-muted);
+    font-weight: 700;
+    text-transform: uppercase;
+    margin-bottom: 4px;
+    letter-spacing: 0.5px;
+}
+
+.course-value {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-weight: 700;
+    font-size: 0.9rem;
+    color: var(--text-main);
+}
+
+.applicant-contact-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.contact-item {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    font-size: 0.85rem;
+    color: var(--text-main);
+    font-weight: 600;
+}
+
+.contact-item .icon {
+    font-size: 1rem;
+    width: 20px;
+    display: inline-block;
+    text-align: center;
+}
+
+.applicant-card-actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr auto;
+    gap: 0.75rem;
+    margin-top: 0.5rem;
+}
+
+.action-btn-sm {
+    padding: 0.6rem;
+    border-radius: 10px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    text-align: center;
+    text-decoration: none;
+    transition: all 0.2s;
+    font-family: 'Cairo';
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    cursor: pointer;
+}
+
+.btn-whatsapp {
+    background: #22c55e15;
+    color: #16a34a;
+    border: 1px solid #22c55e30;
+}
+
+.btn-whatsapp:hover {
+    background: #16a34a;
+    color: white;
+}
+
+.btn-call {
+    background: #3b82f615;
+    color: #2563eb;
+    border: 1px solid #3b82f630;
+}
+
+.btn-call:hover {
+    background: #2563eb;
+    color: white;
+}
+
+.btn-delete-small {
+    width: 38px;
+    height: 38px;
+    border-radius: 10px;
+    border: 1px solid #fee2e2;
+    background: #fef2f2;
+    color: #ef4444;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.btn-delete-small:hover {
+    background: #ef4444;
+    color: white;
+    border-color: #ef4444;
+}
+
+@media (max-width: 768px) {
+    .login-wrapper {
+        flex-direction: column;
+        max-width: 400px;
+    }
+    .login-visual {
+        padding: 2rem;
+        min-height: auto;
+    }
+    .login-form-area {
+        padding: 2rem;
+    }
+}

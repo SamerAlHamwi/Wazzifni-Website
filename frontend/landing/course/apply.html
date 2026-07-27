@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>التسجيل في الدورة - Wazzifni</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&family=Tajawal:wght@300;400;500;700;800&display=swap" rel="stylesheet">
+
+    <!-- CSS Files -->
+    <link rel="stylesheet" href="/course/css/variables.css">
+    <link rel="stylesheet" href="/course/css/main.css">
+    <link rel="stylesheet" href="/course/css/components.css">
+    <link rel="stylesheet" href="/course/css/responsive.css">
+
+    <style>
+        .apply-container {
+            max-width: 800px;
+            margin: 2rem auto;
+            background: var(--white);
+            padding: 2rem;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+            border: 1px solid var(--border);
+        }
+
+        .registration-form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            text-align: right;
+            width: 100%;
+            margin-top: 2rem;
+        }
+
+        .registration-form-grid .form-group {
+            width: 100%;
+        }
+
+        .registration-form-grid .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 700;
+            color: var(--navy);
+        }
+
+        .registration-form-grid .form-group input,
+        .registration-form-grid .form-group select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            font-family: 'Cairo', sans-serif;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+
+        .registration-form-grid .form-group input:focus,
+        .registration-form-grid .form-group select:focus {
+            outline: none;
+            border-color: var(--sky);
+        }
+
+        .span-2 {
+            grid-column: span 2;
+        }
+
+        .course-info-card {
+            background: var(--bg);
+            padding: 1.5rem;
+            border-radius: 15px;
+            border-right: 5px solid var(--sky);
+            margin-bottom: 2rem;
+        }
+
+        .course-info-card h2 {
+            margin-bottom: 10px;
+            color: var(--navy);
+            font-size: 1.5rem;
+        }
+
+        .course-info-card .meta {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            font-weight: 600;
+        }
+
+        @media (max-width: 600px) {
+            .registration-form-grid {
+                grid-template-columns: 1fr;
+            }
+            .registration-form-grid .form-group.span-2 {
+                grid-column: span 1 !important;
+            }
+            .apply-container {
+                padding: 1.5rem;
+                margin: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<!-- Loading Overlay -->
+<div id="loadingOverlay" class="loading-overlay" style="display:none;">
+    <div class="spinner"></div>
+</div>
+
+<!-- Navigation -->
+<nav>
+    <div style="display:flex; align-items:center; gap:2rem;">
+        <a href="/course/" class="logo-wrap" style="text-decoration: none;">
+            <img src="/course/assets/images/logo.png" alt="Wazzifni Logo" class="logo-img">
+            <div>
+                <div class="logo">Wazzifni</div>
+            </div>
+        </a>
+    </div>
+</nav>
+
+<div class="apply-container">
+    <div class="page-header" style="border:none; margin-bottom: 1rem; padding-bottom: 0;">
+        <h1>📝 التسجيل في الدورة</h1>
+        <p>يرجى ملء كافة البيانات المطلوبة لإتمام عملية التسجيل</p>
+    </div>
+
+    <div id="courseInfo" class="course-info-card">
+        <!-- Skeleton Loading -->
+        <div class="skeleton" style="height: 25px; width: 60%; margin-bottom: 10px;"></div>
+        <div class="skeleton" style="height: 20px; width: 40%;"></div>
+    </div>
+
+    <div class="registration-form-grid">
+        <div class="form-group span-2">
+            <label>الاسم الكامل</label>
+            <input type="text" id="regName" placeholder="أدخل اسمك الكامل">
+        </div>
+        <div class="form-group">
+            <label>رقم الهاتف</label>
+            <input type="tel" id="regPhone" placeholder="07XXXXXXXXX">
+            <small style="display:block; color: #666; margin-top: 5px; font-size: 0.8rem;">الأرقام تكتب بالإنكيزية</small>
+        </div>
+        <div class="form-group">
+            <label>الجنس</label>
+            <select id="regGender">
+                <option value="" disabled selected>اختر الجنس</option>
+                <option value="male">ذكر (Male)</option>
+                <option value="female">أنثى (Female)</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label>البريد الإلكتروني (اختياري)</label>
+            <input type="email" id="regEmail" placeholder="example@email.com">
+        </div>
+
+        <div class="form-group">
+            <label>المحافظة</label>
+            <select id="regGovernorate">
+                <option value="" disabled selected>اختر المحافظة</option>
+                <option value="Najaf">النجف (Najaf)</option>
+                <option value="Baghdad">بغداد (Baghdad)</option>
+                <option value="Basra">البصرة (Basra)</option>
+                <option value="Nineveh">نينوى (Nineveh)</option>
+                <option value="Erbil">أربيل (Erbil)</option>
+                <option value="Sulaymaniyah">السليمانية (Sulaymaniyah)</option>
+                <option value="Duhok">دهوك (Duhok)</option>
+                <option value="Kirkuk">كركوك (Kirkuk)</option>
+                <option value="Anbar">الأنبار (Anbar)</option>
+                <option value="Babil">بابل (Babil)</option>
+                <option value="Karbala">كربلاء (Karbala)</option>
+                <option value="Qadisiyah">القادسية (Qadisiyah)</option>
+                <option value="Wasit">واسط (Wasit)</option>
+                <option value="Salah Al-Din">صلاح الدين (Salah Al-Din)</option>
+                <option value="Diyala">ديالى (Diyala)</option>
+                <option value="Maysan">ميسان (Maysan)</option>
+                <option value="Muthanna">المثنى (Muthanna)</option>
+                <option value="Dhi Qar">ذي قار (Dhi Qar)</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label>التحصيل الدراسي</label>
+            <select id="regEducationLevel">
+                <option value="" disabled selected>اختر التحصيل</option>
+                <option value="No Formal Education">بدون شهادة (No Formal Education)</option>
+                <option value="Primary School">ابتدائي (Primary School)</option>
+                <option value="Middle School">متوسط (Middle School)</option>
+                <option value="High School">إعدادي (High School)</option>
+                <option value="Diploma">دبلوم (Diploma)</option>
+                <option value="Bachelor’s Degree">بكالوريوس (Bachelor’s Degree)</option>
+                <option value="Master’s Degree">ماجستير (Master’s Degree)</option>
+                <option value="PhD">دكتوراه (PhD)</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label>التخصص الدراسي</label>
+            <input type="text" id="regStudyDescription" placeholder="أدخل تخصصك الدراسي">
+        </div>
+
+        <div class="form-group span-2">
+            <label>الوظيفة الحالية</label>
+            <select id="regCurrentJob">
+                <option value="" disabled selected>اختر الوظيفة</option>
+                <option value="Student">طالب (Student)</option>
+                <option value="Employee">موظف (Employee)</option>
+                <option value="Unemployed">عاطل (Unemployed)</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="modal-actions" style="margin-top: 30px; display: flex; gap: 10px;">
+        <button class="btn btn-success" id="confirmRegisterBtn" style="flex: 2; padding: 1rem;">✅ تأكيد التسجيل</button>
+        <a href="/course/" class="btn btn-ghost" style="flex: 1; padding: 1rem; text-decoration: none; text-align: center; display: flex; align-items: center; justify-content: center;">إلغاء</a>
+    </div>
+</div>
+
+<!-- Toast Container -->
+<div class="toast-container" id="toastContainer"></div>
+
+<!-- JavaScript Files -->
+<script src="/course/js/models/Course.js"></script>
+<script src="/course/js/services/ApiService.js"></script>
+<script src="/course/js/services/CourseService.js"></script>
+<script src="/course/js/services/UtilsService.js"></script>
+<script src="/course/js/controllers/ApplyController.js"></script>
+<script src="/course/js/apply.js"></script>
+</body>
+</html>

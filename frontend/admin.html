@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>وظِّفني – لوحة الإدارة</title>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&family=Tajawal:wght@300;400;500;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="sales/css/variables.css" />
+    <link rel="stylesheet" href="sales/css/style.css" />
+    <style>
+        #admin-main-content { display: none; }
+    </style>
+</head>
+<body>
+
+<!-- LOGIN OVERLAY -->
+<div id="login-overlay" class="login-overlay">
+    <div class="login-box">
+        <div class="rep-logo-badge" style="margin-bottom: 20px;">
+            <img
+                src="sales/images/logo.png"
+                alt="وظِّفني" />
+        </div>
+        <h2>🔒 دخول الإدارة</h2>
+        <div class="form-group">
+            <label class="form-label">اسم المستخدم</label>
+            <input type="text" id="login-user" class="form-input" placeholder="أدخل اسم المستخدم">
+        </div>
+        <div class="form-group">
+            <label class="form-label">كلمة المرور</label>
+            <input type="password" id="login-pass" class="form-input" placeholder="أدخل كلمة المرور">
+        </div>
+        <button class="btn btn-primary btn-full" onclick="checkAdminLogin()">تسجيل الدخول</button>
+        <div id="login-err" style="color:var(--danger); margin-top:15px; font-size:13px; font-weight:600;"></div>
+    </div>
+</div>
+
+<div id="admin-main-content">
+    <!-- TOPBAR -->
+    <nav class="topbar">
+        <div class="topbar-brand">
+            <div class="topbar-logo">
+                <img
+                    src="sales/images/logo.png"
+                    alt="وظِّفني"/>
+            </div>
+            <div>
+                <div class="topbar-title">وظِّفني</div>
+                <div class="topbar-sub">نظام إدارة المندوبين</div>
+            </div>
+        </div>
+        <div style="display:flex; align-items:center; gap:15px;">
+            <div id="current-admin-name" style="font-size:14px; font-weight:600; color:var(--text);"></div>
+            <button class="btn btn-danger btn-sm" onclick="logoutAdmin()">تسجيل الخروج 🚪</button>
+        </div>
+    </nav>
+
+    <!-- ADMIN PAGE -->
+    <div class="page active" id="page-admin">
+        <div class="dashboard">
+            <div class="page-header">
+                <h1>📊 لوحة إدارة المندوبين</h1>
+                <p>متابعة التقارير والإحصائيات المالية وبيانات الشركات</p>
+            </div>
+
+            <div class="stats-row">
+                <div class="stat-card">
+                    <div class="stat-icon blue">📄</div>
+                    <div class="stat-info">
+                        <div class="stat-val" id="stat-reports">0</div>
+                        <div class="stat-label">إجمالي التقارير</div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon teal">⭐</div>
+                    <div class="stat-info">
+                        <div class="stat-val" id="stat-points">0</div>
+                        <div class="stat-label">مجموع النقاط</div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon gold">💰</div>
+                    <div class="stat-info">
+                        <div class="stat-val" id="stat-amount">0</div>
+                        <div class="stat-label">المبلغ الإجمالي (د.ع)</div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon green">👥</div>
+                    <div class="stat-info">
+                        <div class="stat-val" id="stat-reps-count">0</div>
+                        <div class="stat-label">عدد المندوبين</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tab-bar">
+                <button class="tab active" onclick="switchAdminTab('companies')" id="atab-companies">🏢 الشركات</button>
+                <button class="tab" onclick="switchAdminTab('reports')" id="atab-reports">📄 التقارير</button>
+                <button class="tab" onclick="switchAdminTab('finance')" id="atab-finance">💰 التقارير المالية</button>
+                <button class="tab" onclick="switchAdminTab('reps')" id="atab-reps">👤 المندوبون</button>
+                <button class="tab" onclick="switchAdminTab('actions')" id="atab-actions">⚙️ الإجراءات</button>
+                <button class="tab" onclick="switchAdminTab('admins')" id="atab-admins" style="display:none;">🔑 المدراء</button>
+            </div>
+
+            <!-- COMPANIES TAB -->
+            <div id="content-companies" class="admin-content">
+                <div class="card">
+                    <div class="card-head">
+                        <div style="display:flex; align-items:center; gap:12px;">
+                            <h2>🏢 بيانات الشركات المزارة</h2>
+                            <button class="btn btn-warning btn-sm" onclick="exportCompaniesToExcel()">📥 إكسل</button>
+                        </div>
+                        <span id="companies-count" style="font-size:12px;color:var(--text-muted);"></span>
+                    </div>
+                    <div id="companies-grid" class="companies-grid">
+                        <div class="empty-state">
+                            <div class="es-icon">🏢</div>
+                            <p>لا توجد شركات بعد.<br />ستظهر هنا بعد إرسال أول تقرير من المندوب.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- REPORTS TAB -->
+            <div id="content-reports" class="admin-content" style="display:none;">
+                <div class="card">
+                    <div class="card-head">
+                        <div style="display:flex; align-items:center; gap:12px;">
+                            <h2>📋 آخر التقارير</h2>
+                            <button class="btn btn-warning btn-sm" onclick="exportReportsToExcel()">📥 إكسل</button>
+                        </div>
+                        <button class="btn btn-danger btn-sm" onclick="clearReports()">🗑️ مسح الكل</button>
+                    </div>
+                    <div id="reports-table-wrap">
+                        <div class="empty-state">
+                            <div class="es-icon">📭</div>
+                            <p>لا توجد تقارير حتى الآن.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- FINANCE TAB -->
+            <div id="content-finance" class="admin-content" style="display:none;">
+                <div class="card">
+                    <div class="card-head">
+                        <div style="display:flex; align-items:center; gap:12px;">
+                            <h2>💰 التقارير المالية حسب المندوب</h2>
+                            <button class="btn btn-warning btn-sm" onclick="exportFinanceToExcel()">📥 إكسل</button>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div id="finance-grid" class="rep-fin-grid"></div>
+                    </div>
+                </div>
+                <div id="finance-detail" style="display:none;">
+                    <div class="card">
+                        <div class="card-head">
+                            <div style="display:flex; align-items:center; gap:12px;">
+                                <h2 id="fin-detail-title">تفاصيل المندوب</h2>
+                                <button class="btn btn-warning btn-sm" onclick="exportFinanceDetailToExcel()">📥 إكسل</button>
+                            </div>
+                            <button class="btn btn-sm" style="background:var(--surface2);color:var(--text);"
+                                    onclick="hideFinanceDetail()">✕ إغلاق</button>
+                        </div>
+                        <div id="fin-detail-body" class="card-body"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- REPS TAB -->
+            <div id="content-reps" class="admin-content" style="display:none;">
+                <div class="two-col">
+                    <div class="card">
+                        <div class="card-head">
+                            <h2>👤 إضافة مندوب جديد</h2>
+                        </div>
+                        <div class="card-body">
+                            <div class="form-group">
+                                <label class="form-label">الاسم الكامل</label>
+                                <input class="form-input" id="rep-full-name" placeholder="مثال: حسن أحمد محمد" />
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">اسم المستخدم (للدخول)</label>
+                                <input class="form-input" id="rep-username" placeholder="مثال: hasan88" />
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">كلمة المرور</label>
+                                <input class="form-input" type="password" id="rep-password" placeholder="••••••••" />
+                            </div>
+                            <button class="btn btn-primary btn-full" onclick="addRep()">إضافة المندوب</button>
+                            <div id="rep-msg"></div>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-head">
+                            <h2>🔐 تحديث كلمة المرور</h2>
+                        </div>
+                        <div class="card-body">
+                            <div class="form-group">
+                                <label class="form-label">اختر المندوب</label>
+                                <select class="form-select" id="sel-update-rep-pass">
+                                    <option value="">— اختر —</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">كلمة المرور الجديدة</label>
+                                <input class="form-input" type="password" id="inp-update-rep-pass" placeholder="••••••••" />
+                            </div>
+                            <button class="btn btn-accent btn-full" onclick="updateRepPassword()">تحديث كلمة المرور</button>
+                            <div id="rep-update-msg"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-head">
+                        <div style="display:flex; align-items:center; gap:12px;">
+                            <h2>👥 قائمة المندوبين الحالية</h2>
+                            <button class="btn btn-warning btn-sm" onclick="exportRepsToExcel()">📥 إكسل</button>
+                        </div>
+                    </div>
+                    <div class="card-body" id="reps-list">
+                        <div class="empty-state">
+                            <div class="es-icon">👤</div>
+                            <p>لا يوجد مندوبون بعد.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ACTIONS TAB -->
+            <div id="content-actions" class="admin-content" style="display:none;">
+                <div class="two-col">
+                    <div class="card">
+                        <div class="card-head">
+                            <h2>➕ إضافة إجراء</h2>
+                        </div>
+                        <div class="card-body">
+                            <div class="form-group"><label class="form-label">اسم الإجراء</label><input class="form-input"
+                                                                                                        id="inp-new-action" placeholder="مثال: زيارة ميدانية" /></div>
+                            <div class="form-group"><label class="form-label">عدد النقاط</label><input class="form-input"
+                                                                                                       type="number" id="inp-new-pts" placeholder="0" min="0" /></div>
+                            <button class="btn btn-primary btn-full" onclick="addAction()">إضافة الإجراء</button>
+                            <div id="action-msg"></div>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-head">
+                            <h2>🗑️ حذف إجراء</h2>
+                        </div>
+                        <div class="card-body">
+                            <div class="form-group"><label class="form-label">اختر الإجراء للحذف</label><select class="form-select"
+                                                                                                                id="sel-del-action">
+                                <option value="">— اختر —</option>
+                            </select></div>
+                            <button class="btn btn-danger btn-full" onclick="deleteAction()">حذف الإجراء</button>
+                            <div id="action-del-msg"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-head">
+                        <div style="display:flex; align-items:center; gap:12px;">
+                            <h2>⚙️ قائمة الإجراءات الحالية</h2>
+                            <button class="btn btn-warning btn-sm" onclick="exportActionsToExcel()">📥 إكسل</button>
+                        </div>
+                    </div>
+                    <div id="actions-list-table">
+                        <div class="empty-state">
+                            <div class="es-icon">⚙️</div>
+                            <p>لا توجد إجراءات بعد.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ADMINS TAB (SUPER ADMIN ONLY) -->
+            <div id="content-admins" class="admin-content" style="display:none;">
+                <div class="two-col">
+                    <div class="card">
+                        <div class="card-head">
+                            <h2>🔑 إضافة مدير جديد</h2>
+                        </div>
+                        <div class="card-body">
+                            <div class="form-group">
+                                <label class="form-label">الاسم الكامل</label>
+                                <input class="form-input" id="admin-full-name" placeholder="مثال: حسن أحمد محمد" />
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">اسم المستخدم (للدخول)</label>
+                                <input class="form-input" id="admin-username" placeholder="مثال: admin1" />
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">كلمة المرور</label>
+                                <input class="form-input" type="password" id="admin-password" placeholder="••••••••" />
+                            </div>
+                            <div class="form-group" style="display:flex; align-items:center; gap:10px;">
+                                <input type="checkbox" id="admin-can-edit" style="width:20px; height:20px;" />
+                                <label for="admin-can-edit" style="cursor:pointer">صلاحية التعديل والحذف</label>
+                            </div>
+                            <button class="btn btn-primary btn-full" onclick="addAdmin()">إضافة المدير</button>
+                            <div id="admin-msg"></div>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-head">
+                            <h2>🔑 قائمة المدراء</h2>
+                        </div>
+                        <div class="card-body" id="admins-list">
+                            <div class="empty-state">
+                                <div class="es-icon">🔑</div>
+                                <p>لا يوجد مدراء بعد.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<!-- EDIT MODAL -->
+<div id="edit-report-modal" class="login-overlay" style="display:none; z-index: 1000;">
+    <div class="login-box" style="max-width: 600px; width: 95%; max-height: 90vh; overflow-y: auto;">
+        <div style="display:flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+            <h2 style="margin:0;">✏️ تعديل بيانات التقرير</h2>
+            <button class="btn btn-sm" style="background:var(--surface2);color:var(--text); border:none; border-radius:50%; width:30px; height:30px;" onclick="closeEditModal()">✕</button>
+        </div>
+        <input type="hidden" id="edit-report-id">
+        <div class="two-col">
+            <div class="form-group">
+                <label class="form-label">اسم الشركة</label>
+                <input type="text" id="edit-company-name" class="form-input">
+            </div>
+            <div class="form-group">
+                <label class="form-label">رقم الهاتف</label>
+                <input type="text" id="edit-company-phone" class="form-input">
+            </div>
+        </div>
+        <div class="two-col">
+            <div class="form-group">
+                <label class="form-label">البريد الإلكتروني</label>
+                <input type="text" id="edit-company-email" class="form-input">
+            </div>
+            <div class="form-group">
+                <label class="form-label">العنوان</label>
+                <input type="text" id="edit-company-address" class="form-input">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="form-label">الموقع (GPS)</label>
+            <input type="text" id="edit-company-gps" class="form-input">
+        </div>
+        <div class="form-group">
+            <label class="form-label">ملاحظات</label>
+            <textarea id="edit-notes" class="form-input" style="height: 60px;"></textarea>
+        </div>
+        <div class="form-group">
+            <label class="form-label">الإجراءات المتخذة</label>
+            <div id="edit-actions-container" style="display:flex; flex-wrap:wrap; gap:8px; margin-bottom:12px; padding:10px; background:var(--surface2); border-radius:8px; min-height:40px;">
+                <!-- Actions badges will be here -->
+            </div>
+            <div style="display:flex; gap:10px;">
+                <select id="edit-add-action-select" class="form-select" style="flex:1;">
+                    <option value="">— إضافة إجراء —</option>
+                </select>
+                <button class="btn btn-primary" onclick="addActionToEdit()">إضافة</button>
+            </div>
+        </div>
+        <div style="margin-top:24px; display:flex; gap:12px;">
+            <button class="btn btn-accent btn-full" onclick="saveReportEdit()">حفظ التغييرات</button>
+            <button class="btn btn-full" style="background:var(--surface2); color:var(--text);" onclick="closeEditModal()">إلغاء</button>
+        </div>
+    </div>
+</div>
+
+<!-- SUCCESS OVERLAY -->
+<div class="success-overlay" id="success-overlay">
+    <div class="success-box">
+        <div class="s-icon">🎉</div>
+        <h3>تم الإرسال بنجاح!</h3>
+        <p>تم تسجيل تقريرك وإرساله إلى لوحة الإدارة.</p>
+        <button class="btn btn-primary" onclick="closeSuccess()" style="width:100%;">حسناً</button>
+    </div>
+</div>
+
+<!-- Excel Library -->
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+
+<script src="sales/js/state.js"></script>
+<script src="sales/js/app.js"></script>
+<script src="sales/js/admin.js"></script>
+<script>
+    // Simple check on load
+    document.addEventListener('DOMContentLoaded', async () => {
+        const storedAdmin = sessionStorage.getItem('adminUser');
+        if (sessionStorage.getItem('isAdminLoggedIn') === 'true' && storedAdmin) {
+            state.currentAdmin = JSON.parse(storedAdmin);
+            await loadState(); // Ensure state is loaded with currentAdmin context
+
+            const nameEl = document.getElementById('current-admin-name');
+            if (nameEl) nameEl.textContent = `👤 ${state.currentAdmin.fullName}`;
+
+            document.getElementById('login-overlay').style.display = 'none';
+            document.getElementById('admin-main-content').style.display = 'block';
+
+            if (state.currentAdmin.isSuperAdmin) {
+                document.getElementById('atab-admins').style.display = '';
+            }
+            renderDashboard();
+        }
+    });
+
+    async function checkAdminLogin() {
+        const u = document.getElementById('login-user').value;
+        const p = document.getElementById('login-pass').value;
+        const err = document.getElementById('login-err');
+
+        try {
+            const res = await fetch(`${API_URL}/admins/login`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ username: u, password: p })
+            });
+
+            if (!res.ok) {
+                const data = await res.json();
+                throw new Error(data.error || 'Login failed');
+            }
+
+            const admin = await res.json();
+            sessionStorage.setItem('isAdminLoggedIn', 'true');
+            sessionStorage.setItem('adminUser', JSON.stringify(admin));
+            state.currentAdmin = admin;
+
+            await loadState(); // Load full state after login
+
+            const nameEl = document.getElementById('current-admin-name');
+            if (nameEl) nameEl.textContent = `👤 ${state.currentAdmin.fullName}`;
+
+            document.getElementById('login-overlay').style.display = 'none';
+            document.getElementById('admin-main-content').style.display = 'block';
+
+            if (state.currentAdmin.isSuperAdmin) {
+                document.getElementById('atab-admins').style.display = '';
+            }
+
+            renderDashboard();
+        } catch (e) {
+            err.textContent = `❌ ${e.message}`;
+            setTimeout(() => { err.textContent = ''; }, 3000);
+        }
+    }
+
+    function logoutAdmin() {
+        if (!confirm('هل أنت متأكد من تسجيل الخروج؟')) return;
+        sessionStorage.removeItem('isAdminLoggedIn');
+        sessionStorage.removeItem('adminUser');
+        state.currentAdmin = null;
+        state.admins = [];
+        location.reload(); // Simplest way to reset everything
+    }
+
+    // Allow Enter key to submit
+    document.getElementById('login-pass').addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') checkAdminLogin();
+    });
+</script>
+</body>
+</html>

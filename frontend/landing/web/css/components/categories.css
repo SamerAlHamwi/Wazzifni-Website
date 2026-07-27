@@ -1,0 +1,109 @@
+/* =============================================================================
+   Categories — 2-up chips on phones, icon tiles on desktop
+   ============================================================================= */
+.categories {
+  padding-block: var(--section-y);
+  background: var(--surface);
+}
+
+.categories-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.55rem;
+  max-width: var(--maxw);
+  margin-inline: auto;
+}
+
+.category-card {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  width: 100%;
+  min-height: 52px;
+  padding: 0.6rem 0.75rem;
+  text-align: start;
+  background: var(--bg);
+  border: 1.5px solid var(--border);
+  border-radius: 14px;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  transition: transform var(--t-fast), border-color var(--t-fast), box-shadow var(--t-fast);
+}
+
+.category-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--grad);
+  opacity: 0;
+  transition: opacity var(--t-fast);
+}
+
+.category-card:active {
+  transform: scale(0.97);
+}
+
+.category-icon {
+  position: relative;
+  z-index: 1;
+  flex: 0 0 auto;
+  font-size: 1.25rem;
+  line-height: 1;
+  transition: transform var(--t-fast);
+}
+
+.category-label {
+  position: relative;
+  z-index: 1;
+  font-size: var(--fs-sm);
+  font-weight: 700;
+  color: var(--ink);
+  line-height: 1.3;
+  transition: color var(--t-fast);
+}
+
+@media (hover: hover) {
+  .category-card:hover {
+    transform: translateY(-5px);
+    border-color: var(--blue);
+    box-shadow: var(--shadow-lg);
+  }
+
+  .category-card:hover::before {
+    opacity: 1;
+  }
+
+  .category-card:hover .category-label {
+    color: #fff;
+  }
+
+  .category-card:hover .category-icon {
+    transform: scale(1.15);
+  }
+}
+
+@media (min-width: 700px) {
+  .categories-grid {
+    grid-template-columns: repeat(auto-fill, minmax(165px, 1fr));
+    gap: 1rem;
+  }
+
+  .category-card {
+    flex-direction: column;
+    justify-content: center;
+    gap: 0.6rem;
+    min-height: 0;
+    padding: 1.5rem 1rem;
+    text-align: center;
+    border-radius: 18px;
+  }
+
+  .category-icon {
+    font-size: 2rem;
+  }
+
+  .category-label {
+    font-size: 0.88rem;
+  }
+}

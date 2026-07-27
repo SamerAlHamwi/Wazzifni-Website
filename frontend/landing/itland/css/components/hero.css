@@ -1,0 +1,322 @@
+/* =============================================================================
+   Hero — company name, tagline, pitch, CTAs, and a glass "system" panel.
+   ============================================================================= */
+.hero {
+  position: relative;
+  isolation: isolate;
+  padding-block: calc(var(--nav-h) + clamp(2.5rem, 9vw, 5rem)) clamp(2.5rem, 8vw, 5rem);
+  overflow: hidden;
+  background:
+    radial-gradient(90% 70% at 85% 0%, rgba(0, 135, 198, 0.35), transparent 60%),
+    radial-gradient(70% 60% at 10% 20%, rgba(246, 138, 41, 0.16), transparent 62%),
+    linear-gradient(180deg, #041c33 0%, #04182c 100%);
+}
+
+/* Faint engineering grid. Pure CSS, so it costs no request and scales freely. */
+.hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background-image:
+    linear-gradient(rgba(120, 180, 220, 0.07) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(120, 180, 220, 0.07) 1px, transparent 1px);
+  background-size: 46px 46px;
+  mask-image: radial-gradient(80% 70% at 50% 30%, #000 30%, transparent 100%);
+  -webkit-mask-image: radial-gradient(80% 70% at 50% 30%, #000 30%, transparent 100%);
+}
+
+.hero-container {
+  display: grid;
+  gap: clamp(2rem, 6vw, 3.5rem);
+  align-items: center;
+  width: 100%;
+  max-width: var(--maxw);
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+
+.hero-content {
+  text-align: center;
+}
+
+.hero-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.4rem 1rem;
+  margin-bottom: 1.1rem;
+  border-radius: var(--r-pill);
+  background: rgba(53, 181, 240, 0.12);
+  border: 1px solid rgba(53, 181, 240, 0.32);
+  color: var(--blue-bright);
+  font-size: var(--fs-xs);
+  font-weight: 700;
+}
+
+.hero-title {
+  font-size: var(--fs-display);
+  font-weight: 900;
+  line-height: 1.12;
+  letter-spacing: -0.01em;
+  color: #fff;
+  text-wrap: balance;
+}
+
+/* The company name is Latin inside an RTL document: the isolate keeps the
+   bidi algorithm from reordering it against neighbouring Arabic text. */
+.hero-title .brand {
+  display: inline-block;
+  unicode-bidi: isolate;
+  background: var(--grad-text);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* Fallback for engines without background-clip:text — never an invisible h1. */
+@supports not ((-webkit-background-clip: text) or (background-clip: text)) {
+  .hero-title .brand {
+    color: var(--blue-bright);
+    background: none;
+  }
+}
+
+.hero-tagline {
+  display: block;
+  margin-top: 0.5rem;
+  font-size: clamp(1rem, 3.4vw, 1.6rem);
+  font-weight: 700;
+  color: var(--gold);
+  unicode-bidi: isolate;
+}
+
+.hero-subtitle {
+  margin: 1.1rem auto 0;
+  max-width: 56ch;
+  font-size: var(--fs-body);
+  line-height: 1.9;
+  color: var(--muted);
+  text-wrap: pretty;
+}
+
+.hero-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.7rem;
+  margin-top: 1.8rem;
+}
+
+.hero-metrics {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.6rem;
+  margin-top: 2.2rem;
+  padding-top: 1.6rem;
+  border-top: 1px solid var(--border);
+}
+
+/* A <dl> must list its term before its description, but the number reads better
+   above the label — so the pair is flipped visually rather than in the markup. */
+.hero-metrics > div {
+  display: flex;
+  flex-direction: column-reverse;
+}
+
+.hero-metric-value {
+  font-size: clamp(1.2rem, 4.4vw, 1.9rem);
+  font-weight: 900;
+  color: #fff;
+  line-height: 1.2;
+}
+
+.hero-metric-label {
+  font-size: var(--fs-xs);
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+/* ------------------------------------------------------------ glass panel -- */
+.hero-visual {
+  position: relative;
+  display: flex;
+  justify-content: center;
+}
+
+.hero-panel {
+  position: relative;
+  width: min(100%, 440px);
+  /* The extra bottom padding is the clearance the lower floating badge sits
+     in, so it never lands on top of the note above it. */
+  padding: 1rem 1rem 2.4rem;
+  border-radius: var(--r-xl);
+  background: linear-gradient(150deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.03));
+  border: 1px solid var(--border-strong);
+  box-shadow: var(--shadow-lg);
+  backdrop-filter: blur(6px);
+}
+
+.hero-panel-bar {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding-bottom: 0.8rem;
+  margin-bottom: 0.9rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.hero-panel-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.25);
+}
+
+.hero-panel-dot:nth-child(1) {
+  background: #ff5f57;
+}
+
+.hero-panel-dot:nth-child(2) {
+  background: #febc2e;
+}
+
+.hero-panel-dot:nth-child(3) {
+  background: #28c840;
+}
+
+.hero-panel-title {
+  margin-inline-start: auto;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--muted);
+  letter-spacing: 0.04em;
+  unicode-bidi: isolate;
+}
+
+.hero-stack {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(96px, 1fr));
+  gap: 0.5rem;
+}
+
+.hero-chip {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.55rem 0.6rem;
+  border-radius: var(--r-sm);
+  background: rgba(4, 24, 44, 0.55);
+  border: 1px solid var(--border);
+  font-size: 0.76rem;
+  font-weight: 700;
+  color: #dcecf8;
+  unicode-bidi: isolate;
+}
+
+.hero-chip span[aria-hidden] {
+  font-size: 0.95rem;
+  line-height: 1;
+}
+
+/* Block, not flex: a bare text node in a flex container becomes an anonymous
+   item with min-width:auto and refuses to wrap, which clipped this line. */
+.hero-panel-note {
+  display: block;
+  margin-top: 0.9rem;
+  padding: 0.7rem 0.8rem;
+  border-radius: var(--r-sm);
+  background: rgba(53, 181, 240, 0.1);
+  border: 1px solid rgba(53, 181, 240, 0.25);
+  font-size: var(--fs-xs);
+  color: #cfe7f7;
+  line-height: 1.6;
+}
+
+/* Floating badges. They sit outside the panel's padding box, so the hero keeps
+   overflow:hidden to stop them widening the page on small screens. */
+.hero-float {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  padding: 0.6rem 0.9rem;
+  border-radius: var(--r-md);
+  background: rgba(6, 31, 56, 0.92);
+  border: 1px solid var(--border-strong);
+  box-shadow: var(--shadow-md);
+  animation: hero-float 5s var(--ease) infinite;
+}
+
+/* Sits mostly above the panel's title bar so it does not cover the dots. */
+.hero-float--1 {
+  top: -30px;
+  inset-inline-start: -10px;
+}
+
+.hero-float--2 {
+  bottom: -22px;
+  inset-inline-end: -14px;
+  animation-delay: -2.5s;
+}
+
+.hero-float-icon {
+  font-size: 1.15rem;
+  line-height: 1;
+}
+
+.hero-float-value {
+  display: block;
+  font-size: 0.92rem;
+  font-weight: 900;
+  color: #fff;
+  line-height: 1.2;
+  unicode-bidi: isolate;
+}
+
+.hero-float-label {
+  display: block;
+  font-size: 0.68rem;
+  color: var(--muted);
+  line-height: 1.3;
+}
+
+@keyframes hero-float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-9px);
+  }
+}
+
+/* --------------------------------------------------------- tablet & up ---- */
+@media (min-width: 620px) {
+  .hero-stack {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (min-width: 992px) {
+  .hero-container {
+    grid-template-columns: 1.08fr 0.92fr;
+  }
+
+  .hero-content {
+    text-align: start;
+  }
+
+  .hero-subtitle,
+  .hero-buttons {
+    margin-inline: 0;
+  }
+
+  .hero-buttons {
+    justify-content: flex-start;
+  }
+
+  .hero-metrics {
+    max-width: 32rem;
+  }
+}
