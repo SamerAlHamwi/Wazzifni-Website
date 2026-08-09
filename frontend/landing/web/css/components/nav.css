@@ -67,6 +67,41 @@
   transform: scale(0.96);
 }
 
+/* ----------------------------------------------------- language switcher -- */
+/* Sits between the links and the CTA on every breakpoint — it is chrome, not a
+   nav item, so it stays out of the drawer where it would be hidden on phones. */
+.nav-lang {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+  min-width: 44px;
+  min-height: 34px;
+  padding: 0.25rem 0.6rem;
+  border-radius: var(--r-pill);
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  color: #fff;
+  font-size: var(--fs-xs);
+  font-weight: 800;
+  letter-spacing: 0.03em;
+  white-space: nowrap;
+  /* The label is always the *other* language's own name, so it must never be
+     reordered by the bidi algorithm of the language currently in use. */
+  unicode-bidi: isolate;
+  transition: background var(--t-fast), transform var(--t-fast);
+}
+
+.nav-lang:active {
+  transform: scale(0.96);
+}
+
+@media (hover: hover) {
+  .nav-lang:hover {
+    background: rgba(255, 255, 255, 0.22);
+  }
+}
+
 /* ---------------------------------------------------------------- burger -- */
 .nav-toggle {
   display: grid;
@@ -167,9 +202,11 @@
   visibility: visible;
 }
 
-/* Second word of the CTA drops out on the narrowest phones so the bar never
-   wraps: "📲 حمّل التطبيق" -> "📲 حمّل". */
-@media (max-width: 380px) {
+/* Second word of the CTA drops out on narrow phones so the bar never wraps:
+   "📲 حمّل التطبيق" -> "📲 حمّل". The threshold is 460px rather than 380px
+   because the language switcher sits in the same row and takes ~60px that the
+   bar was not originally budgeted for. */
+@media (max-width: 460px) {
   .nav-btn-word {
     display: none;
   }

@@ -7,7 +7,17 @@
  * of being duplicated into the source data. Every field is defensive: a record
  * copied from the portfolio before it has been translated, or one missing an
  * image or a link, still produces a renderable card.
+ *
+ * Everything here is language-dependent, so normalising is done per render
+ * rather than once: `descriptionAr`/`typeAr` win in Arabic, the portfolio's own
+ * English wins in English, and each falls back to the other when its side is
+ * missing — a card is never left without a description.
  */
+
+/** window.i18n is installed by js/i18n.js, which is deferred and therefore
+    already evaluated by the time any module runs. The fallback keeps this
+    module usable (in Arabic) if it is ever imported on its own. */
+const i18n = window.i18n ?? { lang: 'ar', t: (key) => key };
 
 /** Portfolio records use '#' for "no public link yet". */
 const isUsableUrl = (url) => typeof url === 'string' && url.trim() !== '' && url.trim() !== '#';
@@ -30,28 +40,23 @@ const slugify = (value, fallback) => {
 const CATEGORIES = [
   {
     id: 'enterprise',
-    label: 'أنظمة مؤسسية',
     match: (tags) => tags.some((tag) => /enterprise|security|document/i.test(tag)),
   },
   {
     id: 'education',
-    label: 'تعليم',
     match: (tags) => tags.some((tag) => /education|learning|svu/i.test(tag)),
   },
   {
     id: 'health',
-    label: 'صحة وإتاحة',
     match: (tags) => tags.some((tag) => /health|accessibility|video call/i.test(tag)),
   },
   {
     id: 'platforms',
-    label: 'منصات وخدمات',
     match: (tags) =>
       tags.some((tag) => /recruitment|job search|business|booking|logistics|maps/i.test(tag)),
   },
   {
     id: 'ai',
-    label: 'ذكاء اصطناعي',
     match: (tags) => tags.some((tag) => /\bai\b|speech/i.test(tag)),
   },
 ];
@@ -86,17 +91,23 @@ export function normalizeProject(raw, index = 0) {
 
   const tags = Array.isArray(raw.tags) ? raw.tags.filter(Boolean).map(String) : [];
 
-  // Arabic copy where it exists, the portfolio's English otherwise — never an
-  // empty card body.
+  // The reader's language first, the other one as a fallback — a record that has
+  // only been written in one language still renders rather than showing an empty
+  // card body.
+  const arabicFirst = i18n.lang === 'ar';
+  const localized = (arabic, english) => {
+    const ar = String(arabic ?? '').trim();
+    const en = String(english ?? '').trim();
+    return arabicFirst ? ar || en : en || ar;
+  };
+
   const description =
-    String(raw.descriptionAr ?? '').trim() ||
-    String(raw.description ?? '').trim() ||
-    'مشروع من أعمال IT Land Iraq.';
+    localized(raw.descriptionAr, raw.description) || i18n.t('projects.fallbackDesc');
 
   const links = [
     { kind: 'play', label: 'Google Play', url: raw.playStoreUrl },
     { kind: 'ios', label: 'App Store', url: raw.appStoreUrl },
-    { kind: 'git', label: 'المستودع', url: raw.gitUrl },
+    { kind: 'git', label: i18n.t('projects.repo'), url: raw.gitUrl },
   ].filter((link) => isUsableUrl(link.url));
 
   // The primary "View Project" target: the portfolio's publishUrl when it is
@@ -108,7 +119,7 @@ export function normalizeProject(raw, index = 0) {
     index,
     name,
     description,
-    type: String(raw.typeAr ?? '').trim() || String(raw.type ?? '').trim() || 'مشروع',
+    type: localized(raw.typeAr, raw.type) || i18n.t('projects.fallbackType'),
     tags,
     image: raw.image ? IMAGE_BASE + raw.image : FALLBACK_IMAGE,
     fallbackImage: FALLBACK_IMAGE,
@@ -143,20 +154,35 @@ export function buildFilters(projects) {
   });
 
   return [
-    { id: 'all', label: 'الكل', count: projects.length },
+    { id: 'all', label: i18n.t('filter.all'), count: projects.length },
     ...CATEGORIES.filter((category) => counts.get(category.id)).map((category) => ({
       id: category.id,
-      label: category.label,
+      label: i18n.t(`filter.${category.id}`),
       count: counts.get(category.id),
     })),
   ];
 }
 
+/** Sort definitions. `label` is read at call time, so switching the language and
+    re-rendering relabels the <select> without rebuilding this object. */
 export const SORTS = {
-  featured: { label: 'الترتيب المميز', compare: (a, b) => a.index - b.index },
-  name: { label: 'الاسم (أ-ي)', compare: (a, b) => a.name.localeCompare(b.name, 'ar') },
+  featured: {
+    get label() {
+      return i18n.t('sort.featured');
+    },
+    compare: (a, b) => a.index - b.index,
+  },
+  name: {
+    get label() {
+      return i18n.t('sort.name');
+    },
+    // Collating in the reading language keeps Arabic names in Arabic order.
+    compare: (a, b) => a.name.localeCompare(b.name, i18n.lang),
+  },
   published: {
-    label: 'المنشورة أولاً',
+    get label() {
+      return i18n.t('sort.published');
+    },
     compare: (a, b) => Number(b.published) - Number(a.published) || a.index - b.index,
   },
 };

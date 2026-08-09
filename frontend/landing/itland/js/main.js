@@ -32,12 +32,14 @@ document.addEventListener('keydown', (event) => {
   if (event.key === 'Escape') navigation.close();
 });
 
+const i18n = window.i18n ?? { t: (key) => key };
+
 window.addEventListener('online', () => {
   document.body.classList.remove('offline');
-  showToast('تم استعادة الاتصال بالإنترنت', 'success');
+  showToast(i18n.t('net.online'), 'success');
 });
 
 window.addEventListener('offline', () => {
   document.body.classList.add('offline');
-  showToast('لا يوجد اتصال بالإنترنت', 'error');
+  showToast(i18n.t('net.offline'), 'error');
 });

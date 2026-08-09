@@ -5,9 +5,9 @@
     <!-- viewport-fit=cover lets the safe-area insets used across the CSS work
          on notched phones. -->
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-    <title>وظّفني | Wazzifni - منصة التوظيف الأولى في العراق</title>
-    <meta name="description" content="منصة التوظيف الرقمية الأولى في العراق - ابحث عن وظيفتك المثالية بضغطة واحدة">
-    <meta name="keywords" content="وظائف, توظيف, العراق, عمل, فرص عمل, بغداد, الموصل, أربيل">
+    <title data-i18n="meta.title">وظّفني | Wazzifni - منصة التوظيف الأولى في العراق</title>
+    <meta name="description" data-i18n-attr="content:meta.description" content="منصة التوظيف الرقمية الأولى في العراق - ابحث عن وظيفتك المثالية بضغطة واحدة">
+    <meta name="keywords" content="وظائف, توظيف, العراق, عمل, فرص عمل, بغداد, الموصل, أربيل, jobs Iraq, hiring, careers">
     <meta name="author" content="Wazzifni">
     <meta name="theme-color" content="#004080">
     <meta name="mobile-web-app-capable" content="yes">
@@ -18,6 +18,7 @@
     <meta property="og:description" content="منصة التوظيف الرقمية الأولى في العراق">
     <meta property="og:type" content="website">
     <meta property="og:locale" content="ar_IQ">
+    <meta property="og:locale:alternate" content="en_US">
 
     <link rel="icon" href="assets/images/icon-180.png" sizes="180x180">
     <link rel="apple-touch-icon" href="assets/images/icon-180.png">
@@ -28,38 +29,58 @@
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
 
     <!-- CSS -->
-    <link rel="stylesheet" href="css/main.css?v=2.0.0">
+    <link rel="stylesheet" href="css/main.css?v=2.1.0">
 
     <!-- Marks the document as script-enabled so reveal-on-scroll only hides
-         content when JS is actually there to bring it back. -->
-    <script>document.documentElement.classList.add('js');</script>
+         content when JS is actually there to bring it back, and settles the
+         language before first paint so an English visitor never sees the page
+         laid out right-to-left for a frame. js/i18n.js does the same thing but
+         is deferred, which is too late to prevent that flash. -->
+    <script>
+      document.documentElement.classList.add('js');
+      try {
+        var wzLang = localStorage.getItem('wazzifni-lang');
+        if (wzLang === 'en' || wzLang === 'ar') {
+          document.documentElement.lang = wzLang;
+          document.documentElement.dir = wzLang === 'ar' ? 'rtl' : 'ltr';
+        }
+      } catch (e) { /* storage disabled — the page stays in its default Arabic */ }
+    </script>
+    <script src="js/i18n.js?v=2.1.0" defer></script>
 </head>
 <body>
-<a class="skip-link" href="#main">تخطَّ إلى المحتوى</a>
+<a class="skip-link" href="#main" data-i18n="a11y.skip">تخطَّ إلى المحتوى</a>
 
 <div class="scroll-progress" id="scroll-progress"></div>
 
 <!-- Navigation -->
 <nav class="navbar">
     <div class="nav-container">
-        <a class="nav-logo" href="#home" aria-label="وظّفني — الصفحة الرئيسية">
-            <img src="assets/images/logo-wordmark.png" alt="وظّفني" width="437" height="282" fetchpriority="high">
+        <a class="nav-logo" href="#home" data-i18n-attr="aria-label:a11y.logo" aria-label="وظّفني — الصفحة الرئيسية">
+            <img src="assets/images/logo-wordmark.png" data-i18n-attr="alt:a11y.logoAlt" alt="وظّفني" width="437" height="282" fetchpriority="high">
         </a>
 
         <ul class="nav-links" id="nav-menu">
             <li><a href="/itland/">IT Land Iraq</a></li>
-            <li><a href="#cats">الوظائف</a></li>
-            <li><a href="#why">مميزاتنا</a></li>
-            <li><a href="#employers">أصحاب العمل</a></li>
-            <li><a href="#jobs">أحدث الوظائف</a></li>
+            <li><a href="#cats" data-i18n="nav.jobs">الوظائف</a></li>
+            <li><a href="#why" data-i18n="nav.why">مميزاتنا</a></li>
+            <li><a href="#employers" data-i18n="nav.employers">أصحاب العمل</a></li>
+            <li><a href="#jobs" data-i18n="nav.latest">أحدث الوظائف</a></li>
         </ul>
 
+        <!-- Label is the language you switch TO, in that language's own script. -->
+        <button class="nav-lang" type="button" data-lang-toggle
+                data-i18n="lang.other" data-i18n-attr="aria-label:a11y.langSwitch"
+                aria-label="Switch to English">English</button>
+
         <button class="nav-btn" type="button" data-action="download">
-            📲 حمّل <span class="nav-btn-word">التطبيق</span>
+            <span data-i18n="nav.cta">📲 حمّل</span>
+            <span class="nav-btn-word" data-i18n="nav.ctaWord">التطبيق</span>
         </button>
 
         <button class="nav-toggle" type="button" id="nav-toggle"
-                aria-controls="nav-menu" aria-expanded="false" aria-label="فتح القائمة">
+                aria-controls="nav-menu" aria-expanded="false"
+                data-i18n-attr="aria-label:a11y.menuOpen" aria-label="فتح القائمة">
             <span class="nav-toggle-bars"></span>
         </button>
     </div>
@@ -71,20 +92,21 @@
     <section class="hero" id="home">
         <div class="hero-container">
             <div class="hero-content">
-                <div class="badge">🇮🇶 منصة التوظيف الأولى في العراق</div>
-                <h1>ابحث عن <em>وظيفتك المثالية</em> بضغطة واحدة</h1>
-                <p class="hero-subtitle">وظّفني تربط أصحاب العمل بأفضل الكفاءات في العراق — بسرعة، بذكاء، وبدون تعقيدات.</p>
+                <div class="badge" data-i18n="hero.badge">🇮🇶 منصة التوظيف الأولى في العراق</div>
+                <h1 data-i18n-html="hero.title">ابحث عن <em>وظيفتك المثالية</em> بضغطة واحدة</h1>
+                <p class="hero-subtitle" data-i18n="hero.subtitle">وظّفني تربط أصحاب العمل بأفضل الكفاءات في العراق — بسرعة، بذكاء، وبدون تعقيدات.</p>
                 <div class="hero-buttons">
-                    <button class="btn btn-primary" type="button" data-action="download">📲 حمّل التطبيق</button>
-                    <a href="#jobs" class="btn btn-secondary">🔍 تصفح الوظائف</a>
-                    <a href="#employers" class="btn btn-outline">🏢 لأصحاب الشركات</a>
+                    <button class="btn btn-primary" type="button" data-action="download" data-i18n="hero.ctaDownload">📲 حمّل التطبيق</button>
+                    <a href="#jobs" class="btn btn-secondary" data-i18n="hero.ctaBrowse">🔍 تصفح الوظائف</a>
+                    <a href="#employers" class="btn btn-outline" data-i18n="hero.ctaEmployers">🏢 لأصحاب الشركات</a>
                 </div>
             </div>
             <div class="hero-phone">
                 <div class="phone-mockup">
                     <div class="phone-frame">
                         <div class="phone-screen">
-                            <img src="assets/images/phone-mockup.png" alt="لقطة من تطبيق وظّفني"
+                            <img src="assets/images/phone-mockup.png"
+                                 data-i18n-attr="alt:a11y.phoneShot" alt="لقطة من تطبيق وظّفني"
                                  width="579" height="1219" decoding="async">
                         </div>
                     </div>
@@ -92,14 +114,14 @@
                         <span class="card-icon" aria-hidden="true">👤</span>
                         <div>
                             <div class="card-number">+12,000</div>
-                            <div class="card-label">باحث عن عمل</div>
+                            <div class="card-label" data-i18n="hero.card1">باحث عن عمل</div>
                         </div>
                     </div>
                     <div class="float-card card-2">
                         <span class="card-icon" aria-hidden="true">✅</span>
                         <div>
                             <div class="card-number">+3,500</div>
-                            <div class="card-label">وظيفة منشورة</div>
+                            <div class="card-label" data-i18n="hero.card2">وظيفة منشورة</div>
                         </div>
                     </div>
                 </div>
@@ -111,32 +133,32 @@
     <section class="path" id="path">
         <div class="container">
             <div class="section-header rv">
-                <span class="section-tag">اختر مسارك | Choose Your Path</span>
-                <h2 class="section-title">حدد طريقك وابدأ رحلتك</h2>
-                <p class="section-subtitle">سواء كنت تبحث عن نظام تقني لشركتك، أو تطوير مهاراتك، أو العمل بشكل حر — نحن هنا لخدمتك</p>
+                <span class="section-tag" data-i18n="path.tag">اختر مسارك | Choose Your Path</span>
+                <h2 class="section-title" data-i18n="path.title">حدد طريقك وابدأ رحلتك</h2>
+                <p class="section-subtitle" data-i18n="path.subtitle">سواء كنت تبحث عن نظام تقني لشركتك، أو تطوير مهاراتك، أو العمل بشكل حر — نحن هنا لخدمتك</p>
             </div>
             <div class="path-grid">
                 <a class="path-card path-card--tech rv" href="/itland/">
                     <span class="path-icon" aria-hidden="true">🧩</span>
                     <span class="path-body">
-                        <span class="path-badge path-badge--tech">شركتنا التقنية</span>
+                        <span class="path-badge path-badge--tech" data-i18n="path.techBadge">شركتنا التقنية</span>
                         <span class="path-title">IT Land Iraq</span>
-                        <span class="path-desc">نبني أنظمة وتطبيقات عالية الجودة للمؤسسات والشركات — تعرّف على خدماتنا ومعرض أعمالنا.</span>
+                        <span class="path-desc" data-i18n="path.techDesc">نبني أنظمة وتطبيقات عالية الجودة للمؤسسات والشركات — تعرّف على خدماتنا ومعرض أعمالنا.</span>
                     </span>
                 </a>
                 <a class="path-card rv" href="/course/">
                     <span class="path-icon" aria-hidden="true">🎓</span>
                     <span class="path-body">
-                        <span class="path-title">دورات وظفني</span>
-                        <span class="path-desc">طور مهاراتك مع أفضل الخبراء واحصل على شهادات معتمدة تفتح لك أبواب العمل.</span>
+                        <span class="path-title" data-i18n="path.coursesTitle">دورات وظفني</span>
+                        <span class="path-desc" data-i18n="path.coursesDesc">طور مهاراتك مع أفضل الخبراء واحصل على شهادات معتمدة تفتح لك أبواب العمل.</span>
                     </span>
                 </a>
                 <button class="path-card rv" type="button" data-action="download">
                     <span class="path-icon" aria-hidden="true">💻</span>
                     <span class="path-body">
-                        <span class="path-badge">قريباً</span>
-                        <span class="path-title">فريلانسر</span>
-                        <span class="path-desc">اعرض خدماتك، ابحث عن مشاريع، وابدأ بجني الأرباح من مهاراتك في أي وقت وأي مكان.</span>
+                        <span class="path-badge" data-i18n="path.soon">قريباً</span>
+                        <span class="path-title" data-i18n="path.freelanceTitle">فريلانسر</span>
+                        <span class="path-desc" data-i18n="path.freelanceDesc">اعرض خدماتك، ابحث عن مشاريع، وابدأ بجني الأرباح من مهاراتك في أي وقت وأي مكان.</span>
                     </span>
                 </button>
             </div>
@@ -147,50 +169,50 @@
     <section class="categories" id="cats">
         <div class="container">
             <div class="section-header rv">
-                <span class="section-tag">استكشف الفرص</span>
-                <h2 class="section-title">تصفح حسب نوع الوظيفة</h2>
-                <p class="section-subtitle">اختر المجال المناسب لك — التقديم الكامل من داخل التطبيق</p>
+                <span class="section-tag" data-i18n="cats.tag">استكشف الفرص</span>
+                <h2 class="section-title" data-i18n="cats.title">تصفح حسب نوع الوظيفة</h2>
+                <p class="section-subtitle" data-i18n="cats.subtitle">اختر المجال المناسب لك — التقديم الكامل من داخل التطبيق</p>
             </div>
             <div class="categories-grid">
                 <button class="category-card rv" type="button" data-action="download">
                     <span class="category-icon" aria-hidden="true">🏢</span>
-                    <span class="category-label">وظائف إدارية</span>
+                    <span class="category-label" data-i18n="cats.admin">وظائف إدارية</span>
                 </button>
                 <button class="category-card rv" type="button" data-action="download">
                     <span class="category-icon" aria-hidden="true">🏥</span>
-                    <span class="category-label">وظائف طبية</span>
+                    <span class="category-label" data-i18n="cats.medical">وظائف طبية</span>
                 </button>
                 <button class="category-card rv" type="button" data-action="download">
                     <span class="category-icon" aria-hidden="true">⚙️</span>
-                    <span class="category-label">وظائف هندسية</span>
+                    <span class="category-label" data-i18n="cats.engineering">وظائف هندسية</span>
                 </button>
                 <button class="category-card rv" type="button" data-action="download">
                     <span class="category-icon" aria-hidden="true">📊</span>
-                    <span class="category-label">وظائف مبيعات</span>
+                    <span class="category-label" data-i18n="cats.sales">وظائف مبيعات</span>
                 </button>
                 <button class="category-card rv" type="button" data-action="download">
                     <span class="category-icon" aria-hidden="true">📚</span>
-                    <span class="category-label">وظائف تعليم</span>
+                    <span class="category-label" data-i18n="cats.education">وظائف تعليم</span>
                 </button>
                 <button class="category-card rv" type="button" data-action="download">
                     <span class="category-icon" aria-hidden="true">☕</span>
-                    <span class="category-label">مطاعم وكافيهات</span>
+                    <span class="category-label" data-i18n="cats.food">مطاعم وكافيهات</span>
                 </button>
                 <button class="category-card rv" type="button" data-action="download">
                     <span class="category-icon" aria-hidden="true">🚗</span>
-                    <span class="category-label">سائقون ونقل</span>
+                    <span class="category-label" data-i18n="cats.drivers">سائقون ونقل</span>
                 </button>
                 <button class="category-card rv" type="button" data-action="download">
                     <span class="category-icon" aria-hidden="true">💻</span>
-                    <span class="category-label">وظائف فريلانسر</span>
+                    <span class="category-label" data-i18n="cats.freelance">وظائف فريلانسر</span>
                 </button>
                 <button class="category-card rv" type="button" data-action="download">
                     <span class="category-icon" aria-hidden="true">📱</span>
-                    <span class="category-label">وظائف تقنية</span>
+                    <span class="category-label" data-i18n="cats.tech">وظائف تقنية</span>
                 </button>
                 <button class="category-card rv" type="button" data-action="download">
                     <span class="category-icon" aria-hidden="true">🎧</span>
-                    <span class="category-label">خدمة الزبائن</span>
+                    <span class="category-label" data-i18n="cats.support">خدمة الزبائن</span>
                 </button>
             </div>
         </div>
@@ -200,51 +222,51 @@
     <section class="why-us" id="why">
         <div class="container">
             <div class="section-header rv">
-                <span class="section-tag">مميزاتك معنا</span>
-                <h2 class="section-title">ليش تحمّل تطبيق وظّفني؟</h2>
-                <p class="section-subtitle">كل شيء تحتاجه للحصول على وظيفتك في مكان واحد</p>
+                <span class="section-tag" data-i18n="why.tag">مميزاتك معنا</span>
+                <h2 class="section-title" data-i18n="why.title">ليش تحمّل تطبيق وظّفني؟</h2>
+                <p class="section-subtitle" data-i18n="why.subtitle">كل شيء تحتاجه للحصول على وظيفتك في مكان واحد</p>
             </div>
             <div class="features-grid">
                 <div class="feature-card rv">
                     <div class="feature-icon" aria-hidden="true">🔍</div>
                     <div>
-                        <h3 class="feature-title">بحث ذكي وسريع</h3>
-                        <p class="feature-description">ابحث بالمدينة أو التخصص أو الراتب — النتائج فورية وواضحة</p>
+                        <h3 class="feature-title" data-i18n="why.searchTitle">بحث ذكي وسريع</h3>
+                        <p class="feature-description" data-i18n="why.searchText">ابحث بالمدينة أو التخصص أو الراتب — النتائج فورية وواضحة</p>
                     </div>
                 </div>
                 <div class="feature-card rv">
                     <div class="feature-icon" aria-hidden="true">⚡</div>
                     <div>
-                        <h3 class="feature-title">تقديم بضغطة واحدة</h3>
-                        <p class="feature-description">قدّم مباشرة بدون بريد إلكتروني ولا ورق — كل شيء رقمي</p>
+                        <h3 class="feature-title" data-i18n="why.applyTitle">تقديم بضغطة واحدة</h3>
+                        <p class="feature-description" data-i18n="why.applyText">قدّم مباشرة بدون بريد إلكتروني ولا ورق — كل شيء رقمي</p>
                     </div>
                 </div>
                 <div class="feature-card rv">
                     <div class="feature-icon" aria-hidden="true">🔔</div>
                     <div>
-                        <h3 class="feature-title">إشعارات فورية</h3>
-                        <p class="feature-description">استقبل إشعار فوري عند نشر وظيفة تناسب اهتماماتك</p>
+                        <h3 class="feature-title" data-i18n="why.alertsTitle">إشعارات فورية</h3>
+                        <p class="feature-description" data-i18n="why.alertsText">استقبل إشعار فوري عند نشر وظيفة تناسب اهتماماتك</p>
                     </div>
                 </div>
                 <div class="feature-card rv">
                     <div class="feature-icon" aria-hidden="true">📄</div>
                     <div>
-                        <h3 class="feature-title">سيرة ذاتية احترافية</h3>
-                        <p class="feature-description">أنشئ سيرتك من داخل التطبيق بتصميم جاهز في دقائق</p>
+                        <h3 class="feature-title" data-i18n="why.cvTitle">سيرة ذاتية احترافية</h3>
+                        <p class="feature-description" data-i18n="why.cvText">أنشئ سيرتك من داخل التطبيق بتصميم جاهز في دقائق</p>
                     </div>
                 </div>
                 <div class="feature-card rv">
                     <div class="feature-icon" aria-hidden="true">📊</div>
                     <div>
-                        <h3 class="feature-title">تابع حالة طلبك</h3>
-                        <p class="feature-description">راقب أين وصل طلبك — هل قُبل؟ هل صار مراجعة؟ كل شيء واضح</p>
+                        <h3 class="feature-title" data-i18n="why.trackTitle">تابع حالة طلبك</h3>
+                        <p class="feature-description" data-i18n="why.trackText">راقب أين وصل طلبك — هل قُبل؟ هل صار مراجعة؟ كل شيء واضح</p>
                     </div>
                 </div>
                 <div class="feature-card rv">
                     <div class="feature-icon" aria-hidden="true">🤝</div>
                     <div>
-                        <h3 class="feature-title">تواصل مباشر</h3>
-                        <p class="feature-description">تواصل مع أصحاب العمل بشكل مباشر وبدون وسيط</p>
+                        <h3 class="feature-title" data-i18n="why.contactTitle">تواصل مباشر</h3>
+                        <p class="feature-description" data-i18n="why.contactText">تواصل مع أصحاب العمل بشكل مباشر وبدون وسيط</p>
                     </div>
                 </div>
             </div>
@@ -256,53 +278,53 @@
         <div class="container">
             <div class="employers-grid">
                 <div class="employers-content rv">
-                    <span class="section-tag section-tag--gold">لأصحاب العمل</span>
-                    <h2 class="section-title section-title--light">وظّفني تبحث عنك بدلك</h2>
-                    <p class="section-subtitle section-subtitle--light">لا وقت لمراجعة مئات السير الذاتية؟ نساعدك تلاقي الكفاءة المناسبة بأسرع وقت</p>
+                    <span class="section-tag section-tag--gold" data-i18n="employers.tag">لأصحاب العمل</span>
+                    <h2 class="section-title section-title--light" data-i18n="employers.title">وظّفني تبحث عنك بدلك</h2>
+                    <p class="section-subtitle section-subtitle--light" data-i18n="employers.subtitle">لا وقت لمراجعة مئات السير الذاتية؟ نساعدك تلاقي الكفاءة المناسبة بأسرع وقت</p>
                     <div class="employer-features">
                         <div class="employer-feature">
                             <div class="feature-icon" aria-hidden="true">📢</div>
                             <div>
-                                <h3 class="feature-title">انشر وظيفتك في دقيقة</h3>
-                                <p class="feature-description">واجهة بسيطة توصل إعلانك لآلاف الباحثين</p>
+                                <h3 class="feature-title" data-i18n="employers.postTitle">انشر وظيفتك في دقيقة</h3>
+                                <p class="feature-description" data-i18n="employers.postText">واجهة بسيطة توصل إعلانك لآلاف الباحثين</p>
                             </div>
                         </div>
                         <div class="employer-feature">
                             <div class="feature-icon" aria-hidden="true">🎯</div>
                             <div>
-                                <h3 class="feature-title">مرشحون مناسبون فقط</h3>
-                                <p class="feature-description">فلاتر ذكية تعرض المرشحين اللي ينطبق عليهم شروطك</p>
+                                <h3 class="feature-title" data-i18n="employers.matchTitle">مرشحون مناسبون فقط</h3>
+                                <p class="feature-description" data-i18n="employers.matchText">فلاتر ذكية تعرض المرشحين اللي ينطبق عليهم شروطك</p>
                             </div>
                         </div>
                         <div class="employer-feature">
                             <div class="feature-icon" aria-hidden="true">⚡</div>
                             <div>
-                                <h3 class="feature-title">وفّر وقتك ومالك</h3>
-                                <p class="feature-description">وصول مباشر للكفاءات بأسعار معقولة</p>
+                                <h3 class="feature-title" data-i18n="employers.saveTitle">وفّر وقتك ومالك</h3>
+                                <p class="feature-description" data-i18n="employers.saveText">وصول مباشر للكفاءات بأسعار معقولة</p>
                             </div>
                         </div>
                     </div>
-                    <button class="btn btn-primary" type="button" data-action="download">🏢 ابدأ التوظيف الآن</button>
+                    <button class="btn btn-primary" type="button" data-action="download" data-i18n="employers.cta">🏢 ابدأ التوظيف الآن</button>
                 </div>
                 <div class="employers-stats rv">
                     <div class="stat-card">
                         <div>
                             <div class="stat-number">+500</div>
-                            <div class="stat-label">شركة وصاحب عمل موثوق</div>
+                            <div class="stat-label" data-i18n="employers.stat1">شركة وصاحب عمل موثوق</div>
                         </div>
                         <span class="stat-icon" aria-hidden="true">🏢</span>
                     </div>
                     <div class="stat-card">
                         <div>
-                            <div class="stat-number">48 ساعة</div>
-                            <div class="stat-label">متوسط وقت العثور على مرشح</div>
+                            <div class="stat-number" data-i18n="employers.stat2Number">48 ساعة</div>
+                            <div class="stat-label" data-i18n="employers.stat2">متوسط وقت العثور على مرشح</div>
                         </div>
                         <span class="stat-icon" aria-hidden="true">⚡</span>
                     </div>
                     <div class="stat-card">
                         <div>
                             <div class="stat-number">95%</div>
-                            <div class="stat-label">رضا أصحاب العمل عن المنصة</div>
+                            <div class="stat-label" data-i18n="employers.stat3">رضا أصحاب العمل عن المنصة</div>
                         </div>
                         <span class="stat-icon" aria-hidden="true">⭐</span>
                     </div>
@@ -315,9 +337,9 @@
     <section class="jobs" id="jobs">
         <div class="container">
             <div class="section-header rv">
-                <span class="section-tag">فرص حديثة</span>
-                <h2 class="section-title">أحدث الوظائف المتاحة</h2>
-                <p class="section-subtitle">آلاف الفرص تُضاف يومياً — وظيفتك المثالية تنتظرك</p>
+                <span class="section-tag" data-i18n="jobs.tag">فرص حديثة</span>
+                <h2 class="section-title" data-i18n="jobs.title">أحدث الوظائف المتاحة</h2>
+                <p class="section-subtitle" data-i18n="jobs.subtitle">آلاف الفرص تُضاف يومياً — وظيفتك المثالية تنتظرك</p>
             </div>
 
             <!-- Replaced by js/components/jobs.js on load; these cards are the
@@ -325,81 +347,81 @@
             <div class="jobs-grid bleed" data-rv-group>
                 <div class="job-card rv" role="button" tabindex="0" data-action="download">
                     <div class="job-header">
-                        <h3 class="job-title">اداري محاسب في شركة عطور</h3>
-                        <span class="job-badge">دوام كامل</span>
+                        <h3 class="job-title" data-i18n="fallback.job1">اداري محاسب في شركة عطور</h3>
+                        <span class="job-badge" data-i18n="jobType.1">دوام كامل</span>
                     </div>
-                    <div class="job-company">🏢 شركة بوابة التوظيف</div>
+                    <div class="job-company">🏢 <span data-i18n="fallback.company1">شركة بوابة التوظيف</span></div>
                     <div class="job-footer">
-                        <span class="job-location">📍 هجين (مقر + عن بُعد)</span>
-                        <span class="job-salary">850,000 د.ع</span>
+                        <span class="job-location">📍 <span data-i18n="workPlace.3">هجين (مقر + عن بُعد)</span></span>
+                        <span class="job-salary">850,000 <span data-i18n="jobs.currency">د.ع</span></span>
                         <span class="job-date">28-12-2025</span>
                     </div>
                 </div>
                 <div class="job-card rv" role="button" tabindex="0" data-action="download">
                     <div class="job-header">
-                        <h3 class="job-title">موظفة مبيعات</h3>
-                        <span class="job-badge">دوام كامل</span>
+                        <h3 class="job-title" data-i18n="fallback.job2">موظفة مبيعات</h3>
+                        <span class="job-badge" data-i18n="jobType.1">دوام كامل</span>
                     </div>
-                    <div class="job-company">🏢 شركة بوابة التوظيف</div>
+                    <div class="job-company">🏢 <span data-i18n="fallback.company1">شركة بوابة التوظيف</span></div>
                     <div class="job-footer">
-                        <span class="job-location">📍 هجين (مقر + عن بُعد)</span>
-                        <span class="job-salary">1,000,000 د.ع</span>
+                        <span class="job-location">📍 <span data-i18n="workPlace.3">هجين (مقر + عن بُعد)</span></span>
+                        <span class="job-salary">1,000,000 <span data-i18n="jobs.currency">د.ع</span></span>
                         <span class="job-date">28-12-2025</span>
                     </div>
                 </div>
                 <div class="job-card rv" role="button" tabindex="0" data-action="download">
                     <div class="job-header">
-                        <h3 class="job-title">موظفة في عيادة طبية</h3>
-                        <span class="job-badge">دوام كامل</span>
+                        <h3 class="job-title" data-i18n="fallback.job3">موظفة في عيادة طبية</h3>
+                        <span class="job-badge" data-i18n="jobType.1">دوام كامل</span>
                     </div>
-                    <div class="job-company">🏥 شركة بوابة التوظيف</div>
+                    <div class="job-company">🏥 <span data-i18n="fallback.company1">شركة بوابة التوظيف</span></div>
                     <div class="job-footer">
-                        <span class="job-location">📍 في مقر العمل</span>
-                        <span class="job-salary">400,000 د.ع</span>
+                        <span class="job-location">📍 <span data-i18n="workPlace.1">في مقر العمل</span></span>
+                        <span class="job-salary">400,000 <span data-i18n="jobs.currency">د.ع</span></span>
                         <span class="job-date">28-12-2025</span>
                     </div>
                 </div>
                 <div class="job-card rv" role="button" tabindex="0" data-action="download">
                     <div class="job-header">
-                        <h3 class="job-title">مصمم جرافيك ومحتوى</h3>
-                        <span class="job-badge">فريلانس</span>
+                        <h3 class="job-title" data-i18n="fallback.job4">مصمم جرافيك ومحتوى</h3>
+                        <span class="job-badge" data-i18n="jobType.4">فريلانس</span>
                     </div>
-                    <div class="job-company">📱 وكالة ديجيتال ماركتينج</div>
+                    <div class="job-company">📱 <span data-i18n="fallback.company4">وكالة ديجيتال ماركتينج</span></div>
                     <div class="job-footer">
-                        <span class="job-location">📍 عن بُعد</span>
-                        <span class="job-salary">400,000 - 700,000 د.ع</span>
-                        <span class="job-date">منذ يوم</span>
+                        <span class="job-location">📍 <span data-i18n="workPlace.2">عن بُعد</span></span>
+                        <span class="job-salary">400,000 - 700,000 <span data-i18n="jobs.currency">د.ع</span></span>
+                        <span class="job-date" data-i18n="ago.day">منذ يوم</span>
                     </div>
                 </div>
                 <div class="job-card rv" role="button" tabindex="0" data-action="download">
                     <div class="job-header">
-                        <h3 class="job-title">معلم رياضيات ثانوية</h3>
-                        <span class="job-badge">دوام كامل</span>
+                        <h3 class="job-title" data-i18n="fallback.job5">معلم رياضيات ثانوية</h3>
+                        <span class="job-badge" data-i18n="jobType.1">دوام كامل</span>
                     </div>
-                    <div class="job-company">📚 مجموعة المدارس الأهلية</div>
+                    <div class="job-company">📚 <span data-i18n="fallback.company5">مجموعة المدارس الأهلية</span></div>
                     <div class="job-footer">
-                        <span class="job-location">📍 الموصل</span>
-                        <span class="job-salary">450,000 - 600,000 د.ع</span>
-                        <span class="job-date">منذ 5 أيام</span>
+                        <span class="job-location">📍 <span data-i18n="fallback.mosul">الموصل</span></span>
+                        <span class="job-salary">450,000 - 600,000 <span data-i18n="jobs.currency">د.ع</span></span>
+                        <span class="job-date">—</span>
                     </div>
                 </div>
                 <div class="job-card rv" role="button" tabindex="0" data-action="download">
                     <div class="job-header">
-                        <h3 class="job-title">موظف استقبال كافيه</h3>
-                        <span class="job-badge">دوام جزئي</span>
+                        <h3 class="job-title" data-i18n="fallback.job6">موظف استقبال كافيه</h3>
+                        <span class="job-badge" data-i18n="jobType.2">دوام جزئي</span>
                     </div>
-                    <div class="job-company">☕ كافيه الأندلس - الكرادة</div>
+                    <div class="job-company">☕ <span data-i18n="fallback.company6">كافيه الأندلس - الكرادة</span></div>
                     <div class="job-footer">
-                        <span class="job-location">📍 بغداد</span>
-                        <span class="job-salary">350,000 - 450,000 د.ع</span>
-                        <span class="job-date">منذ يوم</span>
+                        <span class="job-location">📍 <span data-i18n="fallback.baghdad">بغداد</span></span>
+                        <span class="job-salary">350,000 - 450,000 <span data-i18n="jobs.currency">د.ع</span></span>
+                        <span class="job-date" data-i18n="ago.day">منذ يوم</span>
                     </div>
                 </div>
             </div>
 
             <div class="jobs-more rv">
-                <p>لمشاهدة جميع الوظائف والتقديم — حمّل التطبيق</p>
-                <button class="btn btn-primary" type="button" data-action="download">📲 شاهد كل الوظائف في التطبيق</button>
+                <p data-i18n="jobs.moreText">لمشاهدة جميع الوظائف والتقديم — حمّل التطبيق</p>
+                <button class="btn btn-primary" type="button" data-action="download" data-i18n="jobs.moreCta">📲 شاهد كل الوظائف في التطبيق</button>
             </div>
         </div>
     </section>
@@ -408,43 +430,43 @@
     <section class="steps" id="steps">
         <div class="container">
             <div class="section-header rv">
-                <span class="section-tag">بسيط وسريع</span>
-                <h2 class="section-title">كيف تبدأ؟ 5 خطوات فقط</h2>
+                <span class="section-tag" data-i18n="steps.tag">بسيط وسريع</span>
+                <h2 class="section-title" data-i18n="steps.title">كيف تبدأ؟ 5 خطوات فقط</h2>
             </div>
             <ol class="steps-row">
                 <li class="step-item rv">
                     <div class="step-number" aria-hidden="true">📲</div>
                     <div>
-                        <h3 class="step-title">حمّل التطبيق</h3>
-                        <p class="step-description">مجاني من Google Play أو App Store</p>
+                        <h3 class="step-title" data-i18n="steps.1Title">حمّل التطبيق</h3>
+                        <p class="step-description" data-i18n="steps.1Text">مجاني من Google Play أو App Store</p>
                     </div>
                 </li>
                 <li class="step-item rv">
                     <div class="step-number" aria-hidden="true">👤</div>
                     <div>
-                        <h3 class="step-title">أنشئ حسابك</h3>
-                        <p class="step-description">في دقيقة واحدة</p>
+                        <h3 class="step-title" data-i18n="steps.2Title">أنشئ حسابك</h3>
+                        <p class="step-description" data-i18n="steps.2Text">في دقيقة واحدة</p>
                     </div>
                 </li>
                 <li class="step-item rv">
                     <div class="step-number" aria-hidden="true">🔍</div>
                     <div>
-                        <h3 class="step-title">تصفح الوظائف</h3>
-                        <p class="step-description">آلاف الفرص</p>
+                        <h3 class="step-title" data-i18n="steps.3Title">تصفح الوظائف</h3>
+                        <p class="step-description" data-i18n="steps.3Text">آلاف الفرص</p>
                     </div>
                 </li>
                 <li class="step-item rv">
                     <div class="step-number" aria-hidden="true">✅</div>
                     <div>
-                        <h3 class="step-title">قدّم مباشرة</h3>
-                        <p class="step-description">بضغطة واحدة</p>
+                        <h3 class="step-title" data-i18n="steps.4Title">قدّم مباشرة</h3>
+                        <p class="step-description" data-i18n="steps.4Text">بضغطة واحدة</p>
                     </div>
                 </li>
                 <li class="step-item rv">
                     <div class="step-number" aria-hidden="true">📊</div>
                     <div>
-                        <h3 class="step-title">تابع حالتك</h3>
-                        <p class="step-description">في الوقت الحقيقي</p>
+                        <h3 class="step-title" data-i18n="steps.5Title">تابع حالتك</h3>
+                        <p class="step-description" data-i18n="steps.5Text">في الوقت الحقيقي</p>
                     </div>
                 </li>
             </ol>
@@ -455,59 +477,59 @@
     <section class="trust" id="trust">
         <div class="container">
             <div class="section-header rv">
-                <span class="section-tag">أرقام تتحدث</span>
-                <h2 class="section-title">الأرقام التي تثبت ثقتكم</h2>
+                <span class="section-tag" data-i18n="trust.tag">أرقام تتحدث</span>
+                <h2 class="section-title" data-i18n="trust.title">الأرقام التي تثبت ثقتكم</h2>
             </div>
             <div class="stats-grid">
                 <div class="stat-card-large rv">
                     <div class="stat-number">+2K</div>
-                    <div class="stat-label">مستخدم نشط</div>
+                    <div class="stat-label" data-i18n="trust.stat1">مستخدم نشط</div>
                 </div>
                 <div class="stat-card-large rv">
                     <div class="stat-number">+350</div>
-                    <div class="stat-label">وظيفة منشورة</div>
+                    <div class="stat-label" data-i18n="trust.stat2">وظيفة منشورة</div>
                 </div>
                 <div class="stat-card-large rv">
                     <div class="stat-number">+500</div>
-                    <div class="stat-label">شركة وصاحب عمل</div>
+                    <div class="stat-label" data-i18n="trust.stat3">شركة وصاحب عمل</div>
                 </div>
                 <div class="stat-card-large rv">
                     <div class="stat-number">+290</div>
-                    <div class="stat-label">طلب توظيف ناجح</div>
+                    <div class="stat-label" data-i18n="trust.stat4">طلب توظيف ناجح</div>
                 </div>
             </div>
 
             <div class="reviews-grid bleed" data-rv-group>
                 <div class="review-card rv">
-                    <div class="stars" role="img" aria-label="خمس نجوم من خمسة">★★★★★</div>
-                    <p class="review-text">«وظّفني خلّيتني ألاقي وظيفة بأسبوع بس! قدّمت على وظيفة في هندسة البرمجيات وعندي مقابلة الأسبوع الجاي.»</p>
+                    <div class="stars" role="img" data-i18n-attr="aria-label:a11y.fiveStars" aria-label="خمس نجوم من خمسة">★★★★★</div>
+                    <p class="review-text" data-i18n="trust.review1">«وظّفني خلّيتني ألاقي وظيفة بأسبوع بس! قدّمت على وظيفة في هندسة البرمجيات وعندي مقابلة الأسبوع الجاي.»</p>
                     <div class="review-author">
-                        <div class="author-avatar" style="background:linear-gradient(135deg,#004a8c,#0099d4)" aria-hidden="true">أ</div>
+                        <div class="author-avatar" style="background:linear-gradient(135deg,#004a8c,#0099d4)" aria-hidden="true" data-i18n="trust.review1Initial">أ</div>
                         <div>
-                            <div class="author-name">أحمد الكناني</div>
-                            <div class="author-role">مهندس برمجيات · بغداد</div>
+                            <div class="author-name" data-i18n="trust.review1Name">أحمد الكناني</div>
+                            <div class="author-role" data-i18n="trust.review1Role">مهندس برمجيات · بغداد</div>
                         </div>
                     </div>
                 </div>
                 <div class="review-card rv">
-                    <div class="stars" role="img" aria-label="خمس نجوم من خمسة">★★★★★</div>
-                    <p class="review-text">«نشرنا إعلان وخلال 24 ساعة وصلنا أكثر من 40 طلب مناسب. وفّر علينا وقت ومال كثير.»</p>
+                    <div class="stars" role="img" data-i18n-attr="aria-label:a11y.fiveStars" aria-label="خمس نجوم من خمسة">★★★★★</div>
+                    <p class="review-text" data-i18n="trust.review2">«نشرنا إعلان وخلال 24 ساعة وصلنا أكثر من 40 طلب مناسب. وفّر علينا وقت ومال كثير.»</p>
                     <div class="review-author">
-                        <div class="author-avatar" style="background:linear-gradient(135deg,#F68A29,#FF6700)" aria-hidden="true">س</div>
+                        <div class="author-avatar" style="background:linear-gradient(135deg,#F68A29,#FF6700)" aria-hidden="true" data-i18n="trust.review2Initial">س</div>
                         <div>
-                            <div class="author-name">سارة الموسى</div>
-                            <div class="author-role">مدير موارد بشرية</div>
+                            <div class="author-name" data-i18n="trust.review2Name">سارة الموسى</div>
+                            <div class="author-role" data-i18n="trust.review2Role">مدير موارد بشرية</div>
                         </div>
                     </div>
                 </div>
                 <div class="review-card rv">
-                    <div class="stars" role="img" aria-label="أربع نجوم من خمسة">★★★★☆</div>
-                    <p class="review-text">«التطبيق سهل جداً وما يحتاج خبرة. حصلت على وظيفتي كمعلمة بفضل وظّفني.»</p>
+                    <div class="stars" role="img" data-i18n-attr="aria-label:a11y.fourStars" aria-label="أربع نجوم من خمسة">★★★★☆</div>
+                    <p class="review-text" data-i18n="trust.review3">«التطبيق سهل جداً وما يحتاج خبرة. حصلت على وظيفتي كمعلمة بفضل وظّفني.»</p>
                     <div class="review-author">
-                        <div class="author-avatar" style="background:linear-gradient(135deg,#0087C6,#004080)" aria-hidden="true">ن</div>
+                        <div class="author-avatar" style="background:linear-gradient(135deg,#0087C6,#004080)" aria-hidden="true" data-i18n="trust.review3Initial">ن</div>
                         <div>
-                            <div class="author-name">نور الربيعي</div>
-                            <div class="author-role">معلمة · الموصل</div>
+                            <div class="author-name" data-i18n="trust.review3Name">نور الربيعي</div>
+                            <div class="author-role" data-i18n="trust.review3Role">معلمة · الموصل</div>
                         </div>
                     </div>
                 </div>
@@ -519,9 +541,9 @@
     <section class="download" id="download">
         <div class="container">
             <div class="download-container rv">
-                <span class="section-tag section-tag--gold">متوفر الآن</span>
-                <h2 class="download-title">وظيفتك تنتظرك — حمّل التطبيق الآن</h2>
-                <p class="download-subtitle">انضم لآلاف العراقيين اللي وجدوا طريقهم المهني عبر وظّفني — مجاني، سريع، ومتاح 24/7</p>
+                <span class="section-tag section-tag--gold" data-i18n="download.tag">متوفر الآن</span>
+                <h2 class="download-title" data-i18n="download.title">وظيفتك تنتظرك — حمّل التطبيق الآن</h2>
+                <p class="download-subtitle" data-i18n="download.subtitle">انضم لآلاف العراقيين اللي وجدوا طريقهم المهني عبر وظّفني — مجاني، سريع، ومتاح 24/7</p>
                 <div class="download-buttons">
                     <a href="https://play.google.com/store/apps/details?id=com.wazzifni.iraq" class="btn-download btn-android" target="_blank" rel="noopener">
                         <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
@@ -536,7 +558,7 @@
                         App Store
                     </a>
                 </div>
-                <p class="download-note">متوفر على Google Play و App Store</p>
+                <p class="download-note" data-i18n="download.note">متوفر على Google Play و App Store</p>
             </div>
         </div>
     </section>
@@ -547,44 +569,44 @@
     <div class="container">
         <div class="footer-grid">
             <div class="footer-info">
-                <div class="footer-logo">وظّ<span>فني</span></div>
-                <p class="footer-description">منصة التوظيف الرقمية الأولى في العراق. نربط الباحثين عن عمل بأفضل الفرص ونساعد أصحاب العمل في إيجاد الكفاءات.</p>
+                <div class="footer-logo" data-i18n-html="brand.wordmark">وظّ<span>فني</span></div>
+                <p class="footer-description" data-i18n="footer.description">منصة التوظيف الرقمية الأولى في العراق. نربط الباحثين عن عمل بأفضل الفرص ونساعد أصحاب العمل في إيجاد الكفاءات.</p>
                 <div class="social-links">
-                    <a href="https://www.facebook.com/share/14XfHdMCbR8/?mibextid=wwXIfr" target="_blank" rel="noopener" class="social-link" aria-label="فيسبوك">f</a>
-                    <a href="https://www.instagram.com/wazzifni?igsh=MXN6ZzVoMWk2NjN5Yw%3D%3D&utm_source=qr" target="_blank" rel="noopener" class="social-link" aria-label="انستغرام">📸</a>
-                    <a href="https://www.linkedin.com/company/wazzifni-iraq/" target="_blank" rel="noopener" class="social-link" aria-label="لينكدإن">in</a>
-                    <a href="https://wa.me/9647875005001" target="_blank" rel="noopener" class="social-link" aria-label="واتساب">💬</a>
+                    <a href="https://www.facebook.com/share/14XfHdMCbR8/?mibextid=wwXIfr" target="_blank" rel="noopener" class="social-link" data-i18n-attr="aria-label:a11y.facebook" aria-label="فيسبوك">f</a>
+                    <a href="https://www.instagram.com/wazzifni?igsh=MXN6ZzVoMWk2NjN5Yw%3D%3D&utm_source=qr" target="_blank" rel="noopener" class="social-link" data-i18n-attr="aria-label:a11y.instagram" aria-label="انستغرام">📸</a>
+                    <a href="https://www.linkedin.com/company/wazzifni-iraq/" target="_blank" rel="noopener" class="social-link" data-i18n-attr="aria-label:a11y.linkedin" aria-label="لينكدإن">in</a>
+                    <a href="https://wa.me/9647875005001" target="_blank" rel="noopener" class="social-link" data-i18n-attr="aria-label:a11y.whatsappShort" aria-label="واتساب">💬</a>
                 </div>
             </div>
 
             <div class="footer-links">
-                <h4>روابط سريعة</h4>
+                <h4 data-i18n="footer.linksHeading">روابط سريعة</h4>
                 <ul>
                     <li><a href="/itland/">🧩 IT Land Iraq</a></li>
-                    <li><a href="#cats">أنواع الوظائف</a></li>
-                    <li><a href="#why">مميزات التطبيق</a></li>
-                    <li><a href="#employers">أصحاب العمل</a></li>
-                    <li><a href="#jobs">أحدث الوظائف</a></li>
+                    <li><a href="#cats" data-i18n="footer.categories">أنواع الوظائف</a></li>
+                    <li><a href="#why" data-i18n="footer.features">مميزات التطبيق</a></li>
+                    <li><a href="#employers" data-i18n="nav.employers">أصحاب العمل</a></li>
+                    <li><a href="#jobs" data-i18n="nav.latest">أحدث الوظائف</a></li>
                     <li><a href="https://play.google.com/store/apps/details?id=com.wazzifni.iraq" target="_blank" rel="noopener">📱 Google Play</a></li>
                     <li><a href="https://apps.apple.com/app/id6743117085" target="_blank" rel="noopener">🍎 App Store</a></li>
                 </ul>
             </div>
 
             <div class="footer-contact">
-                <h4>تواصل معنا</h4>
+                <h4 data-i18n="footer.contactHeading">تواصل معنا</h4>
                 <ul>
-                    <li><a href="https://wa.me/9647875005001" target="_blank" rel="noopener">💬 واتساب: 07875005001</a></li>
-                    <li><a href="https://www.facebook.com/share/14XfHdMCbR8/?mibextid=wwXIfr" target="_blank" rel="noopener">📘 فيسبوك</a></li>
-                    <li><a href="https://www.instagram.com/wazzifni?igsh=MXN6ZzVoMWk2NjN5Yw%3D%3D&utm_source=qr" target="_blank" rel="noopener">📸 انستغرام</a></li>
-                    <li><a href="https://www.linkedin.com/company/wazzifni-iraq/" target="_blank" rel="noopener">💼 لينكدإن</a></li>
-                    <li><a href="https://maps.app.goo.gl/uygd5NoXuiq14s2i9?g_st=ic" target="_blank" rel="noopener">📍 شارع الغدير، فرات، النجف</a></li>
-                    <li><a href="#terms" data-action="legal-open" data-legal="terms">شروط الاستخدام</a></li>
-                    <li><a href="#privacy" data-action="legal-open" data-legal="privacy">سياسة الخصوصية</a></li>
+                    <li><a href="https://wa.me/9647875005001" target="_blank" rel="noopener" data-i18n="footer.whatsapp">💬 واتساب: 07875005001</a></li>
+                    <li><a href="https://www.facebook.com/share/14XfHdMCbR8/?mibextid=wwXIfr" target="_blank" rel="noopener" data-i18n="footer.facebook">📘 فيسبوك</a></li>
+                    <li><a href="https://www.instagram.com/wazzifni?igsh=MXN6ZzVoMWk2NjN5Yw%3D%3D&utm_source=qr" target="_blank" rel="noopener" data-i18n="footer.instagram">📸 انستغرام</a></li>
+                    <li><a href="https://www.linkedin.com/company/wazzifni-iraq/" target="_blank" rel="noopener" data-i18n="footer.linkedin">💼 لينكدإن</a></li>
+                    <li><a href="https://maps.app.goo.gl/uygd5NoXuiq14s2i9?g_st=ic" target="_blank" rel="noopener" data-i18n="footer.address">📍 شارع الغدير، فرات، النجف</a></li>
+                    <li><a href="#terms" data-action="legal-open" data-legal="terms" data-i18n="footer.terms">شروط الاستخدام</a></li>
+                    <li><a href="#privacy" data-action="legal-open" data-legal="privacy" data-i18n="footer.privacy">سياسة الخصوصية</a></li>
                 </ul>
             </div>
         </div>
 
-        <div class="footer-bottom">
+        <div class="footer-bottom" data-i18n="footer.bottom">
             © 2025 وظّفني | Wazzifni — جميع الحقوق محفوظة · صنع بـ ❤️ في العراق 🇮🇶
         </div>
     </div>
@@ -593,18 +615,18 @@
 <!-- Download modal -->
 <div class="modal" id="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
     <div class="modal-card">
-        <button class="modal-close" type="button" data-action="modal-close" aria-label="إغلاق">✕</button>
-        <div class="modal-logo" aria-hidden="true">وظّ<span>فني</span></div>
-        <h2 class="modal-title" id="modal-title">حمّل تطبيق وظّفني</h2>
-        <p class="modal-subtitle">للاطلاع على الوظائف والتقديم عليها، حمّل التطبيق مجاناً</p>
+        <button class="modal-close" type="button" data-action="modal-close" data-i18n-attr="aria-label:a11y.close" aria-label="إغلاق">✕</button>
+        <div class="modal-logo" aria-hidden="true" data-i18n-html="brand.wordmark">وظّ<span>فني</span></div>
+        <h2 class="modal-title" id="modal-title" data-i18n="modal.title">حمّل تطبيق وظّفني</h2>
+        <p class="modal-subtitle" data-i18n="modal.subtitle">للاطلاع على الوظائف والتقديم عليها، حمّل التطبيق مجاناً</p>
 
         <div class="modal-features">
-            <div class="modal-feature">بحث ذكي وسريع</div>
-            <div class="modal-feature">تقديم بضغطة واحدة</div>
-            <div class="modal-feature">إشعارات فورية</div>
-            <div class="modal-feature">سيرة ذاتية احترافية</div>
-            <div class="modal-feature">متابعة حالة الطلب</div>
-            <div class="modal-feature">تواصل مباشر</div>
+            <div class="modal-feature" data-i18n="modal.feature1">بحث ذكي وسريع</div>
+            <div class="modal-feature" data-i18n="modal.feature2">تقديم بضغطة واحدة</div>
+            <div class="modal-feature" data-i18n="modal.feature3">إشعارات فورية</div>
+            <div class="modal-feature" data-i18n="modal.feature4">سيرة ذاتية احترافية</div>
+            <div class="modal-feature" data-i18n="modal.feature5">متابعة حالة الطلب</div>
+            <div class="modal-feature" data-i18n="modal.feature6">تواصل مباشر</div>
         </div>
 
         <div class="modal-buttons">
@@ -612,147 +634,68 @@
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
                     <path d="M3.18 23.76a2 2 0 0 0 2.07-.22l12.1-6.93-2.84-2.85zM.5 1.1A2 2 0 0 0 0 2.5v19a2 2 0 0 0 .5 1.4L.6 23l10.63-10.63v-.26L.6 1.1zM20.34 10.22l-2.91-1.67-3.17 3.17 3.17 3.17 2.94-1.68a2.02 2.02 0 0 0 0-3.5zM5.25.46 17.43 7.4l-2.84 2.84z"/>
                 </svg>
-                تحميل من Google Play
+                <span data-i18n="modal.android">تحميل من Google Play</span>
             </a>
             <a href="https://apps.apple.com/app/id6743117085" class="btn-download-modal btn-ios" target="_blank" rel="noopener">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
                     <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98l-.09.06c-.22.14-2.15 1.26-2.13 3.75.03 2.99 2.62 3.99 2.65 4l.03.01zM13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/>
                 </svg>
-                تحميل من App Store
+                <span data-i18n="modal.ios">تحميل من App Store</span>
             </a>
         </div>
 
-        <button class="modal-skip" type="button" data-action="modal-close">ربما لاحقاً</button>
+        <button class="modal-skip" type="button" data-action="modal-close" data-i18n="modal.skip">ربما لاحقاً</button>
     </div>
 </div>
 
-<!-- Legal pages -->
+<!-- Legal pages. The articles live in the dictionary rather than the markup:
+     they are the only blocks long enough that a key per paragraph would be
+     unreadable, and nothing user-supplied is ever written into them. -->
 <div class="legal" id="terms" role="dialog" aria-modal="true" aria-labelledby="terms-title">
     <div class="legal-header">
-        <button class="legal-back" type="button" data-action="legal-close" data-legal="terms">→ رجوع</button>
-        <h1 class="legal-title" id="terms-title">شروط الاستخدام</h1>
-        <p class="legal-subtitle">تطبيق وظّفني | شركة بوابة التوظيف لاستقدام وتشغيل الأيدي العاملة م.م</p>
+        <button class="legal-back" type="button" data-action="legal-close" data-legal="terms">
+            <span aria-hidden="true" class="legal-back-arrow">→</span> <span data-i18n="legal.back">رجوع</span>
+        </button>
+        <h1 class="legal-title" id="terms-title" data-i18n="footer.terms">شروط الاستخدام</h1>
+        <p class="legal-subtitle" data-i18n="legal.company">تطبيق وظّفني | شركة بوابة التوظيف لاستقدام وتشغيل الأيدي العاملة م.م</p>
     </div>
-    <div class="legal-content">
+    <div class="legal-content" data-i18n-html="terms.body">
         <div class="legal-article">
             <h3>المادة (1): القبول والالتزام</h3>
             <p>يُعد استخدام التطبيق أو تصفحه بمثابة موافقة صريحة على الالتزام بجميع بنود هذه الشروط.</p>
-        </div>
-        <div class="legal-article">
-            <h3>المادة (2): أهلية المستخدم</h3>
-            <p>يشترط في المستخدم أن يكون متمتعًا بالأهلية القانونية الكاملة، وأي استخدام من قبل قاصر يتم تحت مسؤولية وليّه القانوني.</p>
-        </div>
-        <div class="legal-article">
-            <h3>المادة (3): إنشاء الحساب</h3>
-            <p>يلتزم المستخدم بما يلي:</p>
-            <ul>
-                <li>تقديم معلومات دقيقة وصحيحة.</li>
-                <li>عدم انتحال شخصية أي جهة أو فرد.</li>
-                <li>عدم استخدام أكثر من حساب واحد دون سبب قانوني.</li>
-            </ul>
-        </div>
-        <div class="legal-article">
-            <h3>المادة (4): استخدام المشروع</h3>
-            <p>يحظر على المستخدم:</p>
-            <ul>
-                <li>إرسال أو تحميل محتوى مسيء أو احتيالي أو غير قانوني.</li>
-                <li>محاولة اختراق أنظمة الحماية أو تعطيل خدمات التطبيق.</li>
-                <li>استخدام التطبيق لأغراض تجارية غير مصرّح بها.</li>
-            </ul>
-        </div>
-        <div class="legal-article">
-            <h3>المادة (5): حقوق الملكية الفكرية</h3>
-            <p>تعود جميع الحقوق للشركة، ويمنع نسخها أو إعادة استخدامها بدون إذن مكتوب.</p>
-        </div>
-        <div class="legal-article">
-            <h3>المادة (6): إنهاء الخدمة</h3>
-            <p>يحق للشركة إنهاء وصول أي مستخدم في حال مخالفة الشروط أو إساءة الاستخدام أو التسبب بضرر للشركة أو المستخدمين.</p>
-        </div>
-        <div class="legal-article">
-            <h3>المادة (7): التعديلات على الشروط</h3>
-            <p>تحتفظ الشركة بحقها في تعديل هذه الشروط دون إشعار مسبق، وتكون النسخة المنشورة هي السارية.</p>
-        </div>
-        <div class="legal-article">
-            <h3>المادة (8): القانون المعمول به</h3>
-            <p>تخضع هذه الشروط لأحكام القوانين النافذة في جمهورية العراق، وتكون محاكم محافظة النجف هي المختصة حصريًا.</p>
         </div>
     </div>
 </div>
 
 <div class="legal" id="privacy" role="dialog" aria-modal="true" aria-labelledby="privacy-title">
     <div class="legal-header">
-        <button class="legal-back" type="button" data-action="legal-close" data-legal="privacy">→ رجوع</button>
-        <h1 class="legal-title" id="privacy-title">سياسة الخصوصية</h1>
-        <p class="legal-subtitle">تطبيق وظّفني | شركة بوابة التوظيف لاستقدام وتشغيل الأيدي العاملة م.م</p>
+        <button class="legal-back" type="button" data-action="legal-close" data-legal="privacy">
+            <span aria-hidden="true" class="legal-back-arrow">→</span> <span data-i18n="legal.back">رجوع</span>
+        </button>
+        <h1 class="legal-title" id="privacy-title" data-i18n="footer.privacy">سياسة الخصوصية</h1>
+        <p class="legal-subtitle" data-i18n="legal.company">تطبيق وظّفني | شركة بوابة التوظيف لاستقدام وتشغيل الأيدي العاملة م.م</p>
     </div>
-    <div class="legal-content">
+    <div class="legal-content" data-i18n-html="privacy.body">
         <div class="legal-article">
             <h3>المادة (1): التعريفات</h3>
-            <ul>
-                <li><strong>الشركة:</strong> شركة بوابة التوظيف لاستقدام وتشغيل الأيدي العاملة المحدودة.</li>
-                <li><strong>التطبيق:</strong> تطبيق وظفني والموقع الإلكتروني المرتبط به.</li>
-                <li><strong>المستخدم:</strong> كل شخص يستخدم خدمات التطبيق.</li>
-                <li><strong>البيانات الشخصية:</strong> كل معلومة تُعرّف أو تُمكّن من التعرف على المستخدم.</li>
-            </ul>
-        </div>
-        <div class="legal-article">
-            <h3>المادة (2): نطاق جمع البيانات</h3>
-            <ul>
-                <li>الاسم الكامل، البريد الإلكتروني، رقم الهاتف.</li>
-                <li>المعلومات المهنية والسيرة الذاتية.</li>
-                <li>بيانات الموقع الجغرافي بموافقة المستخدم.</li>
-                <li>بيانات الاستخدام (IP، نوع الجهاز، نظام التشغيل).</li>
-            </ul>
-        </div>
-        <div class="legal-article">
-            <h3>المادة (3): أغراض استخدام البيانات</h3>
-            <ul>
-                <li>تمكين المستخدم من استخدام الخدمات.</li>
-                <li>تخصيص وتحسين تجربة المستخدم.</li>
-                <li>إرسال تنبيهات عن فرص العمل.</li>
-                <li>الامتثال للالتزامات القانونية.</li>
-            </ul>
-        </div>
-        <div class="legal-article">
-            <h3>المادة (4): مشاركة البيانات</h3>
-            <p>لا تبيع الشركة البيانات، باستثناء أصحاب العمل المختارين من المستخدم والجهات القضائية بموجب طلب قانوني.</p>
-        </div>
-        <div class="legal-article">
-            <h3>المادة (5): حماية البيانات</h3>
-            <p>تتخذ الشركة جميع التدابير الفنية بما يشمل التشفير والبروتوكولات الآمنة (SSL).</p>
-        </div>
-        <div class="legal-article">
-            <h3>المادة (6): حقوق المستخدم</h3>
-            <ul>
-                <li>الاطلاع على بياناته وتعديلها أو حذفها.</li>
-                <li>الاعتراض على استخدام بياناته لأغراض تسويقية.</li>
-                <li>سحب الموافقة في أي وقت.</li>
-            </ul>
-        </div>
-        <div class="legal-article">
-            <h3>المادة (7): ملفات تعريف الارتباط</h3>
-            <p>قد يستخدم التطبيق Cookies لتحسين الأداء، ويحق للمستخدم تعطيلها.</p>
-        </div>
-        <div class="legal-article">
-            <h3>المادة (8): التعديلات</h3>
-            <p>تحتفظ الشركة بحق التعديل مع إشعار المستخدم بالتغييرات الجوهرية.</p>
-        </div>
-        <div class="legal-article">
-            <h3>المادة (9): القانون الواجب التطبيق</h3>
-            <p>تخضع لقوانين العراق وتختص محاكم النجف بالنظر في أي نزاع.</p>
+            <p>الشركة: شركة بوابة التوظيف لاستقدام وتشغيل الأيدي العاملة المحدودة.</p>
         </div>
     </div>
 </div>
 
 <!-- Floating actions -->
-<button class="back-to-top" type="button" id="back-to-top" aria-label="العودة إلى الأعلى" title="العودة إلى الأعلى">↑</button>
+<button class="back-to-top" type="button" id="back-to-top"
+        data-i18n-attr="aria-label:a11y.toTop, title:a11y.toTop"
+        aria-label="العودة إلى الأعلى" title="العودة إلى الأعلى">↑</button>
 
-<a href="https://wa.me/9647875005001" target="_blank" rel="noopener" class="whatsapp-button" aria-label="تواصل معنا عبر واتساب" title="تواصل معنا عبر واتساب">
+<a href="https://wa.me/9647875005001" target="_blank" rel="noopener" class="whatsapp-button"
+   data-i18n-attr="aria-label:a11y.whatsapp, title:a11y.whatsapp"
+   aria-label="تواصل معنا عبر واتساب" title="تواصل معنا عبر واتساب">
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" fill="#fff" aria-hidden="true">
         <path d="M16 2C8.268 2 2 8.268 2 16c0 2.478.67 4.797 1.836 6.789L2 30l7.448-1.953A13.928 13.928 0 0 0 16 30c7.732 0 14-6.268 14-14S23.732 2 16 2zm0 25.6a11.54 11.54 0 0 1-5.88-1.607l-.42-.25-4.42 1.16 1.18-4.305-.274-.442A11.56 11.56 0 0 1 4.4 16C4.4 9.593 9.593 4.4 16 4.4S27.6 9.593 27.6 16 22.407 27.6 16 27.6zm6.34-8.64c-.347-.174-2.055-1.014-2.374-1.13-.318-.115-.55-.174-.781.174-.232.347-.897 1.13-1.1 1.362-.202.231-.405.26-.752.087-.347-.174-1.464-.54-2.788-1.72-1.03-.918-1.726-2.052-1.928-2.399-.202-.347-.022-.535.152-.708.156-.155.347-.405.52-.607.174-.202.232-.347.347-.578.116-.232.058-.434-.029-.607-.087-.174-.781-1.883-1.07-2.578-.282-.678-.569-.586-.781-.597l-.666-.011c-.232 0-.607.087-.925.434-.318.347-1.215 1.187-1.215 2.895s1.244 3.357 1.418 3.589c.174.231 2.45 3.74 5.935 5.244.83.358 1.477.572 1.982.732.833.265 1.591.228 2.19.138.668-.1 2.055-.84 2.345-1.651.289-.812.289-1.508.202-1.651-.086-.144-.318-.231-.665-.405z"/>
     </svg>
 </a>
 
-<script src="js/main.js?v=2.0.0" type="module"></script>
+<script src="js/main.js?v=2.1.0" type="module"></script>
 </body>
 </html>

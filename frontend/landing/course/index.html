@@ -3,14 +3,27 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Wazzifni</title>
+    <title data-i18n="meta.title">دورات وظّفني | Wazzifni</title>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&family=Tajawal:wght@300;400;500;700;800&display=swap" rel="stylesheet">
 
     <!-- CSS Files (Absolute paths to ensure they work regardless of sub-route) -->
-    <link rel="stylesheet" href="/course/css/variables.css?v=1.0.0">
-    <link rel="stylesheet" href="/course/css/main.css?v=1.0.0">
-    <link rel="stylesheet" href="/course/css/components.css?v=1.0.0">
-    <link rel="stylesheet" href="/course/css/responsive.css?v=1.0.0">
+    <link rel="stylesheet" href="/course/css/variables.css?v=1.1.0">
+    <link rel="stylesheet" href="/course/css/main.css?v=1.1.0">
+    <link rel="stylesheet" href="/course/css/components.css?v=1.1.0">
+    <link rel="stylesheet" href="/course/css/responsive.css?v=1.1.0">
+
+    <!-- Settles the language before first paint so an English visitor never sees
+         the page laid out right-to-left for a frame. js/i18n.js re-applies the
+         same thing once the markup exists. -->
+    <script>
+      try {
+        var wzLang = localStorage.getItem('wazzifni-lang');
+        if (wzLang === 'en' || wzLang === 'ar') {
+          document.documentElement.lang = wzLang;
+          document.documentElement.dir = wzLang === 'ar' ? 'rtl' : 'ltr';
+        }
+      } catch (e) { /* storage disabled — the page stays in its default Arabic */ }
+    </script>
 </head>
 <body>
 
@@ -23,7 +36,7 @@
 <nav>
     <div style="display:flex; align-items:center; gap:2rem;">
         <div class="logo-wrap">
-            <img src="/course/assets/images/logo.png" alt="Wazzifni Logo" class="logo-img">
+            <img src="/course/assets/images/logo.png" alt="Wazzifni" class="logo-img">
             <div>
                 <div class="logo">Wazzifni</div>
             </div>
@@ -32,24 +45,29 @@
 
     <div style="display:flex; align-items:center; gap:1.5rem;">
         <div class="nav-tabs user-appbar-links">
-            <button class="nav-tab active" data-view="user">🎓 الدورات</button>
+            <button class="nav-tab active" data-view="user" data-i18n="nav.courses">🎓 الدورات</button>
         </div>
+        <!-- Label is the language you switch TO, in that language's own script. -->
+        <button class="nav-lang" type="button" data-lang-toggle
+                data-i18n="lang.other" data-i18n-attr="aria-label:a11y.langSwitch"
+                aria-label="Switch to English">English</button>
     </div>
 </nav>
 
 <!-- User View -->
 <div id="userView" class="view active">
     <div class="page-header">
-        <h1>الدورات التدريبية المتاحة</h1>
-        <p>اكتشف أفضل الدورات واحجز مقعدك الآن</p>
+        <h1 data-i18n="page.title">الدورات التدريبية المتاحة</h1>
+        <p data-i18n="page.subtitle">اكتشف أفضل الدورات واحجز مقعدك الآن</p>
     </div>
     <div id="userStats" class="stats-bar"></div>
     <div class="search-bar">
-        <input type="text" id="searchInput" placeholder="🔍 ابحث عن دورة...">
-        <button class="filter-btn active" data-filter="all">الكل</button>
-        <button class="filter-btn" data-filter="free">مجانية</button>
-        <button class="filter-btn" data-filter="paid">مدفوعة</button>
-        <button class="filter-btn" data-filter="open">متاحة</button>
+        <input type="text" id="searchInput"
+               data-i18n-attr="placeholder:search.placeholder" placeholder="🔍 ابحث عن دورة...">
+        <button class="filter-btn active" data-filter="all" data-i18n="filter.all">الكل</button>
+        <button class="filter-btn" data-filter="free" data-i18n="filter.free">مجانية</button>
+        <button class="filter-btn" data-filter="paid" data-i18n="filter.paid">مدفوعة</button>
+        <button class="filter-btn" data-filter="open" data-i18n="filter.open">متاحة</button>
     </div>
     <div id="userCoursesList" class="cards-grid"></div>
     <!-- Pagination for User View -->
@@ -60,7 +78,8 @@
 <div class="modal-overlay" id="courseDetailModal">
     <div class="modal course-detail-modal">
         <div class="cdm-header">
-            <button class="close-detail-btn" id="closeDetailBtn">✕</button>
+            <button class="close-detail-btn" id="closeDetailBtn"
+                    data-i18n-attr="aria-label:a11y.close" aria-label="إغلاق">✕</button>
             <div class="cdm-header-content">
                 <img id="cdmTeacherImg" src="" alt="" class="cdm-teacher-img">
                 <div>
@@ -72,11 +91,11 @@
         <div class="cdm-body">
             <div id="cdmStats" class="cdm-stats"></div>
             <div class="cdm-description">
-                <div class="cdm-section-title">📄 وصف الدورة</div>
+                <div class="cdm-section-title" data-i18n="detail.descriptionTitle">📄 وصف الدورة</div>
                 <div id="cdmDesc" class="cdm-desc-text"></div>
             </div>
             <div id="cdmRegistrantsWrap" class="cdm-registrants" style="display:none">
-                <div class="cdm-section-title">👥 المتقدمون</div>
+                <div class="cdm-section-title" data-i18n="detail.registrantsTitle">👥 المتقدمون</div>
                 <div id="cdmRegistrants" class="cdm-registrants-list"></div>
             </div>
             <div id="cdmFooterBtns" class="cdm-footer"></div>
@@ -87,16 +106,18 @@
 <!-- Toast Container -->
 <div class="toast-container" id="toastContainer"></div>
 
-<!-- JavaScript Files -->
-<script src="/course/js/models/Course.js?v=1.0.0"></script>
-<script src="/course/js/services/ApiService.js?v=1.0.0"></script>
-<script src="/course/js/services/CourseService.js?v=1.0.0"></script>
-<script src="/course/js/services/RegistrationService.js?v=1.0.0"></script>
-<script src="/course/js/services/StorageService.js?v=1.0.0"></script>
-<script src="/course/js/services/UtilsService.js?v=1.0.0"></script>
-<script src="/course/js/views/UserView.js?v=1.0.0"></script>
-<script src="/course/js/views/ModalView.js?v=1.0.0"></script>
-<script src="/course/js/controllers/MainController.js?v=1.0.0"></script>
-<script src="/course/js/app.js?v=1.0.0"></script>
+<!-- JavaScript Files. i18n.js comes first: every view below reads window.i18n
+     while rendering, so the dictionary has to exist before they run. -->
+<script src="/course/js/i18n.js?v=1.1.0"></script>
+<script src="/course/js/models/Course.js?v=1.1.0"></script>
+<script src="/course/js/services/ApiService.js?v=1.1.0"></script>
+<script src="/course/js/services/CourseService.js?v=1.1.0"></script>
+<script src="/course/js/services/RegistrationService.js?v=1.1.0"></script>
+<script src="/course/js/services/StorageService.js?v=1.1.0"></script>
+<script src="/course/js/services/UtilsService.js?v=1.1.0"></script>
+<script src="/course/js/views/UserView.js?v=1.1.0"></script>
+<script src="/course/js/views/ModalView.js?v=1.1.0"></script>
+<script src="/course/js/controllers/MainController.js?v=1.1.0"></script>
+<script src="/course/js/app.js?v=1.1.0"></script>
 </body>
 </html>

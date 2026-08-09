@@ -1,10 +1,12 @@
 /* =============================================================================
-   Footer
+   Footer — the one dark block on the light page, same as the main landing's.
+   --muted is a light-surface token, so every muted line here is spelled out as
+   translucent white instead.
    ============================================================================= */
 .footer {
   padding-block: clamp(2.2rem, 6vw, 3.5rem) calc(1.5rem + var(--safe-b));
-  background: #02101f;
-  border-top: 1px solid var(--border);
+  background: var(--navy-deep);
+  color: rgba(255, 255, 255, 0.6);
 }
 
 .footer-grid {
@@ -42,14 +44,14 @@
 .footer-logo-sub {
   display: block;
   font-size: 0.72rem;
-  color: var(--muted);
+  color: rgba(255, 255, 255, 0.6);
   unicode-bidi: isolate;
 }
 
 .footer-description {
   max-width: 46ch;
   font-size: var(--fs-sm);
-  color: var(--muted);
+  color: rgba(255, 255, 255, 0.6);
   line-height: 1.9;
 }
 
@@ -71,7 +73,7 @@
   gap: 0.4rem;
   min-height: 36px;
   font-size: var(--fs-sm);
-  color: var(--muted);
+  color: rgba(255, 255, 255, 0.6);
   transition: color var(--t-fast);
 }
 
@@ -82,15 +84,15 @@
 .footer-bottom {
   margin-top: clamp(1.5rem, 5vw, 2.5rem);
   padding-top: 1.2rem;
-  border-top: 1px solid var(--border);
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
   text-align: center;
   font-size: var(--fs-xs);
-  color: var(--muted);
+  color: rgba(255, 255, 255, 0.6);
   line-height: 1.9;
 }
 
 .footer-bottom a {
-  color: var(--blue-bright);
+  color: var(--gold);
 }
 
 /* --------------------------------------------------------- tablet & up ---- */

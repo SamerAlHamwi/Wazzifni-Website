@@ -86,6 +86,33 @@ nav {
     box-shadow: 0 4px 15px rgba(0, 182, 231, 0.4);
 }
 
+/* Language switcher. The label is always the *other* language's own name, so it
+   must never be reordered by the bidi algorithm of the language in use. */
+.nav-lang {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 auto;
+    min-width: 46px;
+    min-height: 36px;
+    padding: 0.35rem 0.9rem;
+    border-radius: 50px;
+    background: rgba(255, 255, 255, 0.14);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    color: white;
+    font-family: 'Cairo', sans-serif;
+    font-size: 0.8rem;
+    font-weight: 700;
+    cursor: pointer;
+    white-space: nowrap;
+    unicode-bidi: isolate;
+    transition: background 0.2s;
+}
+
+.nav-lang:hover {
+    background: rgba(255, 255, 255, 0.26);
+}
+
 /* Views */
 .view {
     display: none;
@@ -132,7 +159,9 @@ nav {
     border: 1px solid var(--border);
     border-radius: 16px;
     box-shadow: 0 4px 12px rgba(0, 87, 198, 0.05);
-    padding: 1.5rem; text-align: right;
+    padding: 1.5rem;
+    /* `start`, not `right`: the card has to read left-to-right in English. */
+    text-align: start;
     transition: all 0.3s;
     display: flex;
     flex-direction: column;

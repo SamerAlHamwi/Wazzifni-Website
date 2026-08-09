@@ -1,36 +1,18 @@
 import { observeReveal } from '../utils/observers.js';
 
+const i18n = window.i18n ?? { lang: 'ar', t: (key) => key, onChange: () => {} };
+
 // Enums from the Wazzifni API. All of these are 1-based; the previous JobPost
 // feed used 0-based enums with a different ordering, so the values are not
-// interchangeable.
-const JOB_TYPE_LABELS = {
-  1: 'دوام كامل',
-  2: 'دوام جزئي',
-  3: 'حسب الإتفاق',
-  4: 'أعمال حرة',
-  5: 'شراكة استراتيجية',
-  6: 'تدريب',
-  7: 'عمل تطوعي',
-};
-
-const WORK_PLACE_LABELS = {
-  1: 'في مقر العمل',
-  2: 'عن بعد',
-  3: 'هجين (مقر العمل + عن بُعد)',
-};
-
+// interchangeable. Only the numeric code is stored here — the label for it comes
+// out of the dictionary at render time, so the same feed renders in either
+// language without being re-fetched.
+//
 // ExperienceLevel only defines 1-3, but older records carry values outside that
 // range, so anything unknown falls back to a neutral label.
-const EXPERIENCE_LEVEL_LABELS = {
-  1: 'مستوى مبتدئ',
-  2: 'مستوى متوسط',
-  3: 'مستوى خبير',
-};
-
-const SALARY_PERIOD_LABELS = {
-  1: 'يومياً',
-  2: 'أسبوعياً',
-  3: 'شهرياً',
+const label = (namespace, code, fallbackKey) => {
+  const key = `${namespace}.${code}`;
+  return i18n.has?.(key) ? i18n.t(key) : i18n.t(fallbackKey);
 };
 
 const CATEGORY_ICONS = {
@@ -57,19 +39,39 @@ const escapeHtml = (value) =>
 export class Jobs {
   constructor() {
     this.container = document.querySelector('.jobs-grid');
-    if (this.container) this.init();
+    /** The last successful feed, kept so a language change can re-render the
+        cards without spending another request on the same six jobs. */
+    this.jobs = null;
+    /** Set when the feed could not be loaded, so the failure message follows the
+        language too rather than being frozen in whichever one it was written in. */
+    this.failed = false;
+
+    if (!this.container) return;
+
+    i18n.onChange(() => {
+      if (this.failed) this.renderError();
+      else if (this.jobs) this.render(this.jobs);
+    });
+
+    this.init();
   }
 
   async init() {
     this.renderShimmers();
 
     try {
-      this.render(await this.fetchJobs());
+      this.jobs = await this.fetchJobs();
+      this.failed = false;
+      this.render(this.jobs);
     } catch (error) {
       console.error('Error fetching jobs:', error);
-      this.container.innerHTML =
-        '<p class="jobs-empty">تعذر تحميل الوظائف، يرجى المحاولة لاحقاً.</p>';
+      this.failed = true;
+      this.renderError();
     }
+  }
+
+  renderError() {
+    this.container.innerHTML = `<p class="jobs-empty">${escapeHtml(i18n.t('jobs.loadError'))}</p>`;
   }
 
   renderShimmers() {
@@ -108,15 +110,19 @@ export class Jobs {
   }
 
   formatSalary(from, to, salaryType) {
-    if (!from && !to) return 'الراتب يحدد في المقابلة';
+    if (!from && !to) return i18n.t('jobs.salaryOnInterview');
 
-    const period = SALARY_PERIOD_LABELS[salaryType];
-    const unit = period ? `د.ع ${period}` : 'د.ع';
+    const currency = i18n.t('jobs.currency');
+    const period = i18n.has?.(`period.${salaryType}`) ? i18n.t(`period.${salaryType}`) : '';
+    const unit = period ? `${currency} ${period}` : currency;
 
-    if (from && !to) return `${from.toLocaleString()} ${unit}`;
-    if (!from && to) return `حتى ${to.toLocaleString()} ${unit}`;
-    if (from === to) return `${from.toLocaleString()} ${unit}`;
-    return `${from.toLocaleString()} - ${to.toLocaleString()} ${unit}`;
+    // Grouping separators follow the reading language, the same way the labels do.
+    const amount = (value) => value.toLocaleString(i18n.lang === 'ar' ? 'ar-IQ' : 'en-US');
+
+    if (from && !to) return `${amount(from)} ${unit}`;
+    if (!from && to) return i18n.t('jobs.salaryUpTo', { amount: amount(to), unit });
+    if (from === to) return `${amount(from)} ${unit}`;
+    return `${amount(from)} - ${amount(to)} ${unit}`;
   }
 
   getTimeAgo(dateString) {
@@ -131,19 +137,21 @@ export class Jobs {
     if (Number.isNaN(date.getTime())) return '';
 
     const seconds = Math.max(0, Math.floor((Date.now() - date.getTime()) / 1000));
-    if (seconds < 60) return 'الآن';
+    if (seconds < 60) return i18n.t('ago.now');
 
     const minutes = Math.floor(seconds / 60);
-    if (minutes < 60) return `منذ ${minutes} دقيقة`;
+    if (minutes < 60) return i18n.t('ago.minutes', { n: minutes });
 
     const hours = Math.floor(minutes / 60);
-    if (hours < 24) return `منذ ${hours} ساعة`;
+    if (hours < 24) return i18n.t('ago.hours', { n: hours });
 
+    // Arabic splits the plural three ways (one / two / 3-10 / more), which is
+    // why this is a ladder rather than a single "{n} days ago".
     const days = Math.floor(hours / 24);
-    if (days === 1) return 'منذ يوم';
-    if (days === 2) return 'منذ يومين';
-    if (days <= 10) return `منذ ${days} أيام`;
-    return `منذ ${days} يوم`;
+    if (days === 1) return i18n.t('ago.day');
+    if (days === 2) return i18n.t('ago.twoDays');
+    if (days <= 10) return i18n.t('ago.days', { n: days });
+    return i18n.t('ago.manyDays', { n: days });
   }
 
   getIcon(job) {
@@ -159,22 +167,22 @@ export class Jobs {
   }
 
   card(job) {
-    const engagement = JOB_TYPE_LABELS[job.jobType] || 'دوام كامل';
-    const workplace = WORK_PLACE_LABELS[job.workPlace] || 'في مقر العمل';
-    const level = EXPERIENCE_LEVEL_LABELS[job.experienceLevel] || 'مستوى غير محدد';
+    const engagement = label('jobType', job.jobType, 'jobType.1');
+    const workplace = label('workPlace', job.workPlace, 'workPlace.1');
+    const level = label('level', job.experienceLevel, 'level.unknown');
 
     return `
       <div class="job-card rv" role="button" tabindex="0" data-action="download">
         <div class="job-header">
-          <h3 class="job-title">${escapeHtml(job.subject || 'وظيفة')}</h3>
-          <span class="job-badge">${engagement}</span>
+          <h3 class="job-title">${escapeHtml(job.subject || i18n.t('jobs.untitled'))}</h3>
+          <span class="job-badge">${escapeHtml(engagement)}</span>
         </div>
-        <div class="job-company">${this.getIcon(job)} ${escapeHtml(job.companyName || 'شركة غير معلنة')}</div>
-        <div class="job-level">⭐ ${level}</div>
+        <div class="job-company">${this.getIcon(job)} ${escapeHtml(job.companyName || i18n.t('jobs.unknownCompany'))}</div>
+        <div class="job-level">⭐ ${escapeHtml(level)}</div>
         <div class="job-footer">
-          <span class="job-location">📍 ${workplace}</span>
-          <span class="job-salary">${this.formatSalary(job.salaryFrom, job.salaryTo, job.salaryType)}</span>
-          <span class="job-date">${this.getTimeAgo(job.createDate)}</span>
+          <span class="job-location">📍 ${escapeHtml(workplace)}</span>
+          <span class="job-salary">${escapeHtml(this.formatSalary(job.salaryFrom, job.salaryTo, job.salaryType))}</span>
+          <span class="job-date">${escapeHtml(this.getTimeAgo(job.createDate))}</span>
         </div>
       </div>
     `;
@@ -182,7 +190,7 @@ export class Jobs {
 
   render(jobs) {
     if (!jobs.length) {
-      this.container.innerHTML = '<p class="jobs-empty">لا توجد وظائف متاحة حالياً.</p>';
+      this.container.innerHTML = `<p class="jobs-empty">${escapeHtml(i18n.t('jobs.empty'))}</p>`;
       return;
     }
 

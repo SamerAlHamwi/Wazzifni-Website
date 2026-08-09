@@ -97,9 +97,11 @@ html {
   -webkit-text-size-adjust: 100%;
 }
 
+/* Direction comes from the dir attribute on <html>, which js/i18n.js flips with
+   the language — hardcoding `direction: rtl` here would pin the page to RTL even
+   in English. */
 body {
   font-family: 'Cairo', system-ui, -apple-system, 'Segoe UI', sans-serif;
-  direction: rtl;
   background: var(--bg);
   color: var(--ink);
   line-height: 1.65;
@@ -319,6 +321,11 @@ button {
   transform: scaleX(0);
   transform-origin: right center;
   pointer-events: none;
+}
+
+/* The bar grows from the edge the page starts at, so it follows the direction. */
+[dir='ltr'] .scroll-progress {
+  transform-origin: left center;
 }
 
 .whatsapp-button,

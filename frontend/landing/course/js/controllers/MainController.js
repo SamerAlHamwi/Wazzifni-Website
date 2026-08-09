@@ -27,6 +27,14 @@ class MainController {
         // Bind global events
         this.bindEvents();
 
+        // Cards, stats and pagination are all rendered from JS, so a language
+        // change has to redraw them — the data itself is already in memory, so
+        // this costs no request.
+        window.i18n.onChange(() => {
+            this.renderAll();
+            this.renderStats();
+        });
+
         // Initial load
         await this.loadCourses();
         this.renderStats();
@@ -106,7 +114,7 @@ class MainController {
 
             this.renderAll();
         } catch (error) {
-            this.showToast('❌ فشل تحميل الدورات: ' + error.message, 'error');
+            this.showToast(window.i18n.t('toast.loadCoursesFailed', { error: error.message }), 'error');
         } finally {
             this.setLoading(false);
         }
@@ -185,10 +193,10 @@ class MainController {
         const shareUrl = `${window.location.origin}/course/?id=${courseId}`;
         UtilsService.copyToClipboard(shareUrl)
             .then(() => {
-                this.showToast('✅ تم نسخ رابط الدورة إلى الحافظة', 'success');
+                this.showToast(window.i18n.t('toast.linkCopied'), 'success');
             })
             .catch(() => {
-                this.showToast('❌ فشل نسخ الرابط', 'error');
+                this.showToast(window.i18n.t('toast.linkCopyFailed'), 'error');
             });
     }
 

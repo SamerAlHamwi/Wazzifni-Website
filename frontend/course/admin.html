@@ -194,6 +194,68 @@
             font-size: 0.9rem;
         }
         .btn-delete-small:hover { background: #fee2e2; }
+
+        /* Project Inquiries (IT Land landing form) — reuses .applicant-card */
+        .badge.purple { background: #ede9fe !important; color: #5b21b6 !important; }
+        .badge.gray { background: #f1f5f9 !important; color: #475569 !important; }
+
+        .inquiry-message-preview {
+            background: var(--bg, #f8fafc);
+            border: 1px solid #f1f5f9;
+            border-radius: 10px;
+            padding: 0.75rem;
+            font-size: 0.85rem;
+            line-height: 1.7;
+            color: #475569;
+            /* Long project briefs must not stretch the card out of the grid. */
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            cursor: pointer;
+        }
+
+        .inquiry-detail-meta {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: 0.75rem;
+            text-align: right;
+            margin-top: 0.5rem;
+        }
+
+        .inquiry-detail-meta .meta-item {
+            background: #f8fafc;
+            border: 1px solid #f1f5f9;
+            border-radius: 10px;
+            padding: 0.6rem 0.8rem;
+        }
+
+        .inquiry-detail-meta .meta-label {
+            font-size: 0.7rem;
+            color: #94a3b8;
+            font-weight: 700;
+            margin-bottom: 2px;
+        }
+
+        .inquiry-detail-meta .meta-value {
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: #1e293b;
+            word-break: break-word;
+        }
+
+        .inquiry-detail-message {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            padding: 1rem;
+            line-height: 1.9;
+            color: #334155;
+            max-height: 220px;
+            overflow-y: auto;
+            /* Preserves the paragraph breaks the visitor typed. */
+            white-space: pre-wrap;
+        }
     </style>
 </head>
 <body class="admin-mode">
@@ -220,6 +282,7 @@
             <button class="nav-tab admin-nav-item active" data-admin-view="dashboard">الإحصائيات</button>
             <button class="nav-tab admin-nav-item" data-admin-view="courses">إدارة الدورات</button>
             <button class="nav-tab admin-nav-item" data-admin-view="applicants">المتقدمين</button>
+            <button class="nav-tab admin-nav-item" data-admin-view="inquiries">طلبات المشاريع</button>
             <button class="nav-tab admin-nav-item" data-admin-view="users">إدارة المسؤولين</button>
         </div>
     </div>
@@ -493,7 +556,61 @@
                 </div>
             </div>
 
-            <!-- 4. Course Details Page (Admin View) -->
+            <!-- 4. Project Inquiries Page (from the IT Land landing contact form) -->
+            <div id="adminInquiries" class="admin-sub-view">
+                <div class="page-header">
+                    <div style="display:flex; justify-content:space-between; align-items:center; width:100%;">
+                        <div>
+                            <h1>طلبات المشاريع</h1>
+                            <p>الطلبات الواردة من نموذج "عندك فكرة أو نظام تريد بناءه؟" في صفحة آي تي لاند</p>
+                        </div>
+                        <button class="btn btn-primary btn-sm" id="exportInquiriesBtn">📥 تصدير CSV</button>
+                    </div>
+                </div>
+
+                <div id="inquiriesStats" class="stats-bar" style="margin-bottom:1.5rem;"></div>
+
+                <div id="inquiriesFilters" class="applicants-filters">
+                    <input type="text" id="inqSearchInput" placeholder="🔍 ابحث بالاسم أو الجهة أو نص الطلب...">
+                    <select id="inqStatusFilter">
+                        <option value="all">🔖 كل الحالات</option>
+                        <option value="new">🆕 جديد</option>
+                        <option value="contacted">📞 تم التواصل</option>
+                        <option value="in-progress">🚧 قيد التنفيذ</option>
+                        <option value="won">✅ تم الاتفاق</option>
+                        <option value="lost">❌ لم يكتمل</option>
+                    </select>
+                    <select id="inqServiceFilter">
+                        <option value="all">🧩 كل الخدمات</option>
+                        <option value="mobile">تطبيق موبايل</option>
+                        <option value="enterprise">نظام مؤسسي</option>
+                        <option value="api">تكامل أنظمة وواجهات API</option>
+                        <option value="cloud">خدمات سحابية وتشغيل</option>
+                        <option value="ux">تصميم تجربة مستخدم</option>
+                        <option value="support">دعم وصيانة</option>
+                        <option value="other">غير ذلك</option>
+                    </select>
+                    <select id="inqChannelFilter">
+                        <option value="all">📨 كل القنوات</option>
+                        <option value="whatsapp">💬 واتساب</option>
+                        <option value="email">✉️ البريد الإلكتروني</option>
+                    </select>
+                    <select id="inqSortFilter">
+                        <option value="newest">🕐 الأحدث أولاً</option>
+                        <option value="oldest">🕐 الأقدم أولاً</option>
+                        <option value="name">🔤 الاسم</option>
+                    </select>
+                </div>
+
+                <div id="inquiriesCardsGrid" class="applicants-grid"></div>
+                <div id="inquiriesEmpty" class="empty-state" style="display:none">
+                    <div class="icon">💡</div>
+                    <h3>لا توجد طلبات مشاريع</h3>
+                    <p>عند إرسال زائر لنموذج التواصل في صفحة آي تي لاند سيظهر طلبه هنا</p>
+                </div>
+            </div>
+
+            <!-- 5. Course Details Page (Admin View) -->
             <div id="adminCourseDetail" class="admin-sub-view">
                 <div class="page-header">
                     <button class="btn btn-ghost btn-sm" style="margin-bottom: 1rem;" id="backToCoursesBtn">🔙 العودة للدورات</button>
@@ -504,7 +621,7 @@
                 <div id="adminCourseDetailContent"></div>
             </div>
 
-            <!-- 5. Users Management Page -->
+            <!-- 6. Users Management Page -->
             <div id="adminUsers" class="admin-sub-view">
                 <div class="page-header">
                     <div style="display:flex; justify-content:space-between; align-items:center; width:100%;">
@@ -700,6 +817,43 @@
     </div>
 </div>
 
+<!-- Inquiry Detail Modal -->
+<div class="modal-overlay" id="inquiryModal">
+    <div class="modal" style="max-width: 620px;">
+        <h2>💡 تفاصيل طلب المشروع</h2>
+        <input type="hidden" id="inquiryId">
+
+        <div class="inquiry-detail-meta" id="inquiryDetailMeta"></div>
+
+        <div class="form-group" style="margin-top: 1rem; text-align: right;">
+            <label>نص الطلب</label>
+            <div class="inquiry-detail-message" id="inquiryDetailMessage"></div>
+        </div>
+
+        <div class="registration-form-grid" style="grid-template-columns: 1fr;">
+            <div class="form-group">
+                <label>الحالة</label>
+                <select id="inquiryStatus">
+                    <option value="new">🆕 جديد</option>
+                    <option value="contacted">📞 تم التواصل</option>
+                    <option value="in-progress">🚧 قيد التنفيذ</option>
+                    <option value="won">✅ تم الاتفاق</option>
+                    <option value="lost">❌ لم يكتمل</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>ملاحظات داخلية</label>
+                <textarea id="inquiryNotes" rows="3" placeholder="ملاحظات الفريق حول هذا الطلب..."></textarea>
+            </div>
+        </div>
+
+        <div class="modal-actions" style="margin-top: 20px;">
+            <button class="btn btn-primary" id="saveInquiryBtn" style="width: 100%;">💾 حفظ التغييرات</button>
+            <button class="btn btn-ghost" id="closeInquiryModalBtn" style="width: 100%; margin-top: 10px;">إغلاق</button>
+        </div>
+    </div>
+</div>
+
 <!-- Toast Container -->
 <div class="toast-container" id="toastContainer"></div>
 
@@ -709,6 +863,7 @@
 <script src="js/services/CourseService.js?v=1.0.2"></script>
 <script src="js/services/UserService.js?v=1.0.2"></script>
 <script src="js/services/RegistrationService.js?v=1.0.2"></script>
+<script src="js/services/InquiryService.js?v=1.0.2"></script>
 <script src="js/services/StorageService.js?v=1.0.2"></script>
 <script src="js/services/UtilsService.js?v=1.0.2"></script>
 <script src="js/views/UserView.js?v=1.0.2"></script>

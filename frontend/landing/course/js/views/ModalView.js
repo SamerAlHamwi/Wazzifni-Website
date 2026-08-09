@@ -39,7 +39,7 @@ const ModalView = {
                 <div class="course-detail">
                     👨‍🏫 ${course.teacherName} &nbsp;|&nbsp;
                     📅 ${UtilsService.formatDate(course.startDate)} &nbsp;|&nbsp;
-                    ${course.type === 'free' ? '🆓 مجانية' : UtilsService.formatPrice(course.price)}
+                    ${course.type === 'free' ? window.i18n.t('detail.freeBadge') : UtilsService.formatPrice(course.price)}
                 </div>`;
         }
 
@@ -62,7 +62,7 @@ const ModalView = {
             'cdmCourseName': course.name,
             'cdmTeacherName': '👨‍🏫 ' + course.teacherName,
             'cdmTeacherImg': course.teacherImg || UtilsService.generateAvatar(course.teacherName),
-            'cdmDesc': course.desc || 'لا يوجد وصف لهذه الدورة.'
+            'cdmDesc': course.desc || window.i18n.t('card.noDescription')
         };
 
         Object.entries(fields).forEach(([id, val]) => {
@@ -100,21 +100,23 @@ const ModalView = {
     },
 
     renderStats(course, regCount, pct, statusColor) {
+        const t = (key, vars) => window.i18n.t(key, vars);
+
         return `
             <div class="cdm-stat-box">
                 <div class="val" style="color:var(--blue)">${course.totalSeats}</div>
-                <div class="lbl">إجمالي المقاعد</div>
+                <div class="lbl">${t('detail.totalSeats')}</div>
             </div>
             <div class="cdm-progress-box">
                 <div style="display:flex;justify-content:space-between;margin-bottom:8px;font-size:0.85rem;font-weight:600;">
                     <span style="color:var(--text)">📅 ${UtilsService.formatDate(course.startDate)}</span>
-                    <span style="color:${course.type === 'free' ? 'var(--success)' : 'var(--orange)'};">${course.type === 'free' ? '🆓 مجانية' : UtilsService.formatPrice(course.price)}</span>
+                    <span style="color:${course.type === 'free' ? 'var(--success)' : 'var(--orange)'};">${course.type === 'free' ? t('detail.freeBadge') : UtilsService.formatPrice(course.price)}</span>
                 </div>
                 <div class="progress-track" style="height:10px;background:var(--border);">
                     <div class="progress-fill" style="width:${pct}%;background:linear-gradient(90deg,var(--sky),var(--blue));"></div>
                 </div>
                 <div style="font-size:0.75rem;color:var(--muted);margin-top:6px;text-align:center;font-weight:700;">
-                    ${course.isCompleted() ? 'هذه الدورة منتهية حالياً' : `تم حجز ${pct}% من المقاعد`}
+                    ${course.isCompleted() ? t('detail.finishedNote') : t('detail.seatsBooked', { pct: pct })}
                 </div>
             </div>`;
     },
@@ -123,7 +125,7 @@ const ModalView = {
         if (registrations.length === 0) {
             return `
                 <div style="text-align:center;padding:2rem;color:var(--muted);font-size:0.9rem;background:var(--bg);border-radius:12px;border:1px dashed var(--border);">
-                    👤 لا يوجد متقدمون لهذه الدورة بعد
+                    ${window.i18n.t('detail.noRegistrants')}
                 </div>`;
         }
 
@@ -134,7 +136,7 @@ const ModalView = {
                     <div class="registrant-name">${r.studentName || r.name}</div>
                     <div class="registrant-contact">${r.studentPhone || r.phone}${ (r.studentEmail || r.email) ? ' • ' + (r.studentEmail || r.email) : ''}</div>
                     <div class="registrant-extra" style="font-size: 0.8rem; color: var(--muted); margin-top: 4px;">
-                        📍 ${UtilsService.translate(r.governorate) || 'غير محدد'} | 🎓 ${UtilsService.translate(r.educationLevel) || 'غير محدد'} | 💼 ${UtilsService.translate(r.currentJob) || 'غير محدد'}
+                        📍 ${UtilsService.translate(r.governorate) || window.i18n.t('detail.unspecified')} | 🎓 ${UtilsService.translate(r.educationLevel) || window.i18n.t('detail.unspecified')} | 💼 ${UtilsService.translate(r.currentJob) || window.i18n.t('detail.unspecified')}
                     </div>
                 </div>
                 <div class="registrant-date">${UtilsService.formatDateTime(r.registeredAt || r.date)}</div>
@@ -146,11 +148,11 @@ const ModalView = {
         if (isAdminView) return '';
 
         if (course.isCompleted()) {
-            return '<div style="text-align:center;color:var(--muted);font-weight:800;padding:1rem;background:rgba(0,0,0,0.05);border-radius:12px;border:1px solid var(--border);">🏁 هذه الدورة منتهية</div>';
+            return `<div style="text-align:center;color:var(--muted);font-weight:800;padding:1rem;background:rgba(0,0,0,0.05);border-radius:12px;border:1px solid var(--border);">${window.i18n.t('detail.finished')}</div>`;
         }
 
         return `<button class="btn btn-primary" style="width:100%;padding:1rem;font-size:1.1rem;border-radius:12px;"
-                    data-action="register-from-detail" data-course-id="${course.id}">📝 سجّل الآن في هذه الدورة</button>`;
+                    data-action="register-from-detail" data-course-id="${course.id}">${window.i18n.t('detail.registerCta')}</button>`;
     },
 
     getRegisterData() {

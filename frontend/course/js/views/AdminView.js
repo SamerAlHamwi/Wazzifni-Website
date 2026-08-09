@@ -54,6 +54,20 @@ class AdminView {
             document.getElementById(id)?.addEventListener('change', () => this.#controller.filterApplicants());
         });
 
+        // Inquiries (IT Land landing form) — export, filters and detail modal
+        document.getElementById('exportInquiriesBtn')?.addEventListener('click', () => this.#controller.exportInquiries());
+
+        const inqSearch = document.getElementById('inqSearchInput');
+        if (inqSearch) {
+            inqSearch.addEventListener('input', UtilsService.debounce(() => this.#controller.filterInquiries(), 300));
+        }
+        ['inqStatusFilter', 'inqServiceFilter', 'inqChannelFilter', 'inqSortFilter'].forEach(id => {
+            document.getElementById(id)?.addEventListener('change', () => this.#controller.filterInquiries());
+        });
+
+        document.getElementById('closeInquiryModalBtn')?.addEventListener('click', () => this.closeInquiryModal());
+        document.getElementById('saveInquiryBtn')?.addEventListener('click', () => this.#controller.saveInquiry());
+
         // Dashboard period filter
         document.getElementById('regGrowthPeriod')?.addEventListener('change', (e) => {
             this.#controller.loadDashboardData(e.target.value);
@@ -510,6 +524,207 @@ class AdminView {
                     </div>
                 </div>
             </div>`;
+    }
+
+    // ---------- Project Inquiries (IT Land landing form) ----------
+
+    // Arabic labels for the language-neutral keys stored on the inquiry.
+    static #SERVICE_LABELS = {
+        mobile: 'تطبيق موبايل',
+        enterprise: 'نظام مؤسسي',
+        api: 'تكامل أنظمة وواجهات API',
+        cloud: 'خدمات سحابية وتشغيل',
+        ux: 'تصميم تجربة مستخدم',
+        support: 'دعم وصيانة',
+        other: 'غير ذلك'
+    };
+
+    static #INQUIRY_STATUSES = {
+        'new': { label: 'جديد 🆕', css: 'blue' },
+        'contacted': { label: 'تم التواصل 📞', css: 'orange' },
+        'in-progress': { label: 'قيد التنفيذ 🚧', css: 'purple' },
+        'won': { label: 'تم الاتفاق ✅', css: 'green' },
+        'lost': { label: 'لم يكتمل ❌', css: 'red' }
+    };
+
+    #getInquiryStatusBadge(status) {
+        const entry = AdminView.#INQUIRY_STATUSES[status] || AdminView.#INQUIRY_STATUSES['new'];
+        return `<span class="badge ${entry.css}">${entry.label}</span>`;
+    }
+
+    #getServiceLabel(inquiry) {
+        return inquiry.serviceLabel || AdminView.#SERVICE_LABELS[inquiry.service] || 'غير محدد';
+    }
+
+    /** wa.me needs digits only, and local 07… numbers need the country code. */
+    #toWhatsAppNumber(phone) {
+        const digits = (phone || '').replace(/[^0-9]/g, '');
+        return digits.startsWith('0') ? '964' + digits.slice(1) : digits;
+    }
+
+    renderInquiriesStats(stats) {
+        const statsEl = document.getElementById('inquiriesStats');
+        if (!statsEl) return;
+
+        statsEl.innerHTML = `
+            <div class="stat-card gold"><div class="num">${stats.total}</div><div class="label">إجمالي الطلبات</div></div>
+            <div class="stat-card blue"><div class="num">${stats.newCount}</div><div class="label">طلبات جديدة</div></div>
+            <div class="stat-card green"><div class="num">${stats.todayCount}</div><div class="label">طلبات اليوم</div></div>
+            <div class="stat-card red"><div class="num">${stats.filtered}</div><div class="label">نتائج الفلتر</div></div>
+        `;
+    }
+
+    renderInquiries(inquiries) {
+        const grid = document.getElementById('inquiriesCardsGrid');
+        const emptyEl = document.getElementById('inquiriesEmpty');
+        if (!grid) return;
+
+        if (!inquiries.length) {
+            grid.innerHTML = '';
+            emptyEl.style.display = 'block';
+            return;
+        }
+
+        emptyEl.style.display = 'none';
+
+        const colors = [
+            ['#8B5CF6', '#7C3AED'], ['#00B6E7', '#0087C6'], ['#F68A29', '#FF6700'],
+            ['#10B981', '#059669'], ['#3B82F6', '#2563EB'], ['#EF4444', '#DC2626']
+        ];
+
+        grid.innerHTML = inquiries.map((inq, i) => this.#renderInquiryCard(inq, colors[i % colors.length])).join('');
+    }
+
+    #renderInquiryCard(inquiry, colors) {
+        // Everything below comes from a public form, so it is escaped rather
+        // than trusted the way admin-authored course data is.
+        const esc = (v) => UtilsService.escapeHtml(v);
+
+        const id = inquiry._id || inquiry.id;
+        const name = inquiry.name || 'مجهول';
+        // Filtered: a name typed with double spaces would otherwise yield
+        // "undefined" from the empty segments.
+        const initials = name.split(/\s+/).filter(Boolean).map(w => w[0]).slice(0, 2).join('').toUpperCase();
+        const isEmail = inquiry.contactType === 'email';
+        const waNumber = this.#toWhatsAppNumber(inquiry.phone || inquiry.contact);
+
+        const channelLabel = inquiry.channel === 'email' ? '✉️ يفضّل البريد' : '💬 يفضّل واتساب';
+
+        return `
+            <div class="applicant-card" data-inquiry-id="${esc(id)}">
+                <div class="applicant-card-header">
+                    <div class="applicant-avatar" style="background: linear-gradient(135deg, ${colors[0]}, ${colors[1]})">
+                        ${esc(initials) || '؟'}
+                    </div>
+                    <div class="applicant-info-main">
+                        <div class="applicant-name">${esc(name)}</div>
+                        <div class="applicant-date">📅 ${UtilsService.formatDateTime(inquiry.createdAt)}</div>
+                    </div>
+                    <div class="applicant-status-wrap">
+                        ${this.#getInquiryStatusBadge(inquiry.status)}
+                    </div>
+                </div>
+                <div class="applicant-card-body">
+                    <div class="applicant-course-box">
+                        <div class="course-label">نوع الخدمة المطلوبة</div>
+                        <div class="course-value">
+                            <span>🧩 ${esc(this.#getServiceLabel(inquiry))}</span>
+                            <span style="color:#64748b; font-size:0.75rem;">${channelLabel}</span>
+                        </div>
+                    </div>
+
+                    ${inquiry.companyName ? `
+                        <div class="applicant-extra-info" style="padding: 8px 10px; background: var(--bg); border-radius: 8px; font-size: 0.85rem;">
+                            🏢 <strong>الجهة:</strong> ${esc(inquiry.companyName)}
+                        </div>` : ''}
+
+                    <div class="inquiry-message-preview" data-action="view-inquiry" data-inquiry-id="${esc(id)}" title="اضغط لعرض الطلب كاملاً">
+                        ${esc(inquiry.message)}
+                    </div>
+
+                    ${inquiry.notes ? `
+                        <div class="applicant-extra-info" style="padding: 8px 10px; background: #fffbeb; border: 1px solid #fef3c7; border-radius: 8px; font-size: 0.82rem;">
+                            📝 <strong>ملاحظات:</strong> ${esc(inquiry.notes)}
+                        </div>` : ''}
+
+                    <div class="applicant-contact-info">
+                        <div class="contact-item">
+                            <span class="icon">${isEmail ? '✉️' : '📞'}</span>
+                            <span style="direction: ltr; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${esc(inquiry.contact)}</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="applicant-card-actions">
+                    <div style="display:flex; gap:0.5rem; flex:1;">
+                        <button class="action-btn-sm btn-success" data-action="view-inquiry" data-inquiry-id="${esc(id)}" title="عرض ومتابعة">📄 عرض</button>
+                    </div>
+                    <div style="display:flex; gap:0.5rem;">
+                        ${isEmail
+                            ? `<a href="mailto:${esc(inquiry.email || inquiry.contact)}" class="action-btn-sm btn-call" title="مراسلة">✉️</a>`
+                            : `<a href="https://wa.me/${esc(waNumber)}" target="_blank" rel="noopener" class="action-btn-sm btn-whatsapp" title="واتساب">💬</a>
+                               <a href="tel:${esc(inquiry.phone || inquiry.contact)}" class="action-btn-sm btn-call" title="اتصال">📞</a>`}
+                        <button class="btn-delete-small" data-action="delete-inquiry" data-inquiry-id="${esc(id)}" title="حذف">🗑️</button>
+                    </div>
+                </div>
+            </div>`;
+    }
+
+    getInquiryFilters() {
+        return {
+            search: document.getElementById('inqSearchInput')?.value || '',
+            status: document.getElementById('inqStatusFilter')?.value || 'all',
+            service: document.getElementById('inqServiceFilter')?.value || 'all',
+            channel: document.getElementById('inqChannelFilter')?.value || 'all',
+            sort: document.getElementById('inqSortFilter')?.value || 'newest'
+        };
+    }
+
+    openInquiryModal(inquiry) {
+        const modal = document.getElementById('inquiryModal');
+        if (!modal || !inquiry) return;
+
+        const esc = (v) => UtilsService.escapeHtml(v);
+
+        document.getElementById('inquiryId').value = inquiry._id || inquiry.id;
+
+        const sourceLabels = { itland: 'آي تي لاند', web: 'وظفني', course: 'الدورات', other: 'أخرى' };
+        const meta = [
+            ['المرسل', inquiry.name],
+            ['وسيلة التواصل', inquiry.contact],
+            ['الجهة', inquiry.companyName || 'غير محدد'],
+            ['نوع الخدمة', this.#getServiceLabel(inquiry)],
+            ['القناة المفضلة', inquiry.channel === 'email' ? 'البريد الإلكتروني' : 'واتساب'],
+            ['المصدر', sourceLabels[inquiry.source] || inquiry.source || '—'],
+            ['تاريخ الإرسال', UtilsService.formatDateTime(inquiry.createdAt)],
+            ['لغة الصفحة', inquiry.lang === 'en' ? 'English' : 'العربية']
+        ];
+
+        document.getElementById('inquiryDetailMeta').innerHTML = meta.map(([label, value]) => `
+            <div class="meta-item">
+                <div class="meta-label">${esc(label)}</div>
+                <div class="meta-value">${esc(value)}</div>
+            </div>
+        `).join('');
+
+        // textContent, not innerHTML: the message is raw visitor input.
+        document.getElementById('inquiryDetailMessage').textContent = inquiry.message || '';
+
+        document.getElementById('inquiryStatus').value = inquiry.status || 'new';
+        document.getElementById('inquiryNotes').value = inquiry.notes || '';
+
+        modal.classList.add('active');
+    }
+
+    closeInquiryModal() {
+        document.getElementById('inquiryModal')?.classList.remove('active');
+    }
+
+    getInquiryFormData() {
+        return {
+            id: document.getElementById('inquiryId')?.value || '',
+            status: document.getElementById('inquiryStatus')?.value || 'new',
+            notes: document.getElementById('inquiryNotes')?.value.trim() || ''
+        };
     }
 
     renderUserProfile(user) {

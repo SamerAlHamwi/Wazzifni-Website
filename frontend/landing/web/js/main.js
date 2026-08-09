@@ -100,14 +100,16 @@ document.addEventListener('keydown', (event) => {
 // Anchor scrolling is handled natively by scroll-behavior + scroll-padding-top
 // in main.css, so no JS is involved.
 
+const i18n = window.i18n ?? { t: (key) => key };
+
 window.addEventListener('online', () => {
   document.body.classList.remove('offline');
-  showToast('تم استعادة الاتصال بالإنترنت', 'success');
+  showToast(i18n.t('net.online'), 'success');
 });
 
 window.addEventListener('offline', () => {
   document.body.classList.add('offline');
-  showToast('لا يوجد اتصال بالإنترنت', 'error');
+  showToast(i18n.t('net.offline'), 'error');
 });
 
 // Form validation is a sizeable module and this page has no forms, so it is

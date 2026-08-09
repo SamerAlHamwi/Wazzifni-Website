@@ -10,12 +10,18 @@ class ApplyController {
         this.courseId = urlParams.get('id');
 
         if (!this.courseId) {
-            this.showToast('❌ عذراً، لم يتم تحديد الدورة المطلوبة', 'error');
+            this.showToast(window.i18n.t('toast.noCourseSelected'), 'error');
             setTimeout(() => window.location.href = '/course/', 2000);
             return;
         }
 
         this.bindEvents();
+
+        // The course summary card is rendered from JS, so it has to be redrawn
+        // when the language changes; the form itself is static markup that
+        // js/i18n.js re-translates on its own.
+        window.i18n.onChange(() => this.renderCourseInfo());
+
         await this.loadCourse();
     }
 
@@ -53,7 +59,7 @@ class ApplyController {
             this.renderCourseInfo();
         } catch (error) {
             console.error('ApplyController.loadCourse error:', error);
-            this.showToast('❌ فشل تحميل بيانات الدورة: ' + error.message, 'error');
+            this.showToast(window.i18n.t('toast.loadCourseFailed', { error: error.message }), 'error');
 
             // If we don't have a course loaded at all, we can't show info
             if (!this.course) {
@@ -80,7 +86,7 @@ class ApplyController {
                 <span>👨‍🏫 ${teacherName}</span>
                 <span>📅 ${UtilsService.formatDate(startDate)}</span>
                 <span style="color:${type === 'free' ? 'var(--success)' : 'var(--orange)'}; font-weight: 700;">
-                    ${type === 'free' ? '🆓 مجانية' : UtilsService.formatPrice(price)}
+                    ${type === 'free' ? window.i18n.t('detail.freeBadge') : UtilsService.formatPrice(price)}
                 </span>
             </div>
         `;
@@ -89,21 +95,21 @@ class ApplyController {
     async confirmRegister() {
         const data = this.getRegisterData();
         if (!data.studentName || !data.studentPhone || !data.gender || !data.governorate || !data.educationLevel || !data.studyDescription || !data.currentJob) {
-            this.showToast('⚠️ يرجى ملء جميع الحقول المطلوبة', 'error');
+            this.showToast(window.i18n.t('toast.missingFields'), 'error');
             return;
         }
 
         this.setLoading(true);
         try {
             await CourseService.registerToCourse(this.courseId, data);
-            this.showToast('✅ تم التسجيل بنجاح سيتم التواصل معك قريباً', 'success');
+            this.showToast(window.i18n.t('toast.registered'), 'success');
 
             // Redirect after success
             setTimeout(() => {
                 window.location.href = '/course/';
             }, 3000);
         } catch (error) {
-            this.showToast('❌ فشل التسجيل: ' + error.message, 'error');
+            this.showToast(window.i18n.t('toast.registerFailed', { error: error.message }), 'error');
         } finally {
             this.setLoading(false);
         }

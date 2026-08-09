@@ -47,6 +47,13 @@
   background: rgba(255, 255, 255, 0.25);
 }
 
+/* "Back" points against the reading direction, so the glyph is mirrored rather
+   than swapped for a second character in the dictionary. */
+[dir='ltr'] .legal-back-arrow {
+  display: inline-block;
+  transform: scaleX(-1);
+}
+
 .legal-title {
   color: #fff;
   font-size: clamp(1.35rem, 5vw, 1.9rem);

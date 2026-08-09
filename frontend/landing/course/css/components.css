@@ -53,7 +53,8 @@ input, textarea, select {
     font-size: 0.9rem;
     transition: border-color 0.2s;
     outline: none;
-    direction: rtl;
+    /* Fields inherit the document direction, which js/i18n.js flips with the
+       language — pinning them to RTL left English input reading backwards. */
 }
 
 input:focus, textarea:focus, select:focus {
@@ -770,8 +771,9 @@ select option {
     display: flex;
     align-items: center;
     gap: 0.6rem;
-    border-right: 4px solid var(--sky);
-    padding-right: 0.8rem;
+    /* Logical, so the accent rail stays on the side the heading starts on. */
+    border-inline-start: 4px solid var(--sky);
+    padding-inline-start: 0.8rem;
 }
 
 .cdm-desc-text {
@@ -833,10 +835,17 @@ select option {
     color: var(--navy);
 }
 
+/* Phone numbers and email addresses are always Latin, so they are laid out LTR
+   whatever the page direction is — but they still start on the page's own edge. */
 .registrant-contact {
     font-size: 0.8rem;
     color: var(--text-muted);
     direction: ltr;
+    text-align: start;
+    unicode-bidi: isolate;
+}
+
+[dir='rtl'] .registrant-contact {
     text-align: right;
 }
 

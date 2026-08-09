@@ -36,20 +36,20 @@
   height: 48px;
   margin-bottom: 0.9rem;
   border-radius: 14px;
-  background: rgba(53, 181, 240, 0.14);
-  border: 1px solid rgba(53, 181, 240, 0.3);
+  background: rgba(0, 135, 198, 0.1);
+  border: 1px solid rgba(0, 135, 198, 0.24);
   font-size: 1.4rem;
 }
 
 .about-card--vision .about-card-icon {
-  background: rgba(255, 180, 60, 0.14);
-  border-color: rgba(255, 180, 60, 0.32);
+  background: rgba(246, 138, 41, 0.12);
+  border-color: rgba(246, 138, 41, 0.3);
 }
 
 .about-card-title {
   font-size: var(--fs-h3);
   font-weight: 900;
-  color: #fff;
+  color: var(--navy);
   margin-bottom: 0.5rem;
 }
 
@@ -72,9 +72,9 @@
   gap: 0.9rem;
   padding: 1.1rem 1.15rem;
   border-radius: var(--r-md);
-  background: rgba(255, 255, 255, 0.03);
+  background: var(--surface);
   border: 1px solid var(--border);
-  transition: transform var(--t-fast), border-color var(--t-fast), background var(--t-fast);
+  transition: transform var(--t-fast), border-color var(--t-fast), box-shadow var(--t-fast);
 }
 
 .about-point-num {
@@ -94,7 +94,7 @@
 .about-point-title {
   font-size: var(--fs-h3);
   font-weight: 800;
-  color: #fff;
+  color: var(--navy);
   margin-bottom: 0.2rem;
 }
 
@@ -119,11 +119,11 @@
   gap: 0.4rem;
   padding: 0.5rem 1rem;
   border-radius: var(--r-pill);
-  background: rgba(255, 255, 255, 0.05);
+  background: var(--surface);
   border: 1px solid var(--border);
   font-size: var(--fs-sm);
   font-weight: 700;
-  color: #d9ecf9;
+  color: var(--navy);
 }
 
 .about-value span[aria-hidden] {
@@ -134,7 +134,7 @@
   .about-point:hover {
     transform: translateY(-4px);
     border-color: var(--border-strong);
-    background: rgba(255, 255, 255, 0.06);
+    box-shadow: var(--shadow-md);
   }
 }
 

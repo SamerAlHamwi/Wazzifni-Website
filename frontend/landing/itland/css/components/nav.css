@@ -1,7 +1,8 @@
 /* =============================================================================
    Navigation — fixed bar + slide-down drawer on phones.
-   Mirrors the main landing bar's behaviour on the dark surface, plus an
-   active-section underline driven by the scroll-spy in js/components.
+   Same navy bar as the main landing (landing/web/css/components/nav.css): it
+   frames the light page rather than sitting on it. Adds an active-section
+   underline driven by the scroll-spy in js/components.
    ============================================================================= */
 .navbar {
   position: fixed;
@@ -9,20 +10,20 @@
   inset-inline: 0;
   z-index: 1000;
   height: var(--nav-h);
-  background: rgba(4, 24, 44, 0.96);
-  border-bottom: 1px solid rgba(120, 180, 220, 0.16);
+  background: rgba(0, 64, 128, 0.97);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
   transition: box-shadow var(--t), background var(--t);
 }
 
 @supports (backdrop-filter: blur(14px)) {
   .navbar {
-    background: rgba(4, 24, 44, 0.78);
+    background: rgba(0, 64, 128, 0.88);
     backdrop-filter: blur(14px) saturate(140%);
   }
 }
 
 .navbar.scrolled {
-  box-shadow: 0 6px 28px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 4px 24px rgba(0, 32, 64, 0.35);
 }
 
 .nav-container {
@@ -75,7 +76,7 @@
 .nav-logo-sub {
   font-size: 0.62rem;
   font-weight: 600;
-  color: var(--muted);
+  color: rgba(255, 255, 255, 0.72);
 }
 
 .nav-btn {
@@ -96,6 +97,42 @@
 
 .nav-btn:active {
   transform: scale(0.96);
+}
+
+/* ----------------------------------------------------- language switcher -- */
+/* Sits between the links and the CTA on every breakpoint — it is chrome, not a
+   nav item, so it stays out of the drawer where it would be hidden on phones. */
+.nav-lang {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.3rem;
+  flex: 0 0 auto;
+  min-width: 44px;
+  min-height: 34px;
+  padding: 0.25rem 0.6rem;
+  border-radius: var(--r-pill);
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  color: #fff;
+  font-size: var(--fs-xs);
+  font-weight: 800;
+  letter-spacing: 0.03em;
+  white-space: nowrap;
+  /* The label is always the *other* language's own name, so it must never be
+     reordered by the bidi algorithm of the language currently in use. */
+  unicode-bidi: isolate;
+  transition: background var(--t-fast), transform var(--t-fast);
+}
+
+.nav-lang:active {
+  transform: scale(0.96);
+}
+
+@media (hover: hover) {
+  .nav-lang:hover {
+    background: rgba(255, 255, 255, 0.22);
+  }
 }
 
 /* ---------------------------------------------------------------- burger -- */
@@ -153,9 +190,9 @@
   max-height: calc(100dvh - var(--nav-h));
   overflow-y: auto;
   overscroll-behavior: contain;
-  background: #061f38;
-  border-bottom: 1px solid rgba(120, 180, 220, 0.18);
-  box-shadow: 0 18px 32px rgba(0, 0, 0, 0.45);
+  background: #00305f;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 0 18px 32px rgba(0, 20, 45, 0.32);
   opacity: 0;
   visibility: hidden;
   transform: translateY(-10px);
@@ -186,7 +223,7 @@
 /* Active section. On phones the drawer marks it with a filled row; the
    underline treatment only makes sense on the horizontal desktop bar. */
 .nav-links a.is-active {
-  background: rgba(53, 181, 240, 0.16);
+  background: rgba(255, 255, 255, 0.14);
   color: #fff;
 }
 
@@ -198,7 +235,7 @@
   position: fixed;
   inset: var(--nav-h) 0 0;
   z-index: 998;
-  background: rgba(0, 12, 26, 0.6);
+  background: rgba(0, 18, 40, 0.5);
   opacity: 0;
   visibility: hidden;
   transition: opacity var(--t), visibility var(--t);
@@ -209,9 +246,11 @@
   visibility: visible;
 }
 
-/* The CTA loses its second word on the narrowest phones so the bar never
-   wraps: "تواصل معنا" -> "تواصل". */
-@media (max-width: 380px) {
+/* The CTA loses its second word on narrow phones so the bar never wraps:
+   "اطلب عرض سعر" -> "اطلب". The threshold is 460px rather than 380px because
+   the language switcher sits in the same row and takes ~60px that the bar was
+   not originally budgeted for. */
+@media (max-width: 460px) {
   .nav-btn-word {
     display: none;
   }
@@ -247,7 +286,9 @@
     z-index: auto;
     display: flex;
     align-items: center;
-    gap: 1.7rem;
+    /* Fluid: six links plus the language button and the CTA are a tight fit at
+       the 900px breakpoint, and a fixed gap would push the bar into wrapping. */
+    gap: clamp(0.85rem, 2.1vw, 1.7rem);
     margin-inline: auto;
     padding: 0;
     max-height: none;
@@ -283,6 +324,10 @@
     transform: scaleX(0);
     transform-origin: right center;
     transition: transform var(--t);
+  }
+
+  [dir='ltr'] .nav-links a::after {
+    transform-origin: left center;
   }
 
   .nav-links a:hover,

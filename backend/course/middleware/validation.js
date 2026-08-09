@@ -29,6 +29,15 @@ exports.validateRegistration = [
     body('currentJob').notEmpty().withMessage('Current job is required')
 ];
 
+// Landing-page inquiry validation (public endpoint — keep the limits tight)
+exports.validateInquiry = [
+    body('name').trim().isLength({ min: 3, max: 120 }).withMessage('Name is required'),
+    body('contact').trim().notEmpty().withMessage('Phone or email is required'),
+    body('message').trim().isLength({ min: 10, max: 5000 }).withMessage('Message is required'),
+    body('companyName').optional({ checkFalsy: true }).trim().isLength({ max: 160 }),
+    body('serviceLabel').optional({ checkFalsy: true }).trim().isLength({ max: 120 })
+];
+
 // Auth validation
 exports.validateLogin = [
     body('email').isEmail().withMessage('Please provide a valid email'),

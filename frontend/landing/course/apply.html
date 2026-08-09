@@ -3,14 +3,26 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>التسجيل في الدورة - Wazzifni</title>
+    <title data-i18n="meta.applyTitle">التسجيل في الدورة - Wazzifni</title>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&family=Tajawal:wght@300;400;500;700;800&display=swap" rel="stylesheet">
 
     <!-- CSS Files -->
-    <link rel="stylesheet" href="/course/css/variables.css">
-    <link rel="stylesheet" href="/course/css/main.css">
-    <link rel="stylesheet" href="/course/css/components.css">
-    <link rel="stylesheet" href="/course/css/responsive.css">
+    <link rel="stylesheet" href="/course/css/variables.css?v=1.1.0">
+    <link rel="stylesheet" href="/course/css/main.css?v=1.1.0">
+    <link rel="stylesheet" href="/course/css/components.css?v=1.1.0">
+    <link rel="stylesheet" href="/course/css/responsive.css?v=1.1.0">
+
+    <!-- Settles the language before first paint so an English visitor never sees
+         the page laid out right-to-left for a frame. -->
+    <script>
+      try {
+        var wzLang = localStorage.getItem('wazzifni-lang');
+        if (wzLang === 'en' || wzLang === 'ar') {
+          document.documentElement.lang = wzLang;
+          document.documentElement.dir = wzLang === 'ar' ? 'rtl' : 'ltr';
+        }
+      } catch (e) { /* storage disabled — the page stays in its default Arabic */ }
+    </script>
 
     <style>
         .apply-container {
@@ -27,7 +39,8 @@
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 20px;
-            text-align: right;
+            /* `start`, not `right`: the form has to read left-to-right in English. */
+            text-align: start;
             width: 100%;
             margin-top: 2rem;
         }
@@ -68,7 +81,8 @@
             background: var(--bg);
             padding: 1.5rem;
             border-radius: 15px;
-            border-right: 5px solid var(--sky);
+            /* Logical, so the accent rail stays on the side the text starts on. */
+            border-inline-start: 5px solid var(--sky);
             margin-bottom: 2rem;
         }
 
@@ -112,18 +126,22 @@
 <nav>
     <div style="display:flex; align-items:center; gap:2rem;">
         <a href="/course/" class="logo-wrap" style="text-decoration: none;">
-            <img src="/course/assets/images/logo.png" alt="Wazzifni Logo" class="logo-img">
+            <img src="/course/assets/images/logo.png" alt="Wazzifni" class="logo-img">
             <div>
                 <div class="logo">Wazzifni</div>
             </div>
         </a>
     </div>
+
+    <button class="nav-lang" type="button" data-lang-toggle
+            data-i18n="lang.other" data-i18n-attr="aria-label:a11y.langSwitch"
+            aria-label="Switch to English">English</button>
 </nav>
 
 <div class="apply-container">
     <div class="page-header" style="border:none; margin-bottom: 1rem; padding-bottom: 0;">
-        <h1>📝 التسجيل في الدورة</h1>
-        <p>يرجى ملء كافة البيانات المطلوبة لإتمام عملية التسجيل</p>
+        <h1 data-i18n="apply.title">📝 التسجيل في الدورة</h1>
+        <p data-i18n="apply.subtitle">يرجى ملء كافة البيانات المطلوبة لإتمام عملية التسجيل</p>
     </div>
 
     <div id="courseInfo" class="course-info-card">
@@ -132,100 +150,109 @@
         <div class="skeleton" style="height: 20px; width: 40%;"></div>
     </div>
 
+    <!-- Every <option value> is the English string the API stores, so switching
+         language relabels the options without changing what gets submitted. -->
     <div class="registration-form-grid">
         <div class="form-group span-2">
-            <label>الاسم الكامل</label>
-            <input type="text" id="regName" placeholder="أدخل اسمك الكامل">
+            <label for="regName" data-i18n="apply.name">الاسم الكامل</label>
+            <input type="text" id="regName"
+                   data-i18n-attr="placeholder:apply.namePlaceholder" placeholder="أدخل اسمك الكامل">
         </div>
         <div class="form-group">
-            <label>رقم الهاتف</label>
+            <label for="regPhone" data-i18n="apply.phone">رقم الهاتف</label>
             <input type="tel" id="regPhone" placeholder="07XXXXXXXXX">
-            <small style="display:block; color: #666; margin-top: 5px; font-size: 0.8rem;">الأرقام تكتب بالإنكيزية</small>
+            <small style="display:block; color: #666; margin-top: 5px; font-size: 0.8rem;"
+                   data-i18n="apply.phoneNote">الأرقام تكتب بالإنكليزية</small>
         </div>
         <div class="form-group">
-            <label>الجنس</label>
+            <label for="regGender" data-i18n="apply.gender">الجنس</label>
             <select id="regGender">
-                <option value="" disabled selected>اختر الجنس</option>
-                <option value="male">ذكر (Male)</option>
-                <option value="female">أنثى (Female)</option>
+                <option value="" disabled selected data-i18n="apply.genderPlaceholder">اختر الجنس</option>
+                <option value="male" data-i18n="apply.male">ذكر</option>
+                <option value="female" data-i18n="apply.female">أنثى</option>
             </select>
         </div>
         <div class="form-group">
-            <label>البريد الإلكتروني (اختياري)</label>
+            <label for="regEmail" data-i18n="apply.email">البريد الإلكتروني (اختياري)</label>
             <input type="email" id="regEmail" placeholder="example@email.com">
         </div>
 
         <div class="form-group">
-            <label>المحافظة</label>
+            <label for="regGovernorate" data-i18n="apply.governorate">المحافظة</label>
             <select id="regGovernorate">
-                <option value="" disabled selected>اختر المحافظة</option>
-                <option value="Najaf">النجف (Najaf)</option>
-                <option value="Baghdad">بغداد (Baghdad)</option>
-                <option value="Basra">البصرة (Basra)</option>
-                <option value="Nineveh">نينوى (Nineveh)</option>
-                <option value="Erbil">أربيل (Erbil)</option>
-                <option value="Sulaymaniyah">السليمانية (Sulaymaniyah)</option>
-                <option value="Duhok">دهوك (Duhok)</option>
-                <option value="Kirkuk">كركوك (Kirkuk)</option>
-                <option value="Anbar">الأنبار (Anbar)</option>
-                <option value="Babil">بابل (Babil)</option>
-                <option value="Karbala">كربلاء (Karbala)</option>
-                <option value="Qadisiyah">القادسية (Qadisiyah)</option>
-                <option value="Wasit">واسط (Wasit)</option>
-                <option value="Salah Al-Din">صلاح الدين (Salah Al-Din)</option>
-                <option value="Diyala">ديالى (Diyala)</option>
-                <option value="Maysan">ميسان (Maysan)</option>
-                <option value="Muthanna">المثنى (Muthanna)</option>
-                <option value="Dhi Qar">ذي قار (Dhi Qar)</option>
+                <option value="" disabled selected data-i18n="apply.governoratePlaceholder">اختر المحافظة</option>
+                <option value="Najaf" data-i18n="gov.Najaf">النجف</option>
+                <option value="Baghdad" data-i18n="gov.Baghdad">بغداد</option>
+                <option value="Basra" data-i18n="gov.Basra">البصرة</option>
+                <option value="Nineveh" data-i18n="gov.Nineveh">نينوى</option>
+                <option value="Erbil" data-i18n="gov.Erbil">أربيل</option>
+                <option value="Sulaymaniyah" data-i18n="gov.Sulaymaniyah">السليمانية</option>
+                <option value="Duhok" data-i18n="gov.Duhok">دهوك</option>
+                <option value="Kirkuk" data-i18n="gov.Kirkuk">كركوك</option>
+                <option value="Anbar" data-i18n="gov.Anbar">الأنبار</option>
+                <option value="Babil" data-i18n="gov.Babil">بابل</option>
+                <option value="Karbala" data-i18n="gov.Karbala">كربلاء</option>
+                <option value="Qadisiyah" data-i18n="gov.Qadisiyah">القادسية</option>
+                <option value="Wasit" data-i18n="gov.Wasit">واسط</option>
+                <option value="Salah Al-Din" data-i18n="gov.SalahAlDin">صلاح الدين</option>
+                <option value="Diyala" data-i18n="gov.Diyala">ديالى</option>
+                <option value="Maysan" data-i18n="gov.Maysan">ميسان</option>
+                <option value="Muthanna" data-i18n="gov.Muthanna">المثنى</option>
+                <option value="Dhi Qar" data-i18n="gov.DhiQar">ذي قار</option>
             </select>
         </div>
 
         <div class="form-group">
-            <label>التحصيل الدراسي</label>
+            <label for="regEducationLevel" data-i18n="apply.education">التحصيل الدراسي</label>
             <select id="regEducationLevel">
-                <option value="" disabled selected>اختر التحصيل</option>
-                <option value="No Formal Education">بدون شهادة (No Formal Education)</option>
-                <option value="Primary School">ابتدائي (Primary School)</option>
-                <option value="Middle School">متوسط (Middle School)</option>
-                <option value="High School">إعدادي (High School)</option>
-                <option value="Diploma">دبلوم (Diploma)</option>
-                <option value="Bachelor’s Degree">بكالوريوس (Bachelor’s Degree)</option>
-                <option value="Master’s Degree">ماجستير (Master’s Degree)</option>
-                <option value="PhD">دكتوراه (PhD)</option>
+                <option value="" disabled selected data-i18n="apply.educationPlaceholder">اختر التحصيل</option>
+                <option value="No Formal Education" data-i18n="edu.NoFormalEducation">بدون شهادة</option>
+                <option value="Primary School" data-i18n="edu.PrimarySchool">ابتدائي</option>
+                <option value="Middle School" data-i18n="edu.MiddleSchool">متوسط</option>
+                <option value="High School" data-i18n="edu.HighSchool">إعدادي</option>
+                <option value="Diploma" data-i18n="edu.Diploma">دبلوم</option>
+                <option value="Bachelor’s Degree" data-i18n="edu.Bachelor">بكالوريوس</option>
+                <option value="Master’s Degree" data-i18n="edu.Master">ماجستير</option>
+                <option value="PhD" data-i18n="edu.PhD">دكتوراه</option>
             </select>
         </div>
 
         <div class="form-group">
-            <label>التخصص الدراسي</label>
-            <input type="text" id="regStudyDescription" placeholder="أدخل تخصصك الدراسي">
+            <label for="regStudyDescription" data-i18n="apply.study">التخصص الدراسي</label>
+            <input type="text" id="regStudyDescription"
+                   data-i18n-attr="placeholder:apply.studyPlaceholder" placeholder="أدخل تخصصك الدراسي">
         </div>
 
         <div class="form-group span-2">
-            <label>الوظيفة الحالية</label>
+            <label for="regCurrentJob" data-i18n="apply.job">الوظيفة الحالية</label>
             <select id="regCurrentJob">
-                <option value="" disabled selected>اختر الوظيفة</option>
-                <option value="Student">طالب (Student)</option>
-                <option value="Employee">موظف (Employee)</option>
-                <option value="Unemployed">عاطل (Unemployed)</option>
+                <option value="" disabled selected data-i18n="apply.jobPlaceholder">اختر الوظيفة</option>
+                <option value="Student" data-i18n="job.Student">طالب</option>
+                <option value="Employee" data-i18n="job.Employee">موظف</option>
+                <option value="Unemployed" data-i18n="job.Unemployed">عاطل</option>
             </select>
         </div>
     </div>
 
     <div class="modal-actions" style="margin-top: 30px; display: flex; gap: 10px;">
-        <button class="btn btn-success" id="confirmRegisterBtn" style="flex: 2; padding: 1rem;">✅ تأكيد التسجيل</button>
-        <a href="/course/" class="btn btn-ghost" style="flex: 1; padding: 1rem; text-decoration: none; text-align: center; display: flex; align-items: center; justify-content: center;">إلغاء</a>
+        <button class="btn btn-success" id="confirmRegisterBtn" style="flex: 2; padding: 1rem;"
+                data-i18n="apply.confirm">✅ تأكيد التسجيل</button>
+        <a href="/course/" class="btn btn-ghost" style="flex: 1; padding: 1rem; text-decoration: none; text-align: center; display: flex; align-items: center; justify-content: center;"
+           data-i18n="apply.cancel">إلغاء</a>
     </div>
 </div>
 
 <!-- Toast Container -->
 <div class="toast-container" id="toastContainer"></div>
 
-<!-- JavaScript Files -->
-<script src="/course/js/models/Course.js"></script>
-<script src="/course/js/services/ApiService.js"></script>
-<script src="/course/js/services/CourseService.js"></script>
-<script src="/course/js/services/UtilsService.js"></script>
-<script src="/course/js/controllers/ApplyController.js"></script>
-<script src="/course/js/apply.js"></script>
+<!-- JavaScript Files. i18n.js comes first: the controller below reads
+     window.i18n while rendering. -->
+<script src="/course/js/i18n.js?v=1.1.0"></script>
+<script src="/course/js/models/Course.js?v=1.1.0"></script>
+<script src="/course/js/services/ApiService.js?v=1.1.0"></script>
+<script src="/course/js/services/CourseService.js?v=1.1.0"></script>
+<script src="/course/js/services/UtilsService.js?v=1.1.0"></script>
+<script src="/course/js/controllers/ApplyController.js?v=1.1.0"></script>
+<script src="/course/js/apply.js?v=1.1.0"></script>
 </body>
 </html>

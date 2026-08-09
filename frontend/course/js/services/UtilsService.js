@@ -43,6 +43,23 @@ const UtilsService = {
         setTimeout(() => toast.remove(), 3500);
     },
 
+    /**
+     * Escapes text before it goes into an innerHTML template.
+     *
+     * Required for anything typed by the public (landing-page inquiries): those
+     * rows are not written by a logged-in admin, so their text must never be
+     * able to bring markup into the dashboard with it.
+     */
+    escapeHtml(value) {
+        if (value === null || value === undefined) return '';
+        return String(value)
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#39;');
+    },
+
     debounce(func, wait) {
         let timeout;
         return function executedFunction(...args) {

@@ -34,8 +34,8 @@
   height: 52px;
   margin-bottom: 1rem;
   border-radius: 16px;
-  background: linear-gradient(145deg, rgba(53, 181, 240, 0.2), rgba(0, 74, 140, 0.25));
-  border: 1px solid rgba(53, 181, 240, 0.28);
+  background: linear-gradient(145deg, rgba(0, 135, 198, 0.14), rgba(0, 74, 140, 0.08));
+  border: 1px solid rgba(0, 135, 198, 0.22);
   font-size: 1.5rem;
   line-height: 1;
   transition: transform var(--t);
@@ -44,7 +44,7 @@
 .service-title {
   font-size: var(--fs-h3);
   font-weight: 800;
-  color: #fff;
+  color: var(--navy);
   margin-bottom: 0.45rem;
 }
 
@@ -64,11 +64,11 @@
 .service-tags li {
   padding: 0.2rem 0.6rem;
   border-radius: var(--r-pill);
-  background: rgba(53, 181, 240, 0.1);
-  border: 1px solid rgba(53, 181, 240, 0.22);
+  background: rgba(0, 135, 198, 0.09);
+  border: 1px solid rgba(0, 135, 198, 0.2);
   font-size: 0.7rem;
   font-weight: 700;
-  color: #bfe2f7;
+  color: var(--blue-bright);
   unicode-bidi: isolate;
 }
 

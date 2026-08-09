@@ -3,7 +3,9 @@ class MainController {
         this.courses = [];
         this.applicants = [];
         this.users = [];
+        this.inquiries = [];
         this.filteredApplicants = [];
+        this.filteredInquiries = [];
         this.pagination = {
             page: 1,
             limit: 10,
@@ -62,6 +64,7 @@ class MainController {
             const courseId = target.dataset.courseId;
             const phone = target.dataset.phone;
             const regId = target.dataset.registrationId;
+            const inquiryId = target.dataset.inquiryId;
 
             switch(action) {
                 case 'edit':
@@ -94,6 +97,12 @@ class MainController {
                     break;
                 case 'complete-course':
                     this.markCourseCompleted(courseId);
+                    break;
+                case 'view-inquiry':
+                    this.openInquiry(inquiryId);
+                    break;
+                case 'delete-inquiry':
+                    this.deleteInquiry(inquiryId);
                     break;
             }
         });
@@ -145,6 +154,133 @@ class MainController {
             this.showToast('❌ فشل تحميل المتقدمين: ' + error.message, 'error');
         } finally {
             this.setLoading(false);
+        }
+    }
+
+    // ---------- Project Inquiries (IT Land landing form) ----------
+    async loadInquiries() {
+        this.setLoading(true);
+        try {
+            const result = await InquiryService.getAllInquiries();
+            this.inquiries = result.inquiries || [];
+            this.filterInquiries();
+        } catch (error) {
+            console.error('loadInquiries error:', error);
+            this.showToast('❌ فشل تحميل طلبات المشاريع: ' + error.message, 'error');
+        } finally {
+            this.setLoading(false);
+        }
+    }
+
+    // Filtering is done client-side, the same way the applicants list works:
+    // the whole list is already loaded, so a filter change needs no round trip.
+    filterInquiries() {
+        if (!this.adminView) return;
+
+        const filters = this.adminView.getInquiryFilters();
+        let filtered = [...this.inquiries];
+
+        if (filters.search) {
+            const s = filters.search.toLowerCase();
+            filtered = filtered.filter(i =>
+                (i.name || '').toLowerCase().includes(s) ||
+                (i.contact || '').toLowerCase().includes(s) ||
+                (i.companyName || '').toLowerCase().includes(s) ||
+                (i.message || '').toLowerCase().includes(s)
+            );
+        }
+
+        if (filters.status !== 'all') {
+            filtered = filtered.filter(i => (i.status || 'new') === filters.status);
+        }
+
+        if (filters.service !== 'all') {
+            filtered = filtered.filter(i => i.service === filters.service);
+        }
+
+        if (filters.channel !== 'all') {
+            filtered = filtered.filter(i => i.channel === filters.channel);
+        }
+
+        switch (filters.sort) {
+            case 'newest':
+                filtered.sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0));
+                break;
+            case 'oldest':
+                filtered.sort((a, b) => new Date(a.createdAt || 0) - new Date(b.createdAt || 0));
+                break;
+            case 'name':
+                filtered.sort((a, b) => (a.name || '').localeCompare(b.name || ''));
+                break;
+        }
+
+        this.filteredInquiries = filtered;
+        this.adminView.renderInquiries(filtered);
+        this.renderInquiriesStats();
+    }
+
+    renderInquiriesStats() {
+        if (!this.adminView) return;
+
+        const today = new Date();
+        const stats = {
+            total: this.inquiries.length,
+            newCount: this.inquiries.filter(i => (i.status || 'new') === 'new').length,
+            todayCount: this.inquiries.filter(i => {
+                const d = new Date(i.createdAt);
+                return d.getDate() === today.getDate() &&
+                       d.getMonth() === today.getMonth() &&
+                       d.getFullYear() === today.getFullYear();
+            }).length,
+            filtered: this.filteredInquiries.length
+        };
+
+        this.adminView.renderInquiriesStats(stats);
+    }
+
+    openInquiry(id) {
+        const inquiry = this.inquiries.find(i => (i._id || i.id) === id);
+        if (!inquiry) return;
+        this.adminView.openInquiryModal(inquiry);
+    }
+
+    async saveInquiry() {
+        const data = this.adminView.getInquiryFormData();
+        if (!data.id) return;
+
+        this.setLoading(true);
+        try {
+            await InquiryService.updateStatus(data.id, { status: data.status, notes: data.notes });
+            this.showToast('✅ تم تحديث الطلب', 'success');
+            this.adminView.closeInquiryModal();
+            await this.loadInquiries();
+        } catch (error) {
+            this.showToast('❌ فشل تحديث الطلب: ' + error.message, 'error');
+        } finally {
+            this.setLoading(false);
+        }
+    }
+
+    async deleteInquiry(id) {
+        if (!confirm('هل أنت متأكد من حذف هذا الطلب؟')) return;
+
+        this.setLoading(true);
+        try {
+            await InquiryService.deleteInquiry(id);
+            this.showToast('🗑️ تم حذف الطلب', 'info');
+            await this.loadInquiries();
+        } catch (error) {
+            this.showToast('❌ فشل الحذف: ' + error.message, 'error');
+        } finally {
+            this.setLoading(false);
+        }
+    }
+
+    async exportInquiries() {
+        try {
+            await InquiryService.exportCsv();
+        } catch (error) {
+            this.showToast('❌ فشل التصدير: ' + error.message, 'error');
         }
     }
 
@@ -345,6 +481,8 @@ class MainController {
             await this.loadDashboardData();
         } else if (subView === 'users') {
             await this.loadUsers();
+        } else if (subView === 'inquiries') {
+            await this.loadInquiries();
         }
     }
 

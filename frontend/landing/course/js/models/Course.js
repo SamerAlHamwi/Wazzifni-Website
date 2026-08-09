@@ -75,15 +75,15 @@ class Course {
 
     getCourseTypeBadge() {
         if (this.type === 'free') {
-            return '<span class="badge badge-free">مجانية</span>';
+            return `<span class="badge badge-free">${window.i18n.t('card.badgeFree')}</span>`;
         }
         return `<span class="badge badge-paid">${UtilsService.formatPrice(this.price)}</span>`;
     }
 
     getStatusBadge() {
         if (this.isCompleted()) {
-            return '<span class="badge badge-completed">🏁 منتهية</span>';
+            return `<span class="badge badge-completed">${window.i18n.t('card.finished')}</span>`;
         }
-        return '<span class="badge badge-open">🟢 متاحة</span>';
+        return `<span class="badge badge-open">${window.i18n.t('card.open')}</span>`;
     }
 }

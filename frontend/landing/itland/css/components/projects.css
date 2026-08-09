@@ -44,9 +44,9 @@
   white-space: nowrap;
   scroll-snap-align: start;
   border-radius: var(--r-pill);
-  background: rgba(255, 255, 255, 0.05);
+  background: var(--surface);
   border: 1px solid var(--border);
-  color: #cfe3f2;
+  color: var(--navy);
   font-size: var(--fs-sm);
   font-weight: 700;
   transition: background var(--t-fast), border-color var(--t-fast), color var(--t-fast),
@@ -71,7 +71,7 @@
   height: 20px;
   padding-inline: 0.3rem;
   border-radius: var(--r-pill);
-  background: rgba(0, 0, 0, 0.28);
+  background: rgba(0, 64, 128, 0.1);
   font-size: 0.68rem;
   font-weight: 800;
   unicode-bidi: isolate;
@@ -93,9 +93,9 @@
   min-height: 38px;
   padding: 0.3rem 0.75rem;
   border-radius: var(--r-pill);
-  background: rgba(255, 255, 255, 0.05);
+  background: var(--surface);
   border: 1px solid var(--border);
-  color: #e7f3fb;
+  color: var(--navy);
   font: inherit;
   font-size: var(--fs-sm);
   font-weight: 700;
@@ -104,7 +104,7 @@
 
 .projects-sort option {
   background: var(--surface-solid);
-  color: #e7f3fb;
+  color: var(--ink);
 }
 
 /* ----------------------------------------------------------------- grid --- */
@@ -131,8 +131,8 @@
   padding: 1.6rem;
   min-height: 148px;
   background:
-    radial-gradient(70% 70% at 50% 30%, rgba(53, 181, 240, 0.18), transparent 70%),
-    linear-gradient(160deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.01));
+    radial-gradient(70% 70% at 50% 30%, rgba(0, 135, 198, 0.12), transparent 70%),
+    linear-gradient(160deg, #f7fbfe, #ffffff);
   border-bottom: 1px solid var(--border);
 }
 
@@ -142,7 +142,7 @@
   height: clamp(76px, 22vw, 96px);
   object-fit: contain;
   border-radius: 20px;
-  filter: drop-shadow(0 10px 22px rgba(0, 0, 0, 0.45));
+  filter: drop-shadow(0 10px 22px rgba(0, 64, 128, 0.22));
   transition: transform var(--t);
 }
 
@@ -157,7 +157,7 @@
   inset-inline-start: 12px;
   padding: 0.2rem 0.65rem;
   border-radius: var(--r-pill);
-  background: rgba(4, 24, 44, 0.75);
+  background: rgba(255, 255, 255, 0.92);
   border: 1px solid var(--border);
   font-size: 0.68rem;
   font-weight: 700;
@@ -174,7 +174,7 @@
 .project-title {
   font-size: var(--fs-h3);
   font-weight: 900;
-  color: #fff;
+  color: var(--navy);
   line-height: 1.4;
   margin-bottom: 0.4rem;
 }
@@ -202,11 +202,11 @@
 .project-tag {
   padding: 0.2rem 0.6rem;
   border-radius: var(--r-pill);
-  background: rgba(53, 181, 240, 0.1);
-  border: 1px solid rgba(53, 181, 240, 0.22);
+  background: rgba(0, 135, 198, 0.09);
+  border: 1px solid rgba(0, 135, 198, 0.2);
   font-size: 0.7rem;
   font-weight: 700;
-  color: #bfe2f7;
+  color: var(--blue-bright);
   unicode-bidi: isolate;
 }
 
@@ -229,18 +229,18 @@
   min-height: 38px;
   padding: 0.35rem 0.95rem;
   border-radius: var(--r-pill);
-  background: rgba(53, 181, 240, 0.14);
-  border: 1px solid rgba(53, 181, 240, 0.35);
-  color: #dff0fb;
+  background: rgba(0, 135, 198, 0.1);
+  border: 1px solid rgba(0, 135, 198, 0.3);
+  color: var(--blue-bright);
   font-size: var(--fs-sm);
   font-weight: 700;
   transition: background var(--t-fast), transform var(--t-fast);
 }
 
 .project-cta--soon {
-  background: rgba(255, 180, 60, 0.1);
-  border-color: rgba(255, 180, 60, 0.3);
-  color: var(--gold);
+  background: rgba(255, 180, 60, 0.18);
+  border-color: rgba(246, 138, 41, 0.35);
+  color: var(--gold-ink);
   cursor: default;
 }
 
@@ -288,18 +288,18 @@
   }
 
   .project-cta:hover {
-    background: rgba(53, 181, 240, 0.26);
+    background: rgba(0, 135, 198, 0.2);
     transform: translateY(-1px);
   }
 
   .project-cta--soon:hover {
-    background: rgba(255, 180, 60, 0.1);
+    background: rgba(255, 180, 60, 0.18);
     transform: none;
   }
 
   .project-store:hover {
-    color: #fff;
-    background: rgba(255, 255, 255, 0.08);
+    color: var(--navy);
+    background: rgba(0, 64, 128, 0.08);
   }
 }
 
@@ -356,9 +356,9 @@
 .skeleton-chip {
   background: linear-gradient(
     100deg,
-    rgba(255, 255, 255, 0.05) 20%,
-    rgba(255, 255, 255, 0.12) 40%,
-    rgba(255, 255, 255, 0.05) 60%
+    rgba(0, 64, 128, 0.06) 20%,
+    rgba(0, 64, 128, 0.13) 40%,
+    rgba(0, 64, 128, 0.06) 60%
   );
   background-size: 240% 100%;
   animation: skeleton-sweep 1.5s var(--ease) infinite;
@@ -395,7 +395,7 @@
 .projects-state-title {
   font-size: var(--fs-h3);
   font-weight: 800;
-  color: #fff;
+  color: var(--navy);
 }
 
 .projects-state-text {
@@ -410,8 +410,8 @@
 }
 
 .projects-state--error {
-  border-color: rgba(255, 138, 138, 0.4);
-  background: rgba(211, 59, 59, 0.08);
+  border-color: rgba(211, 59, 59, 0.4);
+  background: rgba(211, 59, 59, 0.06);
 }
 
 /* --------------------------------------------------------- tablet & up ---- */

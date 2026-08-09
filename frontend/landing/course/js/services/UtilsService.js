@@ -1,8 +1,16 @@
 const UtilsService = {
+    /** Dates, numbers and currency all follow the language currently on screen,
+        so a page rendered in English does not mix Latin copy with Arabic-Indic
+        digits. window.i18n is installed by js/i18n.js, the first script on the
+        page; the fallback keeps this service usable on its own. */
+    i18n() {
+        return window.i18n || { locale: 'ar-IQ', t: (key) => key, value: (raw) => raw };
+    },
+
     formatDate(d) {
         if (!d) return '—';
         const date = new Date(d);
-        return date.toLocaleDateString('ar-IQ', {
+        return date.toLocaleDateString(this.i18n().locale, {
             year: 'numeric',
             month: 'long',
             day: 'numeric'
@@ -12,11 +20,12 @@ const UtilsService = {
     formatDateTime(d) {
         if (!d) return '—';
         const date = new Date(d);
-        return date.toLocaleDateString('ar-IQ', {
+        const locale = this.i18n().locale;
+        return date.toLocaleDateString(locale, {
             year: 'numeric',
             month: 'short',
             day: 'numeric'
-        }) + ' ' + date.toLocaleTimeString('ar-IQ', {
+        }) + ' ' + date.toLocaleTimeString(locale, {
             hour: '2-digit',
             minute: '2-digit'
         });
@@ -24,7 +33,7 @@ const UtilsService = {
 
     formatPrice(p) {
         if (!p) return '—';
-        return p.toLocaleString('ar-IQ') + ' د.ع';
+        return p.toLocaleString(this.i18n().locale) + ' ' + this.i18n().t('currency.iqd');
     },
 
     generateAvatar(name) {
@@ -54,45 +63,13 @@ const UtilsService = {
         };
     },
 
+    /**
+     * Localises one of the English enum values the API stores (governorate,
+     * education level, occupation). The mapping now lives in js/i18n.js so both
+     * languages come from one table; unknown values pass through unchanged.
+     */
     translate(value) {
-        const dictionary = {
-            // Governorates
-            'Najaf': 'النجف',
-            'Baghdad': 'بغداد',
-            'Basra': 'البصرة',
-            'Nineveh': 'نينوى',
-            'Erbil': 'أربيل',
-            'Sulaymaniyah': 'السليمانية',
-            'Duhok': 'دهوك',
-            'Kirkuk': 'كركوك',
-            'Anbar': 'الأنبار',
-            'Babil': 'بابل',
-            'Karbala': 'كربلاء',
-            'Qadisiyah': 'القادسية',
-            'Wasit': 'واسط',
-            'Salah Al-Din': 'صلاح الدين',
-            'Diyala': 'ديالى',
-            'Maysan': 'ميسان',
-            'Muthanna': 'المثنى',
-            'Dhi Qar': 'ذي قار',
-
-            // Education Levels
-            'No Formal Education': 'بدون شهادة',
-            'Primary School': 'ابتدائي',
-            'Middle School': 'متوسط',
-            'High School': 'إعدادي',
-            'Diploma': 'دبلوم',
-            'Bachelor’s Degree': 'بكالوريوس',
-            'Master’s Degree': 'ماجستير',
-            'PhD': 'دكتوراه',
-
-            // Job Status
-            'Student': 'طالب',
-            'Employee': 'موظف',
-            'Unemployed': 'عاطل'
-        };
-
-        return dictionary[value] || value;
+        return this.i18n().value(value);
     },
 
     async copyToClipboard(text) {

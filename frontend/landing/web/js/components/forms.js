@@ -2,6 +2,8 @@
 // imports this module when one is present in the markup.
 import { showToast } from '../utils/toast.js';
 
+const i18n = window.i18n ?? { t: (key) => key };
+
 export class Forms {
   constructor() {
     this.forms = document.querySelectorAll('form');
@@ -27,13 +29,13 @@ export class Forms {
     let error = '';
 
     if (field.hasAttribute('required') && !value) {
-      error = 'هذا الحقل مطلوب';
+      error = i18n.t('form.required');
     } else if (field.type === 'email' && value && !formValidators.isEmail(value)) {
-      error = 'البريد الإلكتروني غير صحيح';
+      error = i18n.t('form.emailInvalid');
     } else if (field.name === 'phone' && value && !formValidators.isIraqiPhone(value)) {
-      error = 'رقم الهاتف غير صحيح (يجب أن يبدأ بـ 077، 078، 079، 075)';
+      error = i18n.t('form.phoneInvalid');
     } else if (field.type === 'password' && value && value.length < 6) {
-      error = 'كلمة المرور يجب أن تكون 6 أحرف على الأقل';
+      error = i18n.t('form.passwordShort');
     }
 
     if (error) {
@@ -78,17 +80,17 @@ export class Forms {
 
     if (button) {
       button.disabled = true;
-      button.textContent = 'جاري الإرسال...';
+      button.textContent = i18n.t('form.sending');
     }
 
     try {
       const data = Object.fromEntries(new FormData(form).entries());
       await this.simulateApiCall(data);
-      showToast('تم الإرسال بنجاح!', 'success');
+      showToast(i18n.t('form.sentOk'), 'success');
       form.reset();
     } catch (error) {
       console.error('Form submission error:', error);
-      showToast('حدث خطأ. الرجاء المحاولة مرة أخرى.', 'error');
+      showToast(i18n.t('form.sendError'), 'error');
     } finally {
       if (button) {
         button.disabled = false;

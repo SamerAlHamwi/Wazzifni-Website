@@ -11,6 +11,8 @@ import { escapeHtml, safeUrl } from '../utils/dom.js';
 
 const SKELETON_COUNT = 6;
 
+const i18n = window.i18n ?? { lang: 'ar', t: (key) => key, onChange: () => {} };
+
 const STORE_ICONS = {
   play: '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M3.18 23.76a2 2 0 0 0 2.07-.22l12.1-6.93-2.84-2.85zM.5 1.1A2 2 0 0 0 0 2.5v19a2 2 0 0 0 .5 1.4L.6 23l10.63-10.63v-.26L.6 1.1zM20.34 10.22l-2.91-1.67-3.17 3.17 3.17 3.17 2.94-1.68a2.02 2.02 0 0 0 0-3.5zM5.25.46 17.43 7.4l-2.84 2.84z"/></svg>',
   ios: '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98l-.09.06c-.22.14-2.15 1.26-2.13 3.75.03 2.99 2.62 3.99 2.65 4l.03.01zM13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>',
@@ -28,8 +30,11 @@ export class ProjectsGallery {
     this.sortSelect = this.root.querySelector('[data-projects-sort]');
     this.status = this.root.querySelector('[data-projects-status]');
 
-    /** @type {object[]} */
+    /** Normalised for the current language. */
     this.projects = [];
+    /** The untouched records, kept so a language change can re-derive the
+        localised copy without re-fetching the data module. */
+    this.raw = [];
     this.filter = 'all';
     this.sort = 'featured';
     /** Lazily filled by load(); kept so retry can reuse them. */
@@ -39,7 +44,20 @@ export class ProjectsGallery {
     this.onImageError = this.onImageError.bind(this);
     this.grid?.addEventListener('error', this.onImageError, true);
 
+    // Every string on a card comes from either the dictionary or the record's
+    // per-language copy, so a language change means a full re-render.
+    i18n.onChange(() => this.relocalize());
+
     this.load();
+  }
+
+  /** Rebuilds the cards and the toolbar in the language now in force. */
+  relocalize() {
+    if (!this.api || !this.raw.length) return;
+
+    this.projects = this.api.normalizeProjects(this.raw);
+    this.renderToolbar();
+    this.render();
   }
 
   // ------------------------------------------------------------------ data --
@@ -60,13 +78,11 @@ export class ProjectsGallery {
       ]);
 
       this.api = transform;
+      this.raw = projects;
       this.projects = transform.normalizeProjects(projects);
 
       if (!this.projects.length) {
-        this.renderEmpty(
-          'لم يتم إضافة أي مشروع بعد.',
-          'نعمل حالياً على تجهيز معرض أعمالنا — تواصل معنا للاطلاع على مشاريعنا الأخيرة.',
-        );
+        this.renderEmpty(i18n.t('projects.emptyTitle'), i18n.t('projects.emptyText'));
         return;
       }
 
@@ -101,7 +117,7 @@ export class ProjectsGallery {
       </div>
     `.repeat(SKELETON_COUNT);
 
-    this.announce('جارٍ تحميل المشاريع…');
+    this.announce(i18n.t('projects.loading'));
   }
 
   renderError() {
@@ -111,14 +127,14 @@ export class ProjectsGallery {
     this.grid.innerHTML = `
       <div class="projects-state projects-state--error">
         <span class="projects-state-icon" aria-hidden="true">⚠️</span>
-        <h3 class="projects-state-title">تعذّر تحميل المشاريع</h3>
-        <p class="projects-state-text">حدث خطأ أثناء جلب قائمة الأعمال. تحقق من اتصالك ثم أعد المحاولة.</p>
-        <button class="btn btn-primary" type="button" data-projects-retry>إعادة المحاولة</button>
+        <h3 class="projects-state-title">${escapeHtml(i18n.t('projects.errorTitle'))}</h3>
+        <p class="projects-state-text">${escapeHtml(i18n.t('projects.errorText'))}</p>
+        <button class="btn btn-primary" type="button" data-projects-retry>${escapeHtml(i18n.t('projects.retry'))}</button>
       </div>
     `;
 
     this.grid.querySelector('[data-projects-retry]')?.addEventListener('click', () => this.load());
-    this.announce('تعذّر تحميل المشاريع.');
+    this.announce(i18n.t('projects.errorAnnounce'));
   }
 
   renderEmpty(title, text) {
@@ -141,7 +157,7 @@ export class ProjectsGallery {
 
     const filters = this.api.buildFilters(this.projects);
 
-    // A single filter chip alongside "الكل" tells the visitor nothing, so the
+    // A single filter chip alongside "All" tells the visitor nothing, so the
     // toolbar only appears once there is a real choice to make.
     if (filters.length < 3) {
       this.toolbar?.setAttribute('hidden', '');
@@ -156,13 +172,24 @@ export class ProjectsGallery {
             <button class="filter-chip${filter.id === this.filter ? ' is-active' : ''}"
                     type="button" data-filter="${escapeHtml(filter.id)}"
                     aria-pressed="${filter.id === this.filter}"
-                    aria-label="${escapeHtml(`${filter.label} — ${filter.count} مشروعاً`)}">
+                    aria-label="${escapeHtml(i18n.t('projects.filterAria', { label: filter.label, count: filter.count }))}">
               ${escapeHtml(filter.label)}
               <span class="filter-count" aria-hidden="true">${filter.count}</span>
             </button>
           </li>`,
       )
       .join('');
+
+    // Rebuilt on every call, not just the first: a language change re-runs
+    // renderToolbar() and the option labels have to follow it.
+    if (this.sortSelect) {
+      this.sortSelect.innerHTML = Object.entries(this.api.SORTS)
+        .map(
+          ([id, sort]) =>
+            `<option value="${escapeHtml(id)}"${id === this.sort ? ' selected' : ''}>${escapeHtml(sort.label)}</option>`,
+        )
+        .join('');
+    }
 
     // A retry after a failed load runs renderToolbar() again, so the handlers
     // are bound once and left to survive the markup being replaced.
@@ -184,8 +211,10 @@ export class ProjectsGallery {
       if (current === -1) return;
 
       event.preventDefault();
-      // RTL: ArrowLeft advances, ArrowRight goes back.
-      const step = event.key === 'ArrowLeft' ? 1 : event.key === 'ArrowRight' ? -1 : 0;
+      // "Next chip" is whichever arrow points along the reading direction, so
+      // ArrowLeft advances in Arabic and ArrowRight advances in English.
+      const forward = document.documentElement.dir === 'rtl' ? 'ArrowLeft' : 'ArrowRight';
+      const step = event.key === forward ? 1 : event.key.startsWith('Arrow') ? -1 : 0;
       const next =
         event.key === 'Home'
           ? 0
@@ -196,19 +225,10 @@ export class ProjectsGallery {
       chips[next].focus();
     });
 
-    if (this.sortSelect) {
-      this.sortSelect.innerHTML = Object.entries(this.api.SORTS)
-        .map(
-          ([id, sort]) =>
-            `<option value="${escapeHtml(id)}"${id === this.sort ? ' selected' : ''}>${escapeHtml(sort.label)}</option>`,
-        )
-        .join('');
-
-      this.sortSelect.addEventListener('change', () => {
-        this.sort = this.sortSelect.value;
-        this.render();
-      });
-    }
+    this.sortSelect?.addEventListener('change', () => {
+      this.sort = this.sortSelect.value;
+      this.render();
+    });
   }
 
   setToolbarEnabled(enabled) {
@@ -238,7 +258,8 @@ export class ProjectsGallery {
       .map(
         (link) => `
           <a class="project-store" href="${safeUrl(link.url)}" target="_blank" rel="noopener"
-             aria-label="${escapeHtml(`${project.name} على ${link.label}`)}" title="${escapeHtml(link.label)}">
+             aria-label="${escapeHtml(i18n.t('projects.storeAria', { name: project.name, store: link.label }))}"
+             title="${escapeHtml(link.label)}">
             ${STORE_ICONS[link.kind] ?? ''}<span>${escapeHtml(link.label)}</span>
           </a>`,
       )
@@ -246,15 +267,16 @@ export class ProjectsGallery {
 
     const cta = project.primaryUrl
       ? `<a class="project-cta" href="${safeUrl(project.primaryUrl)}" target="_blank" rel="noopener">
-           عرض المشروع<span class="sr-only"> — ${escapeHtml(project.name)}</span>
+           ${escapeHtml(i18n.t('projects.view'))}<span class="sr-only"> — ${escapeHtml(project.name)}</span>
            <span aria-hidden="true">↖</span>
          </a>`
-      : '<span class="project-cta project-cta--soon">قيد النشر</span>';
+      : `<span class="project-cta project-cta--soon">${escapeHtml(i18n.t('projects.soon'))}</span>`;
 
     return `
       <article class="project-card rv" aria-labelledby="p-${escapeHtml(project.id)}">
         <div class="project-media">
-          <img src="${safeUrl(project.image)}" alt="شعار ${escapeHtml(project.name)}"
+          <img src="${safeUrl(project.image)}"
+               alt="${escapeHtml(i18n.t('projects.logoAlt', { name: project.name }))}"
                width="160" height="160" loading="lazy" decoding="async"
                data-fallback="${safeUrl(project.fallbackImage)}">
           <span class="project-type">${escapeHtml(project.type)}</span>
@@ -262,7 +284,7 @@ export class ProjectsGallery {
         <div class="project-body">
           <h3 class="project-title" id="p-${escapeHtml(project.id)}">${escapeHtml(project.name)}</h3>
           <p class="project-desc">${escapeHtml(project.description)}</p>
-          <ul class="project-tags" aria-label="${escapeHtml(`تقنيات ${project.name}`)}">
+          <ul class="project-tags" aria-label="${escapeHtml(i18n.t('projects.techAria', { name: project.name }))}">
             ${project.tags.map((tag) => `<li class="project-tag">${escapeHtml(tag)}</li>`).join('')}
           </ul>
           <div class="project-actions">
@@ -281,17 +303,16 @@ export class ProjectsGallery {
     this.grid.removeAttribute('aria-busy');
 
     if (!visible.length) {
-      this.renderEmpty(
-        'لا توجد مشاريع في هذا التصنيف',
-        'جرّب تصنيفاً آخر، أو اعرض كل الأعمال من زر «الكل».',
-      );
-      this.announce('لا توجد مشاريع مطابقة.');
+      this.renderEmpty(i18n.t('projects.noMatchTitle'), i18n.t('projects.noMatchText'));
+      this.announce(i18n.t('projects.noMatchAnnounce'));
       return;
     }
 
     this.grid.innerHTML = visible.map((project) => this.card(project)).join('');
     observeReveal(this.grid.querySelectorAll('.rv'));
-    this.announce(`تم عرض ${visible.length} من ${this.projects.length} مشروعاً.`);
+    this.announce(
+      i18n.t('projects.shownAnnounce', { visible: visible.length, total: this.projects.length }),
+    );
   }
 
   /** Swaps a broken project image for the inline placeholder, once. */

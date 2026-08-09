@@ -5,6 +5,8 @@
 // never opened. This is now the only owner of that button.
 import { lockScroll, unlockScroll } from '../utils/scroll-lock.js';
 
+const i18n = window.i18n ?? { t: (key) => key };
+
 export class Navigation {
   constructor() {
     this.navbar = document.querySelector('.navbar');
@@ -43,7 +45,9 @@ export class Navigation {
     this.menu.classList.toggle('show', next);
     this.scrim?.classList.toggle('show', next);
     this.toggle.setAttribute('aria-expanded', String(next));
-    this.toggle.setAttribute('aria-label', next ? 'إغلاق القائمة' : 'فتح القائمة');
+    // The closed-state label is also in the markup as data-i18n-attr, so the
+    // language switcher restores it if the drawer is closed at the time.
+    this.toggle.setAttribute('aria-label', i18n.t(next ? 'a11y.menuClose' : 'a11y.menuOpen'));
 
     if (next) {
       lockScroll();
