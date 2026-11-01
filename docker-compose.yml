@@ -26,6 +26,8 @@ services:
       - JWT_EXPIRE=7d
     depends_on:
       - mongodb
+    ports:
+      - "127.0.0.1:3000:3000"
     volumes:
       - ./backend/uploads:/usr/src/app/uploads
     networks:
