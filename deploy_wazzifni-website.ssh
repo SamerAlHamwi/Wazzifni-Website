@@ -34,8 +34,8 @@ docker compose down
 echo "== Building Docker image =="
 docker compose build --no-cache  # Fixed: changed from docker-compose to docker compose for consistency
 
-echo "== Running container on port $PORT =="
+echo "== Running container =="
 docker compose up -d
 
 echo "== Done =="
-echo "App running on port $PORT"  
+echo "Backend containers are up and running."

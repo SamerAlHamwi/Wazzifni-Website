@@ -160,23 +160,39 @@ app.use('/api/course/inquiries', courseInquiryRoutes);
 // Static files for uploads
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
-// Serve static files from frontend
+// Serve static files from frontend if available
 const frontendPath = path.join(__dirname, '../frontend');
 app.use(express.static(frontendPath));
 
-// Default route to rep.html
+// Health check and root route
 app.get('/', (req, res) => {
-  res.sendFile(path.join(frontendPath, 'rep.html'));
+  const repFile = path.join(frontendPath, 'rep.html');
+  if (require('fs').existsSync(repFile)) {
+    return res.sendFile(repFile);
+  }
+  res.status(200).json({ status: 'ok', service: 'wazzifni-unified-backend' });
+});
+
+app.get('/health', (req, res) => {
+  res.status(200).json({ status: 'healthy', uptime: process.uptime() });
 });
 
 // HR Dashboard Route (if applicable)
 app.get('/hr', (req, res) => {
-  res.sendFile(path.join(frontendPath, 'hr', 'index.html'));
+  const hrFile = path.join(frontendPath, 'hr', 'index.html');
+  if (require('fs').existsSync(hrFile)) {
+    return res.sendFile(hrFile);
+  }
+  res.status(404).json({ error: 'HR frontend not found' });
 });
 
 // Course Dashboard Route
 app.get('/course-admin', (req, res) => {
-  res.sendFile(path.join(frontendPath, 'course', 'admin.html'));
+  const courseFile = path.join(frontendPath, 'course', 'admin.html');
+  if (require('fs').existsSync(courseFile)) {
+    return res.sendFile(courseFile);
+  }
+  res.status(404).json({ error: 'Course admin frontend not found' });
 });
 
 // Error handling middleware for HR (handles AppError correctly)
