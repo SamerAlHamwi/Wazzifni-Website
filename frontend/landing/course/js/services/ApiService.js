@@ -1,5 +1,5 @@
 const ApiService = {
-    // Use the proxy defined in nginx.conf to avoid CORS issues
+    // Relative path routed through nginx (/api-proxy/) or local dev-server to https://ad.wazzifni.net/api/course
     BASE_URL: '/api-proxy/course',
 
     async request(endpoint, options = {}) {

@@ -1,66 +1,60 @@
-// Mobile navigation drawer.
-//
-// Previously both this class and a setupMobileMenu() helper in main.js bound a
-// click handler to the same burger, so every tap toggled the menu twice and it
-// never opened. This is now the only owner of that button.
-import { lockScroll, unlockScroll } from '../utils/scroll-lock.js';
-
-const i18n = window.i18n ?? { t: (key) => key };
+// Header: scrolled state, scroll-spy highlighting, and the mobile navigation sheet
+import { createOverlay } from './overlay.js';
 
 export class Navigation {
   constructor() {
-    this.navbar = document.querySelector('.navbar');
-    this.toggle = document.getElementById('nav-toggle');
-    this.menu = document.getElementById('nav-menu');
-    this.scrim = document.getElementById('nav-scrim');
-    this.desktop = window.matchMedia('(min-width: 900px)');
-    this.open = false;
+    this.header = document.getElementById('siteHeader');
+    this.toggle = this.header.querySelector('.menu-toggle');
+    this.sheet = document.getElementById('mobileNav');
+    this.backdrop = document.querySelector('[data-close-mobile-nav].sheet-backdrop');
 
-    this.init();
-  }
-
-  init() {
-    if (!this.toggle || !this.menu) return;
-
-    this.toggle.addEventListener('click', () => this.setOpen(!this.open));
-    this.scrim?.addEventListener('click', () => this.close());
-
-    // Any link inside the drawer navigates, so the drawer should go away.
-    this.menu.querySelectorAll('a').forEach((link) => {
-      link.addEventListener('click', () => this.close());
+    this.layer = createOverlay(this.sheet, {
+      backdrop: this.backdrop,
+      onClose: () => this.toggle.setAttribute('aria-expanded', 'false'),
     });
 
-    // Rotating to landscape can cross into the desktop layout while the drawer
-    // is open, which would leave the burger stuck in its "expanded" state and
-    // the body scroll-locked.
-    this.desktop.addEventListener('change', (event) => {
-      if (event.matches) this.close();
+    this.toggle.addEventListener('click', () => {
+      this.layer.open();
+      this.toggle.setAttribute('aria-expanded', 'true');
     });
+
+    this.sheet.addEventListener('click', (e) => {
+      if (e.target.closest('[data-close-mobile-nav]') || e.target.closest('a')) this.layer.close();
+    });
+
+    this.onScroll = this.onScroll.bind(this);
+    window.addEventListener('scroll', this.onScroll, { passive: true });
+    this.onScroll();
+    this.setupScrollSpy();
   }
 
-  setOpen(next) {
-    if (next === this.open) return;
-    this.open = next;
+  onScroll() {
+    this.header.classList.toggle('is-scrolled', window.scrollY > 8);
+  }
 
-    this.menu.classList.toggle('show', next);
-    this.scrim?.classList.toggle('show', next);
-    this.toggle.setAttribute('aria-expanded', String(next));
-    // The closed-state label is also in the markup as data-i18n-attr, so the
-    // language switcher restores it if the drawer is closed at the time.
-    this.toggle.setAttribute('aria-label', i18n.t(next ? 'a11y.menuClose' : 'a11y.menuOpen'));
+  setupScrollSpy() {
+    const links = [...this.header.querySelectorAll('[data-spy]')];
+    const sections = links.map(l => document.getElementById(l.dataset.spy)).filter(Boolean);
+    if (!sections.length) return;
 
-    if (next) {
-      lockScroll();
-    } else {
-      unlockScroll();
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (!entry.isIntersecting) return;
+        links.forEach(l => {
+          if (l.dataset.spy === entry.target.id) l.setAttribute('aria-current', 'true');
+          else l.removeAttribute('aria-current');
+        });
+      });
+    }, { rootMargin: '-45% 0px -50% 0px' });
+
+    sections.forEach(s => observer.observe(s));
+
+    // Clear the highlight when back at the hero
+    const hero = document.getElementById('top');
+    if (hero) {
+      new IntersectionObserver(([entry]) => {
+        if (entry.isIntersecting) links.forEach(l => l.removeAttribute('aria-current'));
+      }, { rootMargin: '-45% 0px -50% 0px' }).observe(hero);
     }
-  }
-
-  close() {
-    this.setOpen(false);
-  }
-
-  isOpen() {
-    return this.open;
   }
 }

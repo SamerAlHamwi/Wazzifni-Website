@@ -1,0 +1,85 @@
+/* Motion layer: marquee, animated mocks */
+
+/* Category marquee */
+.marquee {
+  position: relative;
+  z-index: 1;
+  max-width: var(--container);
+  margin: 0 auto;
+  overflow: hidden;
+  border-top: 1px solid var(--hairline);
+  -webkit-mask-image: linear-gradient(to left, transparent, #000 10%, #000 90%, transparent);
+  mask-image: linear-gradient(to left, transparent, #000 10%, #000 90%, transparent);
+}
+
+.marquee-track {
+  display: flex;
+  width: max-content;
+  animation: marquee 38s linear infinite;
+}
+
+.marquee:hover .marquee-track,
+.marquee:focus-within .marquee-track { animation-play-state: paused; }
+
+.marquee-group {
+  display: flex;
+  gap: var(--s-xs);
+  padding: var(--s-lg) 0 var(--s-lg) var(--s-xs);
+}
+
+/* RTL: content flows right-to-left, so the strip travels toward the right */
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to { transform: translateX(50%); }
+}
+
+.marquee-item {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s-xs);
+  min-height: 36px;
+  padding: 0 var(--s-md);
+  border-radius: var(--r-full);
+  border: 1px solid var(--hairline);
+  background: var(--surface-subtle);
+  color: var(--body);
+  font-size: 13px;
+  font-weight: 500;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.marquee-item .icon { color: var(--primary); width: 16px; height: 16px; }
+
+.marquee-item:hover {
+  color: var(--ink);
+  border-color: var(--primary-line);
+  background: var(--primary-tint);
+}
+
+/* Search mock: typing caret */
+.mock-text { min-height: 1em; }
+
+.mock-caret {
+  width: 1px;
+  height: 15px;
+  margin-inline-start: -4px;
+  background: var(--primary);
+  animation: caret 1s steps(1) infinite;
+}
+
+@keyframes caret {
+  50% { opacity: 0; }
+}
+
+.mock-line { transition: max-width 0.4s var(--ease); }
+
+/* Timeline mock: transitions between states */
+.mock-timeline li,
+.mock-timeline li span { transition: color 0.3s ease, background-color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease; }
+
+@media (prefers-reduced-motion: reduce) {
+  .marquee-track { animation: none; }
+  .marquee { overflow-x: auto; }
+}

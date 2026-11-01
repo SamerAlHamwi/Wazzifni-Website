@@ -1,21 +1,14 @@
-// Single transient message pinned under the navbar. Styling lives in main.css.
-let current = null;
-
-export function showToast(message, type = 'info') {
-  if (current) current.remove();
-
+// Small status toasts (e.g. connection lost / restored)
+export function toast(message, type = 'info') {
+  const region = document.querySelector('[data-toasts]');
+  if (!region) return;
   const el = document.createElement('div');
   el.className = `toast toast--${type}`;
-  el.setAttribute('role', type === 'error' ? 'alert' : 'status');
   el.textContent = message;
-  document.body.appendChild(el);
-  current = el;
-
+  region.appendChild(el);
+  requestAnimationFrame(() => el.classList.add('is-open'));
   setTimeout(() => {
-    el.classList.add('toast--leaving');
-    setTimeout(() => {
-      el.remove();
-      if (current === el) current = null;
-    }, 250);
-  }, 3000);
+    el.classList.remove('is-open');
+    setTimeout(() => el.remove(), 250);
+  }, 3200);
 }

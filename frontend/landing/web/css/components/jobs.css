@@ -1,253 +1,297 @@
-/* =============================================================================
-   Jobs — swipeable card rail on phones, grid from 700px up
-   ============================================================================= */
-.jobs {
-  padding-block: var(--section-y);
-  background: var(--surface);
+/* Jobs — toolbar, cards, skeletons, detail drawer */
+.jobs-toolbar {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-sm);
+  margin-bottom: var(--s-xl);
 }
 
-/* Six stacked job cards cost ~700px of scroll on a phone. A snap rail with a
-   peeking next card keeps the section under one screen and still shows there
-   is more to see. */
+.chip-row {
+  display: flex;
+  align-items: center;
+  gap: var(--s-xs);
+  overflow-x: auto;
+  scrollbar-width: none;
+  padding-bottom: 2px;
+}
+
+.chip-row::-webkit-scrollbar { display: none; }
+
+.active-query {
+  display: flex;
+  align-items: center;
+  gap: var(--s-sm);
+  font-size: 14px;
+}
+
+.active-query strong { color: var(--ink); font-weight: 600; }
+
 .jobs-grid {
   display: grid;
-  grid-auto-flow: column;
-  grid-auto-columns: 82%;
-  gap: 0.7rem;
-  max-width: var(--maxw);
-  margin-inline: auto;
-  margin-bottom: 1.25rem;
-  overflow-x: auto;
-  scroll-snap-type: x mandatory;
-  scroll-padding-inline-start: var(--gutter);
-  overscroll-behavior-x: contain;
-  -webkit-overflow-scrolling: touch;
-  scrollbar-width: none;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--s-md);
 }
 
-.jobs-grid::-webkit-scrollbar {
-  display: none;
+.grid-more {
+  grid-column: 1 / -1;
+  display: flex;
+  justify-content: center;
+  margin-top: var(--s-xs);
 }
 
-.job-card,
-.shimmer-card {
-  scroll-snap-align: start;
-}
-
+/* Card (whole card is a button that opens the drawer) */
 .job-card {
   display: flex;
   flex-direction: column;
+  gap: var(--s-sm);
   width: 100%;
-  height: 100%;
-  padding: 1rem;
-  text-align: start;
-  background: var(--bg);
-  border: 1.5px solid var(--border);
-  border-radius: var(--r-md);
+  padding: var(--s-lg);
+  text-align: right;
+  font-family: inherit;
+  color: inherit;
+  background: var(--surface);
+  border: 1px solid var(--hairline);
+  border-radius: var(--r-lg);
+  box-shadow: var(--shadow-md);
   cursor: pointer;
-  transition: transform var(--t-fast), border-color var(--t-fast), box-shadow var(--t-fast);
+  transition: var(--transition);
 }
 
-.job-card:active {
-  transform: scale(0.99);
+.job-card:hover {
+  border-color: color-mix(in oklab, var(--primary) 35%, transparent);
+  transform: translateY(-2px);
 }
 
-.job-header {
+.job-top {
   display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  gap: 0.5rem;
-  margin-bottom: 0.5rem;
+  align-items: center;
+  gap: var(--s-xs);
+  font-size: 13px;
 }
 
-.job-title {
-  font-size: var(--fs-sm);
-  font-weight: 700;
-  color: var(--navy);
-  line-height: 1.5;
+.job-logo {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  flex-shrink: 0;
+  border-radius: var(--r-sm);
+  border: 1px solid var(--hairline);
+  background: var(--surface-subtle);
+  color: var(--ink);
 }
 
-.job-badge {
-  flex: 0 0 auto;
-  background: rgba(0, 135, 198, 0.1);
-  color: var(--blue);
-  padding: 0.2rem 0.65rem;
-  border-radius: var(--r-pill);
-  font-size: var(--fs-xs);
-  font-weight: 600;
+.job-logo .icon { width: 16px; height: 16px; }
+
+.job-logo--lg {
+  width: 44px;
+  height: 44px;
+  border-radius: var(--r-md);
+}
+
+.job-logo--lg .icon { width: 20px; height: 20px; }
+
+.job-company {
+  flex: 1;
+  min-width: 0;
+  color: var(--body);
+  overflow: hidden;
+  text-overflow: ellipsis;
   white-space: nowrap;
 }
 
-.job-company {
-  font-size: var(--fs-sm);
-  color: var(--muted);
-  margin-bottom: 0.3rem;
+.job-time {
+  font-size: 11px;
+  color: var(--body);
+  white-space: nowrap;
 }
 
-.job-level {
-  font-size: var(--fs-xs);
-  color: var(--muted);
-  margin-bottom: 0.7rem;
+.job-title {
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1.5;
+  color: var(--ink);
 }
 
-.job-footer {
+.job-tags {
   display: flex;
   flex-wrap: wrap;
-  align-items: center;
-  gap: 0.25rem 0.6rem;
-  margin-top: auto;
-  padding-top: 0.6rem;
-  border-top: 1px solid var(--border);
+  gap: 6px;
 }
 
-.job-location {
-  font-size: var(--fs-xs);
-  color: var(--muted);
+.tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px var(--s-xs);
+  border-radius: var(--r-full);
+  border: 1px solid var(--hairline);
+  font-size: 11px;
+  font-weight: 500;
+  line-height: 1.5;
+  color: var(--body);
+}
+
+.tag .icon { width: 12px; height: 12px; }
+
+.job-bottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: auto;
+  padding-top: var(--s-sm);
+  border-top: 1px solid var(--hairline);
 }
 
 .job-salary {
-  font-size: var(--fs-xs);
-  font-weight: 700;
-  color: var(--orange);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ink);
+  font-variant-numeric: tabular-nums;
 }
 
-.job-date {
-  font-size: var(--fs-xs);
-  color: var(--muted);
-  margin-inline-start: auto;
+.job-go {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  color: var(--body);
+  transition: var(--transition);
 }
 
-.jobs-more {
-  text-align: center;
+.job-card:hover .job-go {
+  color: var(--on-primary);
+  background: var(--primary);
+  transform: translateX(-2px);
 }
 
-.jobs-more p {
-  font-size: var(--fs-sm);
-  color: var(--muted);
-  margin-bottom: 0.9rem;
+/* Skeleton */
+.job-card--skeleton {
+  cursor: default;
+  pointer-events: none;
 }
 
-.jobs-more .btn {
-  width: 100%;
+.sk {
+  border-radius: var(--r-xs);
+  background: linear-gradient(90deg, var(--surface-raised) 25%, #34343a 50%, var(--surface-raised) 75%);
+  background-size: 200% 100%;
+  animation: sk 1.4s ease infinite;
 }
 
-.jobs-empty {
-  grid-column: 1 / -1;
-  padding: 2rem 1rem;
-  text-align: center;
-  color: var(--muted);
+.sk-avatar { width: 32px; height: 32px; border-radius: var(--r-sm); }
+.sk-line { height: 12px; width: 55%; }
+.sk-line--lg { height: 16px; width: 80%; }
+.sk-row { display: flex; gap: 6px; }
+.sk-pill { height: 20px; width: 72px; border-radius: var(--r-full); }
+
+@keyframes sk {
+  from { background-position: 200% 0; }
+  to { background-position: -200% 0; }
 }
 
-@media (hover: hover) {
-  .job-card:hover {
-    border-color: var(--blue);
-    transform: translateY(-3px);
-    box-shadow: 0 14px 32px rgba(0, 135, 198, 0.12);
-  }
-}
-
-@media (min-width: 560px) {
-  .jobs-grid {
-    grid-auto-columns: 46%;
-  }
-
-  .jobs-more .btn {
-    width: auto;
-  }
-}
-
-@media (min-width: 700px) {
-  .jobs-grid {
-    grid-auto-flow: row;
-    grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
-    grid-auto-columns: auto;
-    gap: 1.1rem;
-    margin-bottom: 2rem;
-    overflow: visible;
-    scroll-snap-type: none;
-  }
-
-  /* Undoes the .bleed offsets once the rail becomes a normal grid. Needs two
-     classes to outrank .bleed, which is defined after this file in main.css. */
-  .jobs-grid.bleed {
-    margin-inline: auto;
-    padding-inline: 0;
-  }
-
-  .job-card {
-    padding: 1.4rem;
-    border-radius: 18px;
-  }
-}
-
-/* ------------------------------------------------------- shimmer loading -- */
-.shimmer-card {
-  padding: 1rem;
-  background: var(--bg);
-  border: 1.5px solid var(--border);
-  border-radius: var(--r-md);
-  overflow: hidden;
-}
-
-.shimmer-wrapper {
+/* Drawer (slides in from the left edge in RTL) */
+.drawer {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 53;
+  width: min(440px, 100vw);
   display: flex;
   flex-direction: column;
-  gap: 0.8rem;
+  background: var(--surface);
+  border-right: 1px solid var(--hairline);
+  box-shadow: var(--shadow-lg);
+  transform: translateX(-100%);
+  transition: transform 0.28s var(--ease);
 }
 
-.shimmer-line {
-  position: relative;
-  height: 14px;
-  width: 100%;
-  background: #e2ecf3;
-  border-radius: 4px;
+.drawer.is-open { transform: none; }
+
+.drawer-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: var(--header-h);
+  padding: 0 var(--s-xl);
+  border-bottom: 1px solid var(--hairline);
+}
+
+.drawer-head .eyebrow { margin: 0; }
+
+.drawer-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: var(--s-xl);
+}
+
+.drawer-company {
+  display: flex;
+  align-items: center;
+  gap: var(--s-sm);
+  font-size: 14px;
+  color: var(--body);
+}
+
+.drawer-title {
+  margin-top: var(--s-lg);
+  font-size: 24px;
+  font-weight: 700;
+  line-height: 1.33;
+  color: var(--ink);
+}
+
+.drawer-salary {
+  margin-top: var(--s-xs);
+  font-size: 16px;
+  font-weight: 500;
+  color: var(--primary);
+}
+
+.info-list {
+  margin-top: var(--s-xl);
+  border: 1px solid var(--hairline);
+  border-radius: var(--r-lg);
   overflow: hidden;
 }
 
-.shimmer-line.title {
-  height: 18px;
-  width: 70%;
-}
-
-.shimmer-line.company {
-  height: 14px;
-  width: 50%;
-}
-
-.shimmer-line.level {
-  height: 12px;
-  width: 40%;
-}
-
-.shimmer-row {
+.info-row {
   display: flex;
-  gap: 0.5rem;
+  align-items: center;
+  gap: var(--s-sm);
+  padding: var(--s-sm) var(--s-md);
+  font-size: 14px;
 }
 
-.shimmer-line::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  transform: translateX(-100%);
-  background-image: linear-gradient(
-    90deg,
-    rgba(255, 255, 255, 0) 0,
-    rgba(255, 255, 255, 0.4) 20%,
-    rgba(255, 255, 255, 0.8) 60%,
-    rgba(255, 255, 255, 0)
-  );
-  animation: shimmer 1.6s infinite;
+.info-row + .info-row { border-top: 1px solid var(--hairline); }
+
+.info-icon { color: var(--body); display: grid; }
+.info-label { color: var(--body); }
+.info-value { margin-inline-start: auto; color: var(--ink); font-weight: 500; text-align: left; }
+
+.drawer-section { margin-top: var(--s-xl); }
+
+.drawer-section h3 {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--ink);
+  margin-bottom: var(--s-xs);
 }
 
-@keyframes shimmer {
-  100% {
-    transform: translateX(100%);
-  }
+.drawer-section p {
+  font-size: 14px;
+  white-space: pre-line;
 }
 
-@media (min-width: 700px) {
-  .shimmer-card {
-    padding: 1.4rem;
-    border-radius: 18px;
-  }
+.drawer-foot {
+  padding: var(--s-md) var(--s-xl) var(--s-xl);
+  border-top: 1px solid var(--hairline);
+  background: var(--canvas);
+}
+
+.drawer-foot p {
+  margin-bottom: var(--s-sm);
+  font-size: 12px;
+  text-align: center;
 }

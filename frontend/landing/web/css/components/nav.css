@@ -1,269 +1,181 @@
-/* =============================================================================
-   Navigation — fixed bar + slide-down drawer on phones
-   ============================================================================= */
-.navbar {
+/* Header */
+.site-header {
   position: fixed;
   top: 0;
-  inset-inline: 0;
-  z-index: 1000;
-  height: var(--nav-h);
-  background: rgba(0, 64, 128, 0.97);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-  transition: box-shadow var(--t);
+  left: 0;
+  right: 0;
+  z-index: 50;
+  height: var(--header-h);
+  border-bottom: 1px solid transparent;
+  /* Own compositing layer: keeps Chrome from painting the bar beneath the pinned hero,
+     the zooming map and the skewed employer band while scrolling */
+  transform: translateZ(0);
+  will-change: transform;
+  isolation: isolate;
+  transition: background-color 0.2s ease, border-color 0.2s ease;
 }
 
-@supports (backdrop-filter: blur(12px)) {
-  .navbar {
-    background: rgba(0, 64, 128, 0.88);
-    backdrop-filter: blur(12px);
-  }
+.site-header.is-scrolled {
+  background: color-mix(in oklab, var(--canvas) 90%, transparent);
+  backdrop-filter: blur(14px) saturate(140%);
+  -webkit-backdrop-filter: blur(14px) saturate(140%);
+  border-bottom-color: var(--hairline);
 }
 
-.navbar.scrolled {
-  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.35);
-}
-
-.nav-container {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
+.header-inner {
+  max-width: var(--container);
   height: 100%;
-  max-width: var(--maxw);
-  margin-inline: auto;
-  padding-inline: max(var(--gutter), env(safe-area-inset-right, 0px))
-                  max(var(--gutter), env(safe-area-inset-left, 0px));
-}
-
-.nav-logo {
+  margin: 0 auto;
+  padding: 0 var(--s-xl);
   display: flex;
   align-items: center;
-  /* Pushes the CTA + burger to the far edge while the links are out of flow. */
-  margin-inline-end: auto;
+  gap: var(--s-xl);
 }
 
-.nav-logo img {
-  height: 30px;
-  width: auto;
-  object-fit: contain;
-}
-
-.nav-btn {
+.brand {
   display: inline-flex;
   align-items: center;
-  justify-content: center;
-  gap: 0.35rem;
-  min-height: 38px;
-  padding: 0.4rem 0.9rem;
-  background: var(--orange);
-  color: #fff;
-  border-radius: var(--r-pill);
+  gap: var(--s-xs);
+  text-decoration: none;
+  flex-shrink: 0;
+}
+
+.brand img {
+  width: 32px;
+  height: 32px;
+  border-radius: var(--r-sm);
+  object-fit: cover;
+  box-shadow: var(--shadow-sm);
+}
+
+.brand-name {
+  font-size: 15px;
   font-weight: 700;
-  font-size: var(--fs-xs);
-  white-space: nowrap;
-  transition: transform var(--t-fast), box-shadow var(--t-fast);
+  color: var(--ink);
 }
 
-.nav-btn:active {
-  transform: scale(0.96);
+.primary-nav {
+  display: flex;
+  gap: var(--s-xxs);
+  margin-inline-start: var(--s-xs);
 }
 
-/* ----------------------------------------------------- language switcher -- */
-/* Sits between the links and the CTA on every breakpoint — it is chrome, not a
-   nav item, so it stays out of the drawer where it would be hidden on phones. */
-.nav-lang {
+.primary-nav a {
+  position: relative;
+  padding: 6px var(--s-sm);
+  border-radius: var(--r-full);
+  color: var(--body);
+  text-decoration: none;
+  font-size: 14px;
+  transition: var(--transition);
+}
+
+.primary-nav a:hover {
+  color: var(--ink);
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.primary-nav a[aria-current] { color: var(--ink); }
+
+.primary-nav a[aria-current]::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 50%;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: var(--primary);
+  transform: translateX(-50%);
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--s-xs);
+  margin-inline-start: auto;
+}
+
+.menu-toggle { display: none; }
+
+/* Mobile navigation sheet (slides in from the right edge in RTL) */
+.mobile-nav {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  z-index: 53;
+  width: min(360px, 88vw);
+  display: flex;
+  flex-direction: column;
+  background: var(--surface);
+  border-left: 1px solid var(--hairline);
+  box-shadow: var(--shadow-lg);
+  transform: translateX(100%);
+  transition: transform 0.25s var(--ease);
+}
+
+.mobile-nav.is-open { transform: none; }
+
+.mobile-nav-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: var(--header-h);
+  padding: 0 var(--s-md);
+  border-bottom: 1px solid var(--hairline);
+}
+
+.mobile-nav-links {
+  display: flex;
+  flex-direction: column;
+  padding: var(--s-xs);
+  overflow-y: auto;
+}
+
+.mobile-nav-links a {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 48px;
+  padding: 0 var(--s-sm);
+  border-radius: var(--r-md);
+  color: var(--ink);
+  text-decoration: none;
+  font-size: 16px;
+  transition: var(--transition);
+}
+
+.mobile-nav-links a .icon { color: var(--body); }
+.mobile-nav-links a:hover { background: rgba(255, 255, 255, 0.05); }
+
+.mobile-nav-foot {
+  margin-top: auto;
+  padding: var(--s-md);
+  border-top: 1px solid var(--hairline);
+}
+
+/* Language toggle: shows the language it switches to */
+.lang-toggle {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  flex: 0 0 auto;
-  min-width: 44px;
+  gap: 6px;
   min-height: 34px;
-  padding: 0.25rem 0.6rem;
-  border-radius: var(--r-pill);
-  background: rgba(255, 255, 255, 0.12);
-  border: 1px solid rgba(255, 255, 255, 0.28);
-  color: #fff;
-  font-size: var(--fs-xs);
-  font-weight: 800;
-  letter-spacing: 0.03em;
-  white-space: nowrap;
-  /* The label is always the *other* language's own name, so it must never be
-     reordered by the bidi algorithm of the language currently in use. */
-  unicode-bidi: isolate;
-  transition: background var(--t-fast), transform var(--t-fast);
+  padding: 0 12px;
+  border-radius: 999px;
+  border: 1px solid var(--hairline);
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--ink);
+  font: 600 13px/1 var(--font-sans);
+  cursor: pointer;
+  transition: background-color 0.15s ease, border-color 0.15s ease;
 }
 
-.nav-lang:active {
-  transform: scale(0.96);
-}
+.lang-toggle:hover { background: rgba(255, 255, 255, 0.09); }
+.lang-toggle svg { width: 15px; height: 15px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; }
+.lang-toggle .lt-to-ar { font-family: 'IBM Plex Sans Arabic', sans-serif; }
+html[lang="en"] .lang-toggle .lt-to-en,
+html:not([lang="en"]) .lang-toggle .lt-to-ar { display: none; }
 
-@media (hover: hover) {
-  .nav-lang:hover {
-    background: rgba(255, 255, 255, 0.22);
-  }
-}
-
-/* ---------------------------------------------------------------- burger -- */
-.nav-toggle {
-  display: grid;
-  place-items: center;
-  width: var(--tap);
-  height: var(--tap);
-  flex: 0 0 auto;
-  margin-inline-end: -8px;
-  color: #fff;
-}
-
-.nav-toggle-bars,
-.nav-toggle-bars::before,
-.nav-toggle-bars::after {
-  content: '';
-  display: block;
-  width: 22px;
-  height: 2px;
-  border-radius: 2px;
-  background: currentColor;
-  transition: transform var(--t), background var(--t-fast);
-}
-
-.nav-toggle-bars::before {
-  transform: translateY(-7px);
-}
-
-.nav-toggle-bars::after {
-  transform: translateY(5px);
-}
-
-.nav-toggle[aria-expanded='true'] .nav-toggle-bars {
-  background: transparent;
-}
-
-.nav-toggle[aria-expanded='true'] .nav-toggle-bars::before {
-  transform: rotate(45deg);
-}
-
-.nav-toggle[aria-expanded='true'] .nav-toggle-bars::after {
-  transform: rotate(-45deg) translateY(-1px);
-}
-
-/* ---------------------------------------------------------------- drawer -- */
-.nav-links {
-  position: fixed;
-  top: var(--nav-h);
-  inset-inline: 0;
-  z-index: 999;
-  display: grid;
-  gap: 0.15rem;
-  padding: 0.6rem var(--gutter) calc(1rem + var(--safe-b));
-  max-height: calc(100dvh - var(--nav-h));
-  overflow-y: auto;
-  overscroll-behavior: contain;
-  background: #00305f;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
-  box-shadow: 0 18px 32px rgba(0, 0, 0, 0.32);
-  opacity: 0;
-  visibility: hidden;
-  transform: translateY(-10px);
-  transition: opacity var(--t), transform var(--t), visibility var(--t);
-}
-
-.nav-links.show {
-  opacity: 1;
-  visibility: visible;
-  transform: none;
-}
-
-.nav-links a {
-  display: flex;
-  align-items: center;
-  min-height: var(--tap);
-  padding-inline: 0.5rem;
-  border-radius: 10px;
-  color: rgba(255, 255, 255, 0.9);
-  font-size: 1rem;
-  font-weight: 600;
-}
-
-.nav-links a:active {
-  background: rgba(255, 255, 255, 0.08);
-}
-
-.nav-scrim {
-  position: fixed;
-  inset: var(--nav-h) 0 0;
-  z-index: 998;
-  background: rgba(0, 18, 40, 0.5);
-  opacity: 0;
-  visibility: hidden;
-  transition: opacity var(--t), visibility var(--t);
-}
-
-.nav-scrim.show {
-  opacity: 1;
-  visibility: visible;
-}
-
-/* Second word of the CTA drops out on narrow phones so the bar never wraps:
-   "📲 حمّل التطبيق" -> "📲 حمّل". The threshold is 460px rather than 380px
-   because the language switcher sits in the same row and takes ~60px that the
-   bar was not originally budgeted for. */
-@media (max-width: 460px) {
-  .nav-btn-word {
-    display: none;
-  }
-}
-
-/* --------------------------------------------------------------- desktop -- */
-@media (min-width: 900px) {
-  .nav-logo {
-    margin-inline-end: 0;
-  }
-
-  .nav-logo img {
-    height: 38px;
-  }
-
-  .nav-toggle,
-  .nav-scrim {
-    display: none;
-  }
-
-  .nav-links {
-    position: static;
-    z-index: auto;
-    display: flex;
-    gap: 1.8rem;
-    margin-inline: auto;
-    padding: 0;
-    max-height: none;
-    overflow: visible;
-    background: none;
-    border: 0;
-    box-shadow: none;
-    opacity: 1;
-    visibility: visible;
-    transform: none;
-  }
-
-  .nav-links a {
-    min-height: 0;
-    padding: 0;
-    font-size: 0.95rem;
-    color: rgba(255, 255, 255, 0.85);
-    transition: color var(--t-fast);
-  }
-
-  .nav-links a:hover {
-    color: var(--gold);
-  }
-
-  .nav-btn {
-    min-height: 40px;
-    padding: 0.5rem 1.4rem;
-    font-size: 0.9rem;
-  }
-
-  .nav-btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(246, 138, 41, 0.5);
-  }
-}
+.lang-toggle--block { width: 100%; min-height: 44px; margin-bottom: var(--s-xs); }

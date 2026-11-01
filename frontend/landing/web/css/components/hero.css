@@ -1,13 +1,8 @@
-/* =============================================================================
-   Hero — stacked and compact on phones, split layout from 900px up
-   ============================================================================= */
+/* Hero */
 .hero {
   position: relative;
   overflow: hidden;
-  background: var(--grad);
-  /* No 100vh on phones: the address bar makes it taller than the screen and
-     pushes the CTAs below the fold. */
-  padding: calc(var(--nav-h) + 1.4rem) var(--gutter) clamp(2rem, 7vw, 3.5rem);
+  padding: calc(var(--header-h) + var(--s-band)) var(--s-xl) 0;
 }
 
 .hero::after {
@@ -15,268 +10,407 @@
   position: absolute;
   inset: 0;
   pointer-events: none;
-  background:
-    radial-gradient(ellipse 60% 70% at 80% 30%, rgba(255, 180, 60, 0.08) 0%, transparent 65%),
-    radial-gradient(ellipse 50% 60% at 10% 80%, rgba(0, 180, 220, 0.1) 0%, transparent 60%);
+  background: radial-gradient(circle at 1px 1px, rgba(255, 255, 255, 0.05) 1px, transparent 0) 0 0 / 24px 24px;
+  -webkit-mask-image: radial-gradient(ellipse 70% 60% at 50% 30%, #000 0%, transparent 75%);
+  mask-image: radial-gradient(ellipse 70% 60% at 50% 30%, #000 0%, transparent 75%);
 }
 
-.hero-container {
+.hero-inner {
   position: relative;
   z-index: 1;
+  max-width: var(--container);
+  margin: 0 auto;
   display: grid;
-  gap: clamp(1.75rem, 6vw, 3rem);
-  width: 100%;
-  max-width: var(--maxw);
-  margin-inline: auto;
-}
-
-.hero-content {
-  text-align: center;
-}
-
-.badge {
-  display: inline-flex;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: var(--s-section);
   align-items: center;
-  gap: 0.45rem;
-  background: rgba(255, 180, 60, 0.15);
-  border: 1px solid rgba(255, 180, 60, 0.4);
-  color: var(--gold);
-  padding: 0.3rem 0.85rem;
-  border-radius: var(--r-pill);
-  font-size: var(--fs-xs);
-  font-weight: 700;
-  margin-bottom: 0.9rem;
 }
 
-.badge::before {
-  content: '●';
-  font-size: 0.45rem;
-  animation: blink 2s infinite;
+/* Audience switch with a sliding indicator */
+/* Brand logo at the top of the hero: the calligraphic wordmark on its own */
+.hero-logo {
+  display: block;
+  height: 76px;
+  width: auto;
+  margin-bottom: var(--s-xl);
+  filter: drop-shadow(0 6px 18px rgba(0, 182, 231, 0.35));
 }
 
-@keyframes blink {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.2; }
+@media (max-width: 768px) {
+  .hero-logo { height: 56px; margin-bottom: var(--s-lg); }
+}
+
+.audience-switch {
+  position: relative;
+  display: inline-grid;
+  grid-template-columns: 1fr 1fr;
+  margin-bottom: var(--s-xxl);
+  padding: var(--s-xxs);
+  border-radius: var(--r-full);
+  border: 1px solid var(--hairline);
+  background: var(--surface);
+  box-shadow: var(--shadow-sm);
+}
+
+.audience-switch button {
+  position: relative;
+  z-index: 1;
+  min-height: 34px;
+  padding: 0 var(--s-md);
+  border: none;
+  border-radius: var(--r-full);
+  background: transparent;
+  color: var(--body);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.audience-switch button[aria-selected="true"] { color: var(--on-primary); }
+
+.audience-indicator {
+  position: absolute;
+  top: var(--s-xxs);
+  bottom: var(--s-xxs);
+  right: var(--s-xxs);
+  width: calc(50% - var(--s-xxs));
+  border-radius: var(--r-full);
+  background: var(--primary);
+  box-shadow: var(--shadow-sm), inset 0 1px 0 rgba(255, 255, 255, 0.15);
+  transition: transform 0.3s var(--ease);
+}
+
+.audience-switch[data-active="employer"] .audience-indicator { transform: translateX(-100%); }
+
+/* Both audience panels sit in the same cell, so the block keeps the taller one's height and the
+   logo and switch above it don't move when switching; the inactive panel is invisible, not removed */
+.hero-panels { display: grid; grid-template-columns: minmax(0, 1fr); }
+.hero-panels > .hero-panel { grid-area: 1 / 1; }
+.hero-panels > .hero-panel[hidden] { display: block !important; visibility: hidden; animation: none; }
+.hero-panels > .hero-panel:not([hidden]) { animation: panelIn 0.35s var(--ease); }
+
+@keyframes panelIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: none; }
 }
 
 .hero h1 {
-  font-size: var(--fs-display);
-  font-weight: 900;
-  color: #fff;
-  line-height: 1.25;
-  text-wrap: balance;
-  margin-bottom: 0.7rem;
+  font-size: 42px;
+  font-weight: 700;
+  line-height: 1.2;
+  color: var(--ink);
+  margin-bottom: var(--s-lg);
 }
 
 .hero h1 em {
-  color: var(--gold);
   font-style: normal;
+  background: linear-gradient(to left, #6FA8F5, #8CCDE6 30%, #F0A86A 92%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
 }
 
-.hero-subtitle {
-  font-size: var(--fs-body);
-  color: rgba(255, 255, 255, 0.8);
-  line-height: 1.8;
-  max-width: 42ch;
-  margin: 0 auto clamp(1.25rem, 4vw, 2.2rem);
+.hero-lead {
+  max-width: 500px;
+  font-size: 18px;
+  line-height: 1.63;
+  color: var(--body);
+  margin-bottom: var(--s-xxl);
 }
 
-/* Primary CTA gets the full width, the two secondary actions share a row —
-   three stacked full-width buttons cost ~90px of extra scroll for nothing. */
-.hero-buttons {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 0.55rem;
-}
-
-.hero-buttons > :first-child {
-  grid-column: 1 / -1;
-}
-
-.hero-buttons .btn {
-  width: 100%;
-  padding-inline: 0.75rem;
-}
-
-/* ----------------------------------------------------------------- phone -- */
-.hero-phone {
+.hero-ctas {
   display: flex;
-  justify-content: center;
+  flex-wrap: wrap;
+  gap: var(--s-sm);
+}
+
+.hero-checks {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-xs);
+  margin-top: var(--s-xxl);
+  font-size: 14px;
+  color: var(--ink);
+}
+
+.hero-checks li {
+  display: flex;
+  align-items: center;
+  gap: var(--s-xs);
+}
+
+.hero-checks .icon {
+  width: 18px;
+  height: 18px;
+  padding: 3px;
+  border-radius: 50%;
+  color: var(--accent-2);
+  background: color-mix(in oklab, var(--accent-2) 12%, transparent);
+}
+
+/* Map visual */
+.hero-visual {
+  position: relative;
+  display: flex;
+  flex-direction: column;
   align-items: center;
 }
 
-.phone-mockup {
+.hero-map {
+  width: 100%;
+  max-width: 560px;
+}
+
+.map-stage {
   position: relative;
+  width: 100%;
+  aspect-ratio: 1000 / 1014;
 }
 
-.phone-frame {
-  width: min(52vw, 200px);
-  aspect-ratio: 260 / 500;
-  background: #001833;
-  border-radius: 34px;
-  border: 2px solid rgba(255, 255, 255, 0.15);
-  box-shadow: 0 30px 60px rgba(0, 0, 0, 0.45);
-  position: relative;
-  transform: rotate(-4deg);
-}
-
-.phone-frame::before {
-  content: '';
+.map-dots,
+.map-svg {
   position: absolute;
-  top: 11px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 58px;
-  height: 4px;
-  background: rgba(255, 255, 255, 0.15);
-  border-radius: 10px;
-  z-index: 2;
-}
-
-.phone-screen {
-  position: absolute;
-  inset: 6px;
-  border-radius: 29px;
-  overflow: hidden;
-}
-
-.phone-screen img {
+  inset: 0;
   width: 100%;
   height: 100%;
-  object-fit: cover;
-  object-position: top;
 }
 
-/* ---------------------------------------------------------- float cards -- */
-.float-card {
+.map-svg { overflow: visible; }
+
+/* Governorates: clear borders, Najaf highlighted */
+.map-outline path {
+  fill: none;
+  stroke: color-mix(in oklab, var(--primary) 40%, transparent);
+  stroke-width: 10;
+  stroke-linejoin: round;
+  filter: blur(6px);
+  opacity: 0.6;
+}
+
+.gov {
+  fill: rgba(23, 24, 27, 0.55);
+  stroke: rgba(154, 160, 171, 0.55);
+  stroke-width: 1.4;
+  stroke-linejoin: round;
+  transition: fill 0.25s ease, stroke 0.25s ease;
+}
+
+.gov:hover {
+  fill: rgba(0, 182, 231, 0.08);
+  stroke: rgba(245, 246, 248, 0.8);
+}
+
+.gov--hq {
+  fill: rgba(0, 182, 231, 0.16);
+  stroke: var(--primary);
+  stroke-width: 2.2;
+}
+
+.gov--hq:hover { fill: rgba(0, 182, 231, 0.22); stroke: var(--primary); }
+
+/* Network */
+.map-links path {
+  fill: none;
+  stroke: rgba(154, 160, 171, 0.28);
+  stroke-width: 1.2;
+  stroke-dasharray: 3 6;
+}
+
+.arc {
+  fill: none;
+  stroke: url(#arcGrad);
+  stroke-width: 2;
+  stroke-linecap: round;
+  opacity: 0.75;
+}
+
+.pulse {
+  fill: #F5F6F8;
+  opacity: 0;
+  filter: drop-shadow(0 0 6px rgba(0, 182, 231, 0.9));
+}
+
+.node-core { fill: var(--ink); }
+
+.node-ring {
+  fill: rgba(0, 182, 231, 0.18);
+  stroke: rgba(0, 182, 231, 0.6);
+  stroke-width: 1;
+}
+
+.node-label {
+  font-family: var(--font-sans);
+  font-size: 19px;
+  font-weight: 500;
+  fill: var(--body);
+  paint-order: stroke;
+  stroke: var(--canvas);
+  stroke-width: 5px;
+  stroke-linejoin: round;
+}
+
+/* Najaf */
+.hq-ripple {
+  fill: none;
+  stroke: var(--primary);
+  stroke-width: 1.5;
+  opacity: 0;
+}
+
+.hq-core-ring {
+  fill: rgba(0, 182, 231, 0.2);
+  stroke: var(--primary);
+  stroke-width: 2;
+}
+
+.hq-core-dot { fill: #F5F6F8; }
+
+.hq-label {
   position: absolute;
   display: flex;
   align-items: center;
-  gap: 7px;
-  background: #fff;
-  border-radius: 12px;
-  padding: 7px 10px;
-  box-shadow: 0 10px 26px rgba(0, 0, 0, 0.22);
+  translate: calc(-100% - 22px) -50%;
+  pointer-events: none;
 }
 
-.card-1 {
-  top: 34px;
-  left: -20px;
-  animation: float 4s ease-in-out infinite;
+.hq-label-line {
+  order: 1;
+  width: 26px;
+  height: 1px;
+  background: linear-gradient(to left, var(--primary), transparent);
 }
 
-.card-2 {
-  bottom: 48px;
-  right: -22px;
-  animation: float 4s ease-in-out infinite 2s;
+.hq-label-card {
+  order: 2;
+  display: flex;
+  flex-direction: column;
+  padding: var(--s-xs) var(--s-sm);
+  border-radius: var(--r-md);
+  border: 1px solid var(--primary-line);
+  background: color-mix(in oklab, var(--surface) 88%, transparent);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  box-shadow: var(--shadow-lg), 0 0 40px -12px rgba(0, 182, 231, 0.6);
+  white-space: nowrap;
 }
 
-@keyframes float {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-7px); }
+.hq-label-eyebrow {
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--primary);
 }
 
-.card-number {
-  font-size: 0.85rem;
-  font-weight: 900;
-  color: var(--navy);
-  line-height: 1.2;
-}
-
-.card-label {
-  font-size: 0.6rem;
-  color: var(--muted);
+.hq-label-card strong {
+  font-size: 18px;
+  font-weight: 700;
   line-height: 1.3;
+  color: var(--ink);
 }
 
-.card-icon {
-  font-size: 1.05rem;
+.hq-label-card small {
+  font-size: 11px;
+  color: var(--body);
 }
 
-/* --------------------------------------------------------------- tablet -- */
-@media (min-width: 600px) {
-  .hero-buttons {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 0.7rem;
-  }
-
-  .hero-buttons .btn {
-    width: auto;
-    padding-inline: 1.6rem;
-  }
+/* Floating job card near a city */
+.map-card {
+  position: absolute;
+  pointer-events: none;
+  translate: 18px calc(-100% - 14px);
 }
 
-/* -------------------------------------------------------------- desktop -- */
-@media (min-width: 900px) {
-  .hero {
-    display: flex;
-    align-items: center;
-    min-height: 100svh;
-    padding-block: calc(var(--nav-h) + 2rem) 3.5rem;
-  }
+.map-card--flip { translate: calc(-100% - 18px) calc(-100% - 14px); }
 
-  .hero-container {
-    grid-template-columns: 1fr 1fr;
-    align-items: center;
-    gap: 3rem;
-  }
+.map-card-body {
+  display: flex;
+  align-items: center;
+  gap: var(--s-xs);
+  padding: 6px var(--s-sm) 6px var(--s-xs);
+  border-radius: var(--r-md);
+  border: 1px solid var(--hairline);
+  background: color-mix(in oklab, var(--surface) 90%, transparent);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  box-shadow: var(--shadow-lg);
+  white-space: nowrap;
+  opacity: 0;
+}
 
-  .hero-content {
-    text-align: start;
-  }
+.map-card-icon {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border-radius: var(--r-sm);
+  color: var(--primary);
+  background: var(--primary-tint);
+}
 
-  .hero-subtitle {
-    margin-inline: 0;
-  }
+.map-card-icon .icon { width: 14px; height: 14px; }
 
-  .hero-buttons {
-    justify-content: flex-start;
-  }
+.map-card strong {
+  display: block;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.3;
+  color: var(--ink);
+}
 
-  .phone-frame {
-    width: 260px;
-    border-radius: 40px;
-    box-shadow: 0 40px 80px rgba(0, 0, 0, 0.5);
-  }
+.map-card small { font-size: 10px; color: var(--body); }
 
-  .phone-frame::before {
-    top: 13px;
-    width: 75px;
-    height: 5px;
-  }
+.map-legend {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--s-xs) var(--s-xl);
+  margin-top: var(--s-sm);
+  font-size: 12px;
+  color: var(--body);
+}
 
-  .phone-screen {
-    inset: 7px;
-    border-radius: 34px;
-  }
+.map-legend span { display: inline-flex; align-items: center; gap: 6px; }
 
-  .float-card {
-    gap: 8px;
-    padding: 10px 14px;
-    border-radius: 14px;
-  }
+.map-legend i {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
 
-  .card-1 {
-    top: 55px;
-    left: -38px;
-  }
+.lg-hq { background: var(--primary); box-shadow: 0 0 0 3px rgba(0, 182, 231, 0.25); }
+.lg-node { background: var(--ink); box-shadow: 0 0 0 3px rgba(0, 182, 231, 0.18); }
 
-  .card-2 {
-    bottom: 70px;
-    right: -48px;
-  }
+/* Stats strip */
+.stats-strip {
+  position: relative;
+  z-index: 1;
+  max-width: var(--container);
+  margin: var(--s-band) auto 0;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  border-top: 1px solid var(--hairline);
+}
 
-  .card-number {
-    font-size: 1rem;
-  }
+.stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: var(--s-xxl) var(--s-md);
+}
 
-  .card-label {
-    font-size: 0.62rem;
-  }
+.stat + .stat { border-right: 1px solid var(--hairline); }
 
-  .card-icon {
-    font-size: 1.3rem;
-  }
+.stat-value {
+  font-size: 24px;
+  font-weight: 700;
+  line-height: 1.33;
+  color: var(--ink);
+  font-variant-numeric: tabular-nums;
+  direction: ltr;
+}
+
+.stat-label {
+  font-size: 13px;
+  color: var(--body);
 }

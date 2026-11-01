@@ -1,128 +1,115 @@
-/* =============================================================================
-   Cross-cutting responsive concerns.
+/* Responsive — breakpoints follow the design system (375 / 768 / 1024) */
+@media (max-width: 1024px) {
+  .hero h1 { font-size: 38px; }
+  .legal-title { font-size: 38px; }
 
-   Layout breakpoints live next to the component they affect (mobile-first,
-   min-width only). This file is only for rules that cut across components:
-   motion preferences, very small screens, landscape phones and print.
-   ============================================================================= */
+  .primary-nav { display: none; }
+  .menu-toggle { display: inline-grid; }
 
-/* ------------------------------------------------------- reduced motion --- */
-@media (prefers-reduced-motion: reduce) {
-  html {
-    scroll-behavior: auto;
+  .jobs-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+
+  .bento { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+
+  .quotes { grid-template-columns: 1fr 1fr; }
+  .quotes .quote:last-child { grid-column: 1 / -1; }
+
+  .footer-grid { grid-template-columns: 1fr 1fr 1fr; }
+  .footer-brand { grid-column: 1 / -1; }
+}
+
+@media (max-width: 900px) {
+  .hero-inner {
+    grid-template-columns: 1fr;
+    gap: var(--s-xxxl);
   }
 
-  *,
-  *::before,
-  *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-    scroll-behavior: auto !important;
-  }
+  .hero-visual { order: -1; }
+  .hero-map { max-width: 440px; }
 
-  /* Reveal-on-scroll must not leave content invisible when motion is off. */
-  .js .rv {
-    opacity: 1;
-    transform: none;
+  .cta-panel {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: var(--s-xxxl) var(--s-xl);
   }
 }
 
-/* --------------------------------------------------------- small phones --- */
-/* iPhone SE / Galaxy A-series at 320-360px: shave the last bit of padding so
-   two-up grids keep their cards above the 140px readable width. */
-@media (max-width: 360px) {
-  :root {
-    --gutter: 0.85rem;
+@media (max-width: 768px) {
+  .container,
+  .header-inner { padding: 0 var(--s-md); }
+
+  .section { padding: var(--s-section) 0; }
+
+  .hero { padding: calc(var(--header-h) + var(--s-xxxl)) var(--s-md) 0; }
+  .hero h1 { font-size: 28px; }
+  .hero-lead { font-size: 16px; }
+  .legal-title { font-size: 28px; }
+
+  .header-actions .btn { display: none; }
+
+  .hero-ctas .btn { flex: 1; }
+
+  .hero-map { max-width: 380px; }
+  .node-label { display: none; }
+  .hq-label-card { padding: 6px var(--s-xs); }
+  .hq-label-card strong { font-size: 15px; }
+  .hq-label-card small { display: none; }
+
+  .stats-strip {
+    grid-template-columns: 1fr 1fr;
+    margin-top: var(--s-section);
   }
 
-  .categories-grid {
-    gap: 0.45rem;
-  }
+  .stat:nth-child(3) { border-right: none; }
+  .stat:nth-child(n + 3) { border-top: 1px solid var(--hairline); }
 
-  .category-card {
-    padding-inline: 0.6rem;
-  }
-
-  .hero-buttons .btn {
-    font-size: 0.78rem;
-  }
-}
-
-/* ----------------------------------------------------- landscape phones --- */
-/* Short viewports: drop the hero's vertical breathing room and shrink the
-   phone mockup so the headline and CTAs still fit on screen. */
-@media (max-height: 520px) and (orientation: landscape) {
-  .hero {
-    padding-block: calc(var(--nav-h) + 1rem) 1.5rem;
-  }
-
-  .hero-container {
-    grid-template-columns: 1.2fr 0.8fr;
-    align-items: center;
-    gap: 1.5rem;
-  }
-
-  .hero-content {
-    text-align: start;
-  }
-
-  .hero-subtitle {
-    margin-inline: 0;
-  }
-
-  .phone-frame {
-    width: min(28vw, 150px);
-  }
-
-  .float-card {
-    display: none;
-  }
-
-  .nav-links {
-    max-height: calc(100dvh - var(--nav-h));
-  }
-}
-
-/* ---------------------------------------------------------------- print --- */
-@media print {
-  .navbar,
-  .nav-scrim,
-  .hero-phone,
-  .whatsapp-button,
-  .back-to-top,
-  .scroll-progress,
-  .modal,
-  .download,
-  .footer {
-    display: none !important;
-  }
-
-  body {
-    background: #fff;
-  }
-
-  .js .rv {
-    opacity: 1;
-    transform: none;
-  }
-
-  .hero {
-    min-height: auto;
-    padding: 20px;
-    background: none;
-  }
-
-  .hero h1,
-  .hero h1 em,
-  .hero-subtitle {
-    color: #000;
+  .section-head--split {
+    flex-direction: column;
+    align-items: stretch;
   }
 
   .jobs-grid,
-  .reviews-grid {
-    grid-auto-flow: row;
-    grid-template-columns: 1fr 1fr;
-    overflow: visible;
+  .bento,
+  .paths,
+  .quotes { grid-template-columns: 1fr; }
+
+  .bento-card--wide {
+    grid-column: auto;
+    grid-template-columns: 1fr;
   }
+
+  .quotes .quote:last-child { grid-column: auto; }
+
+  .segmented { width: 100%; }
+  .segmented button { flex: 1; justify-content: center; padding: 0 var(--s-xs); font-size: 13px; }
+
+  .employer-proof { flex-direction: column; align-items: stretch; }
+  .employer-proof .btn { margin: 0; }
+
+  .cta-panel { padding: var(--s-xxxl) var(--s-md); }
+  .cta-panel .store-buttons { width: 100%; }
+  .cta-panel .store-btn { flex: 1; justify-content: center; }
+
+  .footer-grid { grid-template-columns: 1fr 1fr; gap: var(--s-xxl); }
+
+  .footer-bottom { flex-direction: column; align-items: center; text-align: center; }
+
+  .fab-stack { bottom: var(--s-md); left: var(--s-md); }
+
+  .legal-header,
+  .legal-content { padding-left: var(--s-md); padding-right: var(--s-md); }
+}
+
+@media (max-width: 480px) {
+  .map-card { display: none; }
+  .cta-panel .store-buttons { flex-direction: column; }
+  .footer-grid { grid-template-columns: 1fr; }
+  .modal { padding: var(--s-md); }
+  .modal-card { padding: var(--s-xxxl) var(--s-md) var(--s-md); }
+  .drawer-body, .drawer-head { padding-left: var(--s-md); padding-right: var(--s-md); }
+  .drawer-foot { padding: var(--s-md); }
+}
+
+@media print {
+  .site-header, .hero-visual, .fab-stack, .modal, .drawer, #download, .site-footer { display: none; }
+  body { background: #fff; color: #000; }
 }

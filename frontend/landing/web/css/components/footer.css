@@ -1,139 +1,79 @@
-/* =============================================================================
-   Footer — two link columns from 400px, single stack below
-   ============================================================================= */
-.footer {
-  background: var(--navy-deep);
-  color: rgba(255, 255, 255, 0.6);
-  /* Extra bottom room so the floating WhatsApp button never lands on text. */
-  padding-block: clamp(2.25rem, 7vw, 3.4rem) calc(4.5rem + var(--safe-b));
+/* Footer */
+.site-footer {
+  padding: var(--s-section) 0 var(--s-xl);
+  /* Continues the sections' translucent fill, so there is no edge where the last section ends */
+  background: rgba(20, 21, 25, 0.65);
 }
 
-/* Two link columns from the smallest phone up. Stacking all three blocks costs
-   ~240px of scroll, and the two lists are short enough to sit side by side even
-   at 320px. */
 .footer-grid {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 1.5rem 1rem;
-  max-width: var(--maxw);
-  margin: 0 auto 1.75rem;
+  grid-template-columns: 1.6fr 1fr 1fr 1fr;
+  gap: var(--s-xxxl);
+  margin-bottom: var(--s-xxxl);
 }
 
-.footer-info {
-  grid-column: 1 / -1;
+.footer-brand p {
+  max-width: 300px;
+  margin-top: var(--s-md);
+  font-size: 14px;
 }
 
-.footer-logo {
-  font-size: 1.5rem;
-  font-weight: 900;
-  color: #fff;
-  margin-bottom: 0.5rem;
-}
-
-.footer-logo span {
-  color: var(--gold);
-}
-
-.footer-description {
-  font-size: var(--fs-sm);
-  line-height: 1.8;
-  max-width: 44ch;
-}
-
-.footer-links h4,
-.footer-contact h4 {
-  color: #fff;
-  font-weight: 700;
-  font-size: var(--fs-sm);
-  margin-bottom: 0.6rem;
-}
-
-.footer-links ul,
-.footer-contact ul {
-  display: grid;
-  gap: 0.1rem;
-}
-
-.footer-links a,
-.footer-contact a {
-  display: inline-flex;
-  align-items: center;
-  min-height: 34px;
-  color: rgba(255, 255, 255, 0.55);
-  font-size: var(--fs-sm);
-  line-height: 1.5;
-  transition: color var(--t-fast);
-}
-
-.footer-links a:hover,
-.footer-contact a:hover {
-  color: var(--gold);
-}
-
-.social-links {
+.socials {
   display: flex;
-  gap: 0.6rem;
-  margin-top: 0.9rem;
+  gap: var(--s-xs);
+  margin-top: var(--s-lg);
 }
 
-.social-link {
-  flex: 0 0 auto;
-  width: 40px;
-  height: 40px;
+.socials a {
   display: grid;
   place-items: center;
+  width: 36px;
+  height: 36px;
   border-radius: 50%;
-  background: rgba(255, 255, 255, 0.1);
-  color: #fff;
-  font-size: 0.85rem;
-  font-weight: 700;
-  transition: background var(--t-fast);
+  border: 1px solid var(--hairline);
+  color: var(--body);
+  transition: var(--transition);
 }
 
-.social-link:hover {
-  background: var(--blue);
+.socials a .icon { width: 16px; height: 16px; }
+
+.socials a:hover {
+  color: var(--ink);
+  border-color: var(--primary-line);
 }
+
+.footer-col h4 {
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.56;
+  color: var(--ink);
+  margin-bottom: var(--s-md);
+}
+
+.footer-col ul {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-sm);
+}
+
+.footer-col a {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s-xs);
+  font-size: 14px;
+  color: var(--body);
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.footer-col a .icon { width: 15px; height: 15px; }
+.footer-col a:hover { color: var(--ink); }
 
 .footer-bottom {
-  max-width: var(--maxw);
-  margin-inline: auto;
-  padding-top: 1.4rem;
-  border-top: 1px solid rgba(255, 255, 255, 0.08);
-  text-align: center;
-  font-size: var(--fs-xs);
-  line-height: 1.7;
-}
-
-@media (min-width: 900px) {
-  .footer {
-    padding-block: 55px calc(28px + var(--safe-b));
-  }
-
-  .footer-grid {
-    grid-template-columns: 2fr 1fr 1fr;
-    gap: 2.5rem;
-    margin-bottom: 2.5rem;
-  }
-
-  .footer-info {
-    grid-column: auto;
-  }
-
-  .footer-logo {
-    font-size: 1.7rem;
-  }
-
-  .footer-links ul,
-  .footer-contact ul {
-    gap: 0.35rem;
-  }
-
-  .footer-links a,
-  .footer-contact a {
-    min-height: 0;
-  }
-
-  .footer-bottom {
-    padding-top: 1.8rem;
-  }
+  display: flex;
+  justify-content: space-between;
+  gap: var(--s-md);
+  padding-top: var(--s-xl);
+  border-top: 1px solid var(--hairline);
+  font-size: 12px;
 }

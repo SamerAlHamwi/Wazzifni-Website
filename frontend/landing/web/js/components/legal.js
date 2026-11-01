@@ -1,69 +1,55 @@
-// Terms / privacy full-screen readers.
-import { lockScroll, unlockScroll } from '../utils/scroll-lock.js';
-import { trapFocus } from '../utils/focus-trap.js';
+// Legal pages — opened by #terms / #privacy so they can be linked to and the back button closes them
+import { createOverlay } from './overlay.js';
+
+const IDS = ['terms', 'privacy'];
 
 export class Legal {
   constructor() {
-    this.pages = {
-      terms: document.getElementById('terms'),
-      privacy: document.getElementById('privacy'),
-    };
-    this.release = null;
-    this.openId = null;
+    this.layers = {};
+    this.openedFromPage = false;
 
-    // Supports deep links and the browser back button: /#terms opens the page,
-    // going back closes it.
-    window.addEventListener('hashchange', () => this.syncWithHash());
-    this.syncWithHash();
+    IDS.forEach(id => {
+      const el = document.getElementById(id);
+      if (!el) return;
+      this.layers[id] = createOverlay(el, { onClose: () => this.clearHash(id) });
+      el.addEventListener('click', (e) => {
+        if (e.target.closest('[data-close-legal]')) this.layers[id].close();
+      });
+    });
+
+    window.addEventListener('hashchange', () => {
+      this.openedFromPage = true;
+      this.sync();
+    });
+    this.sync();
   }
 
-  syncWithHash() {
-    const id = window.location.hash.replace('#', '');
-    if (this.pages[id]) {
-      this.open(id, { updateHash: false });
-    } else if (this.openId) {
-      this.closeAll({ updateHash: false });
-    }
+  sync() {
+    const id = location.hash.slice(1);
+    IDS.forEach(key => {
+      const layer = this.layers[key];
+      if (!layer) return;
+      if (key === id) {
+        layer.open();
+        layer.el.scrollTop = 0;
+      } else if (layer.isOpen()) {
+        layer.close();
+      }
+    });
   }
 
-  open(pageId, { updateHash = true } = {}) {
-    const page = this.pages[pageId];
-    if (!page || this.openId === pageId) return;
-
-    this.closeAll({ updateHash: false });
-    page.classList.add('on');
-    page.scrollTop = 0;
-    this.openId = pageId;
-
-    lockScroll();
-    this.release = trapFocus(page);
-
-    if (updateHash) window.history.pushState(null, '', `#${pageId}`);
+  clearHash(id) {
+    if (location.hash !== `#${id}`) return;
+    // Arrived by clicking a link: step back. Arrived on the URL directly: just drop the hash.
+    if (this.openedFromPage) history.back();
+    else history.replaceState(null, '', location.pathname + location.search);
   }
 
-  close(pageId, options) {
-    if (pageId && this.openId !== pageId) return;
-    this.closeAll(options);
-  }
-
-  closeAll({ updateHash = true } = {}) {
-    if (!this.openId) return;
-
-    Object.values(this.pages).forEach((page) => page?.classList.remove('on'));
-    this.openId = null;
-
-    unlockScroll();
-    this.release?.();
-    this.release = null;
-
-    // replaceState, not pushState: it drops the "#terms" entry instead of
-    // stacking a second one that the back button would reopen.
-    if (updateHash && window.location.hash) {
-      window.history.replaceState(null, '', window.location.pathname + window.location.search);
-    }
+  open(id) {
+    location.hash = id;
   }
 
   isVisible() {
-    return this.openId !== null;
+    return Object.values(this.layers).some(l => l.isOpen());
   }
 }

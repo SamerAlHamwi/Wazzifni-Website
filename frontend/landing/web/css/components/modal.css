@@ -1,174 +1,113 @@
-/* =============================================================================
-   Download modal — never taller than the viewport, scrolls inside itself
-   ============================================================================= */
+/* Download dialog */
 .modal {
-  display: none;
   position: fixed;
   inset: 0;
-  z-index: 1080;
-  background: rgba(0, 20, 50, 0.7);
+  z-index: 55;
+  display: flex;
   align-items: center;
   justify-content: center;
-  padding: 1rem;
-  padding-bottom: calc(1rem + var(--safe-b));
+  padding: var(--s-xl);
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  opacity: 0;
+  transition: opacity 0.2s ease;
 }
 
-@supports (backdrop-filter: blur(8px)) {
-  .modal {
-    backdrop-filter: blur(8px);
-  }
-}
-
-.modal.on {
-  display: flex;
-}
+.modal.is-open { opacity: 1; }
 
 .modal-card {
   position: relative;
   width: 100%;
-  max-width: 420px;
-  /* Without this the card grows past a short phone screen and the close
-     button ends up unreachable. */
-  max-height: calc(100dvh - 2rem);
-  overflow-y: auto;
-  overscroll-behavior: contain;
-  padding: 1.5rem 1.25rem;
+  max-width: 400px;
+  padding: var(--s-xxxl) var(--s-xl) var(--s-xl);
+  border-radius: var(--r-lg);
+  border: 1px solid var(--hairline);
   background: var(--surface);
-  border-radius: var(--r-xl);
+  box-shadow: var(--shadow-lg);
   text-align: center;
-  box-shadow: 0 30px 70px rgba(0, 0, 0, 0.35);
-  animation: pop 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+  overflow: hidden;
+  transform: scale(0.96) translateY(8px);
+  transition: transform 0.25s var(--ease);
 }
 
-@keyframes pop {
-  from {
-    transform: scale(0.9);
-    opacity: 0;
-  }
+.modal.is-open .modal-card { transform: none; }
+
+.modal-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 20%;
+  right: 20%;
+  height: 1px;
+  background: var(--line-primary);
 }
 
 .modal-close {
   position: absolute;
-  top: 0.6rem;
-  inset-inline-start: 0.6rem;
-  width: 36px;
-  height: 36px;
-  display: grid;
-  place-items: center;
+  top: var(--s-sm);
+  left: var(--s-sm);
+  width: 32px;
+  height: 32px;
   border-radius: 50%;
-  background: var(--bg);
-  color: var(--muted);
-  font-size: 1rem;
+  color: var(--body);
 }
 
-.modal-logo {
-  font-size: 1.9rem;
-  font-weight: 900;
-  color: var(--navy);
-  line-height: 1.2;
+.modal-close:hover { color: var(--ink); }
+
+.modal-icon {
+  display: inline-grid;
+  place-items: center;
+  width: 52px;
+  height: 52px;
+  margin-bottom: var(--s-lg);
+  border-radius: var(--r-lg);
+  color: var(--primary);
+  background: var(--primary-tint);
+  border: 1px solid var(--primary-line);
 }
 
-.modal-logo span {
-  color: var(--blue);
-}
+.modal-icon .icon { width: 24px; height: 24px; }
 
 .modal-title {
-  font-size: 1.15rem;
-  font-weight: 900;
-  color: var(--navy);
-  margin-top: 0.3rem;
-}
-
-.modal-subtitle {
-  font-size: var(--fs-sm);
-  color: var(--muted);
-  line-height: 1.65;
-  margin: 0.35rem 0 1rem;
-}
-
-.modal-features {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 0.4rem;
-  margin-bottom: 1.1rem;
-  text-align: start;
-}
-
-.modal-feature {
-  display: flex;
-  align-items: center;
-  gap: 0.3rem;
-  font-size: var(--fs-xs);
+  font-size: 24px;
+  font-weight: 700;
+  line-height: 1.33;
   color: var(--ink);
 }
 
-.modal-feature::before {
-  content: '✓';
-  flex: 0 0 auto;
-  color: var(--blue);
-  font-weight: 700;
+.modal-text {
+  margin-top: var(--s-xs);
+  font-size: 14px;
 }
 
-.modal-buttons {
-  display: grid;
-  gap: 0.6rem;
+.modal-points {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-xs);
+  margin: var(--s-xl) 0;
+  padding: var(--s-md);
+  border-radius: var(--r-md);
+  border: 1px solid var(--hairline);
+  background: var(--surface-subtle);
+  text-align: right;
 }
 
-.btn-download-modal {
+.modal-points li {
   display: flex;
   align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
-  min-height: var(--tap);
-  padding: 0.8rem;
-  border-radius: var(--r-sm);
-  color: #fff;
-  font-weight: 700;
-  font-size: var(--fs-sm);
-  transition: transform var(--t-fast), box-shadow var(--t-fast);
+  gap: var(--s-xs);
+  font-size: 13px;
+  color: var(--ink);
 }
 
-.btn-download-modal svg {
-  flex: 0 0 auto;
+.modal-points .icon { width: 15px; height: 15px; color: var(--primary); }
+
+.modal-later {
+  margin-top: var(--s-md);
+  color: var(--body);
+  font-size: 13px;
+  text-decoration: none;
 }
 
-.btn-download-modal.btn-android {
-  background: linear-gradient(135deg, #004a8c, #0099d4);
-}
-
-.btn-download-modal.btn-ios {
-  background: #1c1c1e;
-}
-
-.btn-download-modal:active {
-  transform: scale(0.98);
-}
-
-@media (hover: hover) {
-  .btn-download-modal:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
-  }
-}
-
-.modal-skip {
-  min-height: 40px;
-  margin-top: 0.4rem;
-  padding: 0.3rem;
-  color: var(--muted);
-  font-size: var(--fs-sm);
-}
-
-@media (min-width: 480px) {
-  .modal-card {
-    padding: 2.2rem;
-  }
-
-  .modal-logo {
-    font-size: 2.2rem;
-  }
-
-  .modal-title {
-    font-size: 1.3rem;
-  }
-}
+.modal-later:hover { color: var(--ink); }

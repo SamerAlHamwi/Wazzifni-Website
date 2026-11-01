@@ -1,0 +1,23 @@
+/* English (left-to-right) — mirrors the rules that assume Arabic's right-to-left layout.
+   /js/i18n.js sets dir="ltr" on <html> when English is chosen. Loaded last. */
+
+[dir="ltr"] .page-header::before { right: auto; left: -200px; }
+[dir="ltr"] .stat + .stat { border-right: none; border-left: 1px solid var(--hairline); }
+
+/* Registration drawer opens from the right */
+[dir="ltr"] .drawer { left: auto; right: 0; border-right: none; border-left: 1px solid var(--hairline); }
+[dir="ltr"] .drawer:not(.is-open) { transform: translateX(100%); }
+
+/* Phone and email fields read left to right anyway */
+[dir="ltr"] input[dir="ltr"] { text-align: left; }
+
+[dir="ltr"] .select-wrap select { padding-left: var(--s-md); padding-right: var(--s-xxxl); }
+[dir="ltr"] .select-wrap .icon { left: auto; right: var(--s-md); }
+
+/* Arrow icons point forward: right in English */
+[dir="ltr"] svg:has(> use[href="#i-arrow"]) { transform: scaleX(-1); }
+[dir="ltr"] svg.icon--flip:has(> use[href="#i-arrow"]) { transform: none; }
+
+@media (max-width: 768px) {
+  [dir="ltr"] .stat:nth-child(3) { border-left: none; }
+}

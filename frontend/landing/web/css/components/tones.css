@@ -1,0 +1,330 @@
+/* Section colour: every section carries a tone; eyebrows, icons and the section edge take it.
+   Buttons stay on the primary blue. */
+[data-tone="blue"]   { --tone: #00B6E7; }  /* brand sky */
+[data-tone="sky"]    { --tone: #00B6E7; }
+[data-tone="ocean"]  { --tone: #3AA6DE; }  /* brand ocean, lifted for dark backgrounds */
+[data-tone="gold"]   { --tone: #FFB43C; }  /* brand gold */
+[data-tone="orange"] { --tone: #F68A29; }  /* brand orange */
+[data-tone="amber"]  { --tone: #FFB43C; }
+
+@property --ambient {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: #00B6E7;
+}
+
+/* Page-wide glow that shifts to the colour of the section in view */
+.ambient {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    radial-gradient(70% 45% at 50% -8%, color-mix(in oklab, var(--ambient) 10%, transparent), transparent 70%),
+    radial-gradient(45% 40% at 100% 105%, color-mix(in oklab, var(--ambient) 5%, transparent), transparent 70%);
+  transition: --ambient 1.2s ease;
+}
+
+/* Tone-driven details */
+[data-tone] .eyebrow { color: var(--tone); }
+
+[data-tone] .feature-icon,
+[data-tone] .step-icon {
+  color: var(--tone);
+  background: color-mix(in oklab, var(--tone) 12%, transparent);
+  border-color: color-mix(in oklab, var(--tone) 32%, transparent);
+}
+
+[data-tone] .segmented button[aria-selected="true"] {
+  border-color: color-mix(in oklab, var(--tone) 40%, transparent);
+}
+
+[data-tone] .step-index { color: var(--tone); }
+
+/* Section dividers: a thin line in the section's tone, brightest at the centre. One even translucent fill. */
+.section {
+  --sec-fill: rgba(20, 21, 25, 0.65);
+  position: relative;
+  isolation: isolate;
+  border-top: none;
+  overflow-x: clip;
+  padding-top: calc(var(--s-band) + 16px);
+  background: var(--sec-fill);
+}
+
+.section::before,
+.section::after {
+  content: '';
+  position: absolute;
+  z-index: -1;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(to left, transparent 8%, var(--tone, var(--primary)) 50%, transparent 92%);
+  pointer-events: none;
+}
+
+.section::before { opacity: 0.7; }
+.section::after { content: none; }
+
+/* The stats + category strip under the hero starts the translucent fill, fading in so it has no hard top edge */
+.hero-stats { background: linear-gradient(rgba(20, 21, 25, 0), rgba(20, 21, 25, 0.65) 96px); }
+
+/* Feature cards each get their own colour, with a corner glow */
+.bento-card:nth-child(1) { --tone: #00B6E7; }
+.bento-card:nth-child(2) { --tone: #FFB43C; }
+.bento-card:nth-child(3) { --tone: #3AA6DE; }
+.bento-card:nth-child(4) { --tone: #F68A29; }
+.bento-card:nth-child(5) { --tone: #7FD6F2; }
+.bento-card:nth-child(6) { --tone: #FF6700; }
+
+.bento-card .mock-input { border-color: color-mix(in oklab, var(--tone) 55%, transparent); }
+.bento-card .mock-caret { background: var(--tone); }
+.mock-timeline li.done span { background: var(--tone); border-color: var(--tone); }
+.mock-timeline li.done::after { background: var(--tone) !important; }
+.mock-timeline li.current span { border-color: var(--tone); box-shadow: 0 0 0 4px color-mix(in oklab, var(--tone) 22%, transparent); }
+
+/* Success stories: tone accents */
+#stories .quote { border-color: color-mix(in oklab, var(--tone) 14%, var(--hairline)); }
+#stories .avatar { border-color: color-mix(in oklab, var(--tone) 45%, transparent); color: var(--tone); }
+
+/* Courses card picks up the section tone */
+#more a.path-card:hover { border-color: color-mix(in oklab, var(--tone) 40%, transparent); }
+#more .path-cta { color: var(--tone); }
+
+/* ---------- Employer band: a section like the others, with the same plain fill ---------- */
+.section.employer-band {
+  background: var(--sec-fill);
+  overflow: hidden;
+}
+
+.band-inner {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
+  gap: var(--s-section);
+  align-items: center;
+}
+
+.band-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s-xs);
+  margin-bottom: var(--s-lg);
+  padding: var(--s-xxs) var(--s-sm);
+  border-radius: var(--r-full);
+  color: var(--tone);
+  background: color-mix(in oklab, var(--tone) 10%, transparent);
+  border: 1px solid color-mix(in oklab, var(--tone) 30%, transparent);
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.band-copy h2 {
+  font-size: 42px;
+  font-weight: 700;
+  line-height: 1.25;
+  color: var(--ink);
+  margin-bottom: var(--s-md);
+  text-wrap: balance;
+}
+
+.band-copy p {
+  max-width: 460px;
+  font-size: 18px;
+  line-height: 1.63;
+  color: var(--body);
+}
+
+.band-ctas {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s-sm);
+  margin-top: var(--s-xxl);
+}
+
+.band-stats {
+  display: grid;
+  gap: var(--s-sm);
+}
+
+.band-stat {
+  position: relative;
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--s-md);
+  padding: var(--s-lg) var(--s-xl);
+  border-radius: var(--r-lg);
+  background: rgba(23, 24, 27, 0.7);
+  border: 1px solid color-mix(in oklab, var(--tone) 18%, var(--hairline));
+  box-shadow: var(--shadow-md);
+  overflow: hidden;
+}
+
+/* Warm hairline across the top of each stat */
+.band-stat::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 15%;
+  left: 15%;
+  height: 1px;
+  background: linear-gradient(to left, transparent, var(--tone), transparent);
+  opacity: 0.6;
+}
+
+.band-num {
+  font-size: 44px;
+  font-weight: 700;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+  color: var(--gold);
+}
+
+.band-label {
+  max-width: 180px;
+  font-size: 14px;
+  color: var(--body);
+  text-align: left;
+}
+
+/* ---------- Hero sized for the scroll story ---------- */
+.hero {
+  min-height: min(100vh, 920px);
+  display: flex;
+  align-items: center;
+  padding-bottom: var(--s-xxxl);
+}
+
+.hero-inner { width: 100%; }
+
+.hero-stats { position: relative; }
+
+/* Desktop: room for the map to settle into the background before the stats come into view */
+@media (min-width: 901px) {
+  .hero-stats { margin-top: 18vh; }
+}
+.hero-stats .stats-strip { margin-top: 0; }
+
+@media (max-width: 900px) {
+  .hero { min-height: 0; }
+  .band-inner { grid-template-columns: 1fr; gap: var(--s-xxxl); }
+}
+
+@media (max-width: 768px) {
+  .band-copy h2 { font-size: 28px; }
+  .band-copy p { font-size: 16px; }
+  .band-num { font-size: 38px; }
+  .band-stat { padding: var(--s-md); }
+  .band-ctas .btn { flex: 1; }
+}
+
+
+
+/* Fixed layer the hero map moves into on desktop; sections paint above it */
+.map-layer {
+  position: fixed;
+  z-index: 0;
+  transform-origin: center center;
+  will-change: transform, opacity;
+}
+
+.map-layer .hero-map { max-width: none; }
+.map-layer.is-background { pointer-events: none; }
+
+/* Phones: the map sits centred behind everything from the first screen */
+.map-layer--mobile {
+  inset: 0;
+  height: 100lvh;
+  display: grid;
+  place-items: center;
+  opacity: 0.32;
+}
+
+.map-layer--mobile .hero-map { width: min(100vw, 90lvh); }
+.map-layer--mobile :is(.hq-label, .map-card, .map-legend, .node-label) { display: none; }
+
+/* Phone boot: only the map shows until it fades back (js/main.js mapBoot) */
+.map-boot :is(.site-header, .hero-copy, .hero ~ *, .fab-stack) { opacity: 0; pointer-events: none; }
+
+/* Unpositioned blocks would paint beneath the fixed map layer */
+.site-footer { position: relative; }
+
+/* Brand slogan */
+.hero-slogan {
+  display: flex;
+  align-items: center;
+  gap: var(--s-sm);
+  margin: calc(-1 * var(--s-sm)) 0 var(--s-lg);
+  font-size: 15px;
+  font-weight: 600;
+  background: linear-gradient(to left, var(--sky), var(--gold));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.hero-slogan::before {
+  content: '';
+  width: 28px;
+  height: 1px;
+  background: linear-gradient(to left, var(--sky), transparent);
+}
+
+.footer-slogan {
+  margin-top: var(--s-sm);
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--sky);
+  text-align: right;
+}
+
+@media (max-width: 900px) {
+  .hero-slogan { justify-content: flex-start; }
+}
+
+/* Page-load brand reveal (created by brand-intro.js) */
+.brand-intro {
+  position: fixed;
+  inset: 0;
+  z-index: 90;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--s-xl);
+  background: var(--canvas);
+  cursor: pointer;
+}
+
+.bi-glow {
+  position: absolute;
+  width: min(900px, 120vw);
+  aspect-ratio: 1;
+  background: radial-gradient(closest-side, rgba(0, 182, 231, 0.22), rgba(0, 135, 198, 0.08) 55%, transparent 75%);
+  pointer-events: none;
+}
+
+.bi-mark-wrap {
+  position: relative;
+  /* Glow on the wrapper so it follows the letters, not the reveal's clip box */
+  filter: drop-shadow(0 0 28px rgba(0, 182, 231, 0.45));
+}
+
+.bi-mark {
+  display: block;
+  width: min(380px, 66vw);
+  height: auto;
+}
+
+.bi-slogan {
+  position: relative;
+  font-size: 18px;
+  font-weight: 600;
+  background: linear-gradient(to left, var(--sky), var(--gold));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}

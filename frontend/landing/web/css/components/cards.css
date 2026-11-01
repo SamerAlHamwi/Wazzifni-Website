@@ -1,0 +1,71 @@
+/* Card identity — a frosted surface (the dimmed map shows through) with a quiet hairline border.
+   Tones come from the section, or per card (jobs, features), and colour the icons and accents only. */
+
+:is(.job-card, .bento-card, .step, .quote, .path-card, .band-stat) {
+  position: relative;
+  isolation: isolate;
+  background-color: rgba(24, 25, 30, 0.72);
+  backdrop-filter: blur(12px) saturate(130%);
+  -webkit-backdrop-filter: blur(12px) saturate(130%);
+  border-color: rgba(255, 255, 255, 0.07);
+  box-shadow: var(--shadow-sm);
+  transition: border-color 0.2s ease, transform 0.2s var(--ease), box-shadow 0.2s ease;
+}
+
+:is(.job-card, .bento-card, .step, .quote, a.path-card, .band-stat):hover {
+  border-color: rgba(255, 255, 255, 0.14);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+}
+
+.path-card--soon { background-color: rgba(24, 25, 30, 0.5); }
+
+/* Jobs: the category colour carries through the card */
+.job-logo {
+  color: var(--tone, var(--ink));
+  background: color-mix(in oklab, var(--tone, var(--primary)) 12%, transparent);
+  border-color: color-mix(in oklab, var(--tone, var(--primary)) 30%, transparent);
+}
+
+.job-card:hover .job-go {
+  background: var(--tone, var(--primary));
+  color: #0F1012;
+}
+
+.job-card .tag:first-child {
+  color: var(--ink);
+  border-color: color-mix(in oklab, var(--tone, var(--primary)) 30%, transparent);
+}
+
+/* Category chips and strip pick up their category colour */
+.chip .icon,
+.marquee-item .icon { color: var(--tone, var(--primary)); }
+
+.chip[style*="--tone"].is-active {
+  background: color-mix(in oklab, var(--tone) 14%, transparent);
+  border-color: color-mix(in oklab, var(--tone) 60%, transparent);
+}
+
+.marquee-item:hover {
+  background: color-mix(in oklab, var(--tone, var(--primary)) 12%, transparent);
+  border-color: color-mix(in oklab, var(--tone, var(--primary)) 40%, transparent);
+}
+
+/* Steps: a small step number in the section tone */
+.step-index,
+[data-tone] .step-index {
+  top: var(--s-lg);
+  left: var(--s-lg);
+  font-family: var(--font-mono);
+  font-size: 13px;
+  font-weight: 400;
+  line-height: 1;
+  color: color-mix(in oklab, var(--tone, var(--primary)) 80%, var(--body));
+}
+
+/* Employer stats keep their warm tone */
+.band-stat { background-color: rgba(24, 22, 18, 0.72); }
+
+@media (prefers-reduced-motion: reduce) {
+  :is(.job-card, .bento-card, .step, .quote, a.path-card, .band-stat):hover { transform: none; }
+}

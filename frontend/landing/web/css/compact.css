@@ -1,0 +1,284 @@
+/* Compact scale: tighter spacing and smaller type. Loaded after the component styles. */
+
+/* ---------- Sections: tighter padding ---------- */
+.section {
+  padding-top: 72px;
+  padding-bottom: var(--s-section);
+}
+
+
+.section-head { margin-bottom: var(--s-xxl); }
+.section-head .segmented { margin-top: var(--s-lg); }
+
+/* ---------- Hero and stats ---------- */
+.hero {
+  min-height: min(88vh, 820px);
+  padding-bottom: var(--s-xl);
+}
+
+.hero-map { max-width: 500px; }
+.map-legend { margin-top: var(--s-xs); }
+
+.stat { padding: var(--s-lg) var(--s-md); }
+.marquee-group { padding-top: var(--s-md); padding-bottom: var(--s-md); }
+
+/* ---------- Cards ---------- */
+.job-card { padding: var(--s-md) var(--s-lg); gap: var(--s-xs); }
+.job-bottom { padding-top: var(--s-xs); }
+
+.step { padding: var(--s-xl) var(--s-lg) var(--s-lg); }
+.step-icon { margin-bottom: var(--s-md); }
+.step-index { font-size: 46px; }
+
+.bento-card { padding: var(--s-lg); }
+.bento-card .feature-icon { margin-bottom: var(--s-xs); }
+.mock { padding: var(--s-sm); }
+.mock-row { padding: 6px 0; }
+.mock-timeline { gap: var(--s-xs); }
+
+/* Courses / freelance: icon beside the text instead of stacked above it */
+.path-card {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  grid-template-areas: "icon body" "icon cta";
+  column-gap: var(--s-lg);
+  row-gap: var(--s-sm);
+  padding: var(--s-xl);
+}
+
+.path-card > .feature-icon { grid-area: icon; align-self: start; }
+.path-card > .path-body { grid-area: body; }
+.path-card > .path-cta { grid-area: cta; margin-top: 0; }
+.path-body h3 { font-size: 20px; margin-bottom: var(--s-xxs); }
+
+.quote { padding: var(--s-lg); }
+.quote figcaption { margin-top: var(--s-md); padding-top: var(--s-sm); }
+
+/* ---------- Employer band ---------- */
+.band-copy h2 { font-size: 34px; }
+.band-copy p { font-size: 16px; }
+.band-ctas { margin-top: var(--s-xl); }
+.band-stat { padding: var(--s-md) var(--s-lg); }
+.band-num { font-size: 36px; }
+
+/* ---------- FAQ, CTA, footer ---------- */
+.faq summary { padding: var(--s-md) 0; }
+.faq details p { padding-bottom: var(--s-md); }
+
+.cta-panel { padding: var(--s-xxxl) var(--s-xxxl); }
+
+.site-footer { padding: var(--s-xxxl) 0 var(--s-lg); }
+.footer-grid { gap: var(--s-xxl); margin-bottom: var(--s-xxl); }
+.footer-col ul { gap: var(--s-xs); }
+.footer-bottom { padding-top: var(--s-lg); }
+
+/* ---------- Tablets and desktops ---------- */
+@media (min-width: 769px) {
+  :root { --container: 1040px; }
+
+  .section { padding-top: 52px; padding-bottom: 40px; }
+  .section-head { margin-bottom: var(--s-lg); }
+  .section-head .segmented { margin-top: var(--s-md); }
+  .section-title { font-size: 21px; }
+  .section-lead { font-size: 14px; }
+  .eyebrow { font-size: 11px; margin-bottom: 4px; }
+
+  /* Hero */
+  .hero { min-height: min(80vh, 720px); }
+  .hero-logo { height: 60px; margin-bottom: var(--s-md); }
+  .audience-switch { margin-bottom: var(--s-lg); }
+  .hero h1 { font-size: 34px; margin-bottom: var(--s-md); text-wrap: balance; }
+  .hero-lead { font-size: 15px; margin-bottom: var(--s-lg); text-wrap: pretty; }
+  .hero-map { max-width: 440px; }
+  .stat { padding: var(--s-md) var(--s-sm); }
+  .stat-value { font-size: 21px; }
+
+  /* Cards */
+  .job-card { padding: 14px var(--s-md); }
+  .job-title { font-size: 14px; }
+  .step { padding: var(--s-lg) var(--s-md) var(--s-md); }
+  .step h3, .bento-card h3 { font-size: 14px; }
+  .step p, .bento-card p { font-size: 13px; }
+  .bento-card { padding: var(--s-md); }
+  .path-card { padding: var(--s-lg); }
+  .path-body h3 { font-size: 18px; }
+  .quote { padding: var(--s-md); }
+  .quote blockquote { font-size: 14px; }
+  .quote figcaption { margin-top: var(--s-sm); padding-top: var(--s-sm); }
+
+  /* Employer band */
+  .band-copy h2 { font-size: 28px; }
+  .band-copy p { font-size: 15px; }
+  .band-ctas { margin-top: var(--s-lg); }
+  .band-stat { padding: var(--s-sm) var(--s-md); }
+  .band-num { font-size: 28px; }
+
+  /* FAQ, download panel, footer */
+  .faq summary { padding: var(--s-sm) 0; font-size: 14px; }
+  .faq details p { font-size: 14px; }
+  .cta-panel { padding: var(--s-xl) var(--s-xxl); }
+  .cta-copy h2 { font-size: 21px; }
+  .cta-copy p { font-size: 14px; }
+  .site-footer { padding: var(--s-xl) 0 var(--s-md); }
+  .footer-grid { gap: var(--s-xl); margin-bottom: var(--s-lg); }
+  .footer-bottom { padding-top: var(--s-md); }
+}
+
+@media (min-width: 901px) {
+  .hero-stats { margin-top: 10vh; }
+}
+
+/* ---------- Phones ---------- */
+@media (max-width: 768px) {
+  body { font-size: 14px; }
+  .container { padding: 0 var(--s-xl); }
+
+  /* Sections */
+  .section { padding-top: 32px; padding-bottom: 20px; }
+  .section-head { margin-bottom: var(--s-sm); }
+  .section-head--split { align-items: center; text-align: center; }
+  .section-title { font-size: 18px; }
+  .section-lead { font-size: 13px; }
+  .eyebrow { font-size: 11px; margin-bottom: 2px; }
+
+  /* Hero: centred. It isn't vertically centred here, so it fits the visible audience panel
+     rather than reserving the hidden one's height */
+  .hero {
+    min-height: 0;
+    padding: calc(var(--header-h) + var(--s-xxl)) var(--s-xl) var(--s-xxl);
+  }
+  .hero-copy { text-align: center; }
+  .hero-logo { height: 40px; margin: 0 auto var(--s-md); }
+  .audience-switch { margin-bottom: var(--s-lg); }
+  .audience-switch button { min-height: 30px; font-size: 12px; padding: 0 var(--s-sm); }
+  .hero-slogan { justify-content: center; margin-bottom: var(--s-sm); font-size: 12px; }
+  .hero-slogan::before { content: none; }
+  .hero h1 { font-size: 22px; margin-bottom: var(--s-sm); text-wrap: balance; }
+  .hero-lead { font-size: 13px; margin-bottom: var(--s-md); text-wrap: pretty; }
+  .hero-ctas { justify-content: center; }
+  .hero-checks { display: none; }
+  .hero-panels > .hero-panel[hidden] { display: none !important; }
+  .hero-map { max-width: 320px; }
+
+  .hero-stats { margin-top: 0; }
+  .hero-stats .stats-strip { margin-inline: var(--s-xl); }
+  .stat { padding: var(--s-xs); }
+  .stat-value { font-size: 18px; }
+  .stat-label { font-size: 11px; }
+  .marquee-group { padding-top: var(--s-sm); padding-bottom: var(--s-sm); }
+
+  /* Buttons and chips */
+  .btn { min-height: 36px; font-size: 13px; padding: 0 var(--s-sm); }
+  .btn-lg { min-height: 40px; font-size: 13px; padding: 0 var(--s-md); }
+  .chip { font-size: 12px; }
+  .segmented button { font-size: 12px; }
+  /* Centred while they fit; the auto margins give way when the row scrolls */
+  .chip-row > :first-child { margin-inline-start: auto; }
+  .chip-row > :last-child { margin-inline-end: auto; }
+
+  /* Jobs and steps: swipe rows, one card centred with its neighbours peeking in */
+  .jobs-grid:not(:has(.state)),
+  .steps {
+    display: grid;
+    grid-template-columns: none;
+    grid-auto-flow: column;
+    grid-auto-columns: 100%;
+    gap: var(--s-sm);
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    scroll-snap-type: x mandatory;
+    margin-inline: calc(-1 * var(--s-xl));
+    padding: 4px 48px var(--s-sm);
+    scroll-padding-inline: 48px;
+    scrollbar-width: none;
+  }
+  .jobs-grid::-webkit-scrollbar,
+  .steps::-webkit-scrollbar { display: none; }
+  .jobs-grid > *,
+  .steps > * { scroll-snap-align: center; }
+  .jobs-grid .grid-more { grid-column: auto; align-items: center; }
+
+  .job-card { padding: var(--s-sm) 14px; }
+  .job-title { font-size: 14px; }
+  .step { padding: var(--s-md) 14px 14px; }
+  .step h3, .path-body h3 { font-size: 14px; }
+  .step p, .path-body p { font-size: 12px; }
+  .path-card { padding: var(--s-md); column-gap: var(--s-md); }
+
+  /* Features: three stacked cards, icon beside the title */
+  .bento { grid-template-columns: 1fr; gap: var(--s-xs); }
+  .bento > .bento-card:nth-child(3),
+  .bento > .bento-card:nth-child(5),
+  .bento > .bento-card:nth-child(6),
+  .bento .mock { display: none; }
+  .bento-card,
+  .bento-card--wide .bento-text {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    column-gap: var(--s-sm);
+    align-items: center;
+    text-align: start;
+  }
+  .bento-card { padding: var(--s-sm) 14px; }
+  .bento-card--wide { grid-column: auto; }
+  .bento-card--wide .bento-text { grid-column: 1 / -1; }
+  .bento-card .feature-icon { grid-row: span 2; margin: 0; width: 36px; height: 36px; }
+  .bento-card h3 { margin: 0; font-size: 14px; }
+  .bento-card p { margin: 2px 0 0; font-size: 12px; }
+
+  /* Reviews: two short cards, name and role on one line */
+  .quotes { display: flex; flex-direction: column; gap: var(--s-xs); }
+  .quotes > .quote:nth-child(n + 3) { display: none; }
+  .quote { padding: var(--s-sm) 14px; }
+  .stars { margin-bottom: 4px; }
+  .stars .icon { width: 10px; height: 10px; }
+  .quote blockquote { font-size: 13px; line-height: 1.55; }
+  .quote figcaption { margin-top: 6px; padding-top: 0; border-top: none; gap: 0; }
+  .quote .avatar { display: none; }
+  .quote figcaption > span { display: flex; flex-wrap: wrap; align-items: baseline; gap: 0 6px; }
+  .quote figcaption strong { display: inline; font-size: 12px; }
+  .quote figcaption small { font-size: 11px; }
+
+  /* Employer band */
+  .band-inner { gap: var(--s-lg); }
+  .band-copy { text-align: center; }
+  .band-copy h2 { font-size: 19px; }
+  .band-copy p { font-size: 13px; }
+  .band-eyebrow { margin-bottom: var(--s-sm); }
+  .band-ctas { justify-content: center; margin-top: var(--s-lg); }
+  .band-stat { padding: var(--s-sm) var(--s-md); }
+  .band-num { font-size: 22px; }
+  .band-label { font-size: 12px; }
+
+  /* FAQ and download panel */
+  .faq summary { font-size: 14px; padding: var(--s-sm) 0; }
+  .faq details p { font-size: 13px; }
+  .cta-panel { align-items: center; text-align: center; padding: var(--s-xl) var(--s-md); gap: var(--s-lg); }
+  .cta-copy h2 { font-size: 18px; }
+  .cta-copy p { font-size: 13px; }
+  .cta-panel .store-buttons { width: 100%; flex-direction: row; flex-wrap: nowrap; gap: var(--s-xs); }
+  .cta-panel .store-btn { flex: 1 1 0; min-width: 0; justify-content: center; }
+  .store-btn { min-height: 40px; padding: 0 var(--s-sm); gap: var(--s-xs); font-size: 13px; }
+  .store-btn .icon { width: 18px; height: 18px; }
+  .store-btn small { font-size: 10px; }
+
+  /* Footer: one centred stack, each link group a single row */
+  .site-footer { padding: var(--s-xl) 0 var(--s-sm); }
+  .footer-grid { display: flex; flex-direction: column; align-items: center; gap: var(--s-sm); margin-bottom: var(--s-md); text-align: center; }
+  .footer-brand p { margin-top: var(--s-xs); font-size: 13px; }
+  .footer-brand p:not(.footer-slogan) { display: none; }
+  .footer-slogan { text-align: center; }
+  .socials { justify-content: center; margin-top: var(--s-xs); }
+  .socials a { width: 32px; height: 32px; }
+  .footer-col h4 { display: none; }
+  .footer-col ul { flex-direction: row; flex-wrap: wrap; align-items: center; justify-content: center; gap: 4px var(--s-md); }
+  .footer-col a { font-size: 12px; }
+  .footer-col a .icon { width: 13px; height: 13px; }
+  .footer-bottom { padding-top: var(--s-sm); font-size: 11px; flex-direction: row; flex-wrap: wrap; justify-content: center; gap: 2px var(--s-sm); }
+}
+
+/* Store buttons stack when two can't fit side by side */
+@media (max-width: 380px) {
+  .cta-panel .store-buttons { flex-direction: column; }
+  .cta-panel .store-btn { flex: none; width: 100%; }
+}

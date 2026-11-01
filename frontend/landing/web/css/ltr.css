@@ -1,0 +1,50 @@
+/* English (left-to-right) — mirrors the rules elsewhere that assume Arabic's right-to-left layout.
+   js/i18n.js sets dir="ltr" on <html> when English is chosen. Loaded last. */
+
+[dir="ltr"] .skip-link { right: auto; left: var(--s-xs); }
+[dir="ltr"] .section-head--split { text-align: left; }
+[dir="ltr"] .fab-stack { left: auto; right: var(--s-xl); }
+
+/* Audience switch: the highlight starts on the left and slides right */
+[dir="ltr"] .audience-indicator { right: auto; left: var(--s-xxs); }
+[dir="ltr"] .audience-switch[data-active="employer"] .audience-indicator { transform: translateX(100%); }
+
+[dir="ltr"] .modal-close { left: auto; right: var(--s-sm); }
+[dir="ltr"] .modal-points { text-align: left; }
+
+/* Jobs */
+[dir="ltr"] .job-card { text-align: left; }
+[dir="ltr"] .job-card:hover .job-go { transform: translateX(2px); }
+
+/* Job details drawer opens from the right; the mobile menu from the left */
+[dir="ltr"] .drawer { left: auto; right: 0; border-right: none; border-left: 1px solid var(--hairline); }
+[dir="ltr"] .drawer:not(.is-open) { transform: translateX(100%); }
+[dir="ltr"] .mobile-nav { right: auto; left: 0; border-left: none; border-right: 1px solid var(--hairline); }
+[dir="ltr"] .mobile-nav:not(.is-open) { transform: translateX(-100%); }
+
+/* Steps, feature mocks, cards */
+[dir="ltr"] .step-index,
+[dir="ltr"] [data-tone] .step-index { left: auto; right: var(--s-lg); }
+[dir="ltr"] .mock-timeline li:not(:last-child)::after { right: auto; left: 5.5px; }
+[dir="ltr"] a.path-card::after { right: auto; left: -100px; }
+[dir="ltr"] a.path-card:hover .path-cta .icon { transform: scaleX(-1) translateX(-3px); }
+
+/* Employer band and footer */
+[dir="ltr"] .band-label { text-align: right; }
+[dir="ltr"] .footer-slogan { text-align: left; }
+
+[dir="ltr"] .legal-article ul { padding-right: 0; padding-left: var(--s-xl); }
+
+/* The category strip scrolls the other way */
+[dir="ltr"] .marquee-track { animation-name: marquee-ltr; }
+@keyframes marquee-ltr {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+
+/* Arrow icons point forward: right in English */
+[dir="ltr"] svg:has(> use[href="#i-arrow"]) { transform: scaleX(-1); }
+[dir="ltr"] svg.icon--flip:has(> use[href="#i-arrow"]) { transform: none; }
+
+/* "48 hours" is longer than "48 ساعة"; keep it on one line */
+html[lang="en"] .band-num { white-space: nowrap; }

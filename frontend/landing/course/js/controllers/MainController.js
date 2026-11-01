@@ -27,35 +27,8 @@ class MainController {
         // Bind global events
         this.bindEvents();
 
-        // Cards, stats and pagination are all rendered from JS, so a language
-        // change has to redraw them — the data itself is already in memory, so
-        // this costs no request.
-        window.i18n.onChange(() => {
-            this.renderAll();
-            this.renderStats();
-        });
-
         // Initial load
         await this.loadCourses();
-        this.renderStats();
-
-        // Check for course id in URL (e.g., ?id=... or path)
-        const urlParams = new URLSearchParams(window.location.search);
-        let courseId = urlParams.get('id');
-
-        // Fallback: check pathname if using pretty URLs like /course/ID
-        if (!courseId) {
-            const pathParts = window.location.pathname.split('/');
-            // If path is /course/123, parts might be ["", "course", "123"]
-            const lastPart = pathParts[pathParts.length - 1];
-            if (lastPart && lastPart !== 'index.html' && lastPart !== 'course' && lastPart !== '') {
-                courseId = lastPart;
-            }
-        }
-
-        if (courseId) {
-            this.openCourseDetail(courseId);
-        }
     }
 
     bindEvents() {
@@ -65,13 +38,7 @@ class MainController {
             if (!target) return;
 
             const action = target.dataset.action;
-            // Get courseId from the target or its closest parent with data-course-id
-            const courseId = target.dataset.courseId || target.closest('[data-course-id]')?.dataset.courseId;
-
-            if (!courseId && (action === 'detail' || action === 'register' || action === 'register-from-detail' || action === 'share')) {
-                console.warn('Action triggered but courseId is missing', action);
-                return;
-            }
+            const courseId = target.dataset.courseId;
 
             switch(action) {
                 case 'detail':
@@ -80,12 +47,11 @@ class MainController {
                 case 'register':
                     this.openRegister(courseId);
                     break;
-                case 'register-from-detail':
-                    ModalView.closeCourseDetail();
-                    this.openRegister(courseId);
+                case 'retry':
+                    this.loadCourses();
                     break;
-                case 'share':
-                    this.shareCourseLink(courseId);
+                case 'clear-filters':
+                    UserView.clearFilters();
                     break;
             }
         });
@@ -93,8 +59,7 @@ class MainController {
 
     setLoading(loading) {
         this.isLoading = loading;
-        const overlay = document.getElementById('loadingOverlay');
-        if (overlay) overlay.style.display = loading ? 'flex' : 'none';
+        if (loading) UserView.renderSkeletons();
     }
 
     async loadCourses() {
@@ -109,33 +74,35 @@ class MainController {
             };
 
             const result = await CourseService.getAllCourses(params);
-            this.courses = result.courses.map(c => new Course(c));
+            this.courses = result.courses;
             this.pagination = result.pagination;
 
             this.renderAll();
         } catch (error) {
-            this.showToast(window.i18n.t('toast.loadCoursesFailed', { error: error.message }), 'error');
+            UserView.renderError(error.message);
         } finally {
-            this.setLoading(false);
+            this.isLoading = false;
         }
     }
 
     async goToPage(page) {
         this.pagination.page = page;
         await this.loadCourses();
-        window.scrollTo({ top: 0, behavior: 'smooth' });
+        document.getElementById('userCoursesList')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
 
     renderAll() {
         UserView.renderCourses(this.courses);
         UserView.renderPagination(this.pagination);
+        UserView.renderResultCount(this.pagination?.total ?? this.courses.length);
+        this.renderStats();
     }
 
     renderStats() {
         const stats = {
             total: this.pagination.total || this.courses.length,
-            open: this.courses.filter(c => !c.isCompleted()).length,
-            completed: this.courses.filter(c => c.isCompleted()).length,
+            open: this.courses.filter(c => c.seatsLeft > 0).length,
+            full: this.courses.filter(c => c.seatsLeft === 0).length,
             free: this.courses.filter(c => c.type === 'free').length
         };
 
@@ -149,55 +116,34 @@ class MainController {
         await this.loadCourses();
     }
 
-    async openCourseDetail(id) {
-        let course = this.courses.find(c => c.id === id || c.slug === id);
-
-        if (!course) {
-            try {
-                this.setLoading(true);
-                // Try to fetch by ID or slug
-                course = await CourseService.getCourse(id);
-                if (course) {
-                    this.courses.push(course);
-                }
-            } catch (error) {
-                console.error('Could not find course:', id);
-                return;
-            } finally {
-                this.setLoading(false);
-            }
-        }
-
-        if (course) {
-            ModalView.openCourseDetail(course, false);
-        }
+    openCourseDetail(id) {
+        const course = this.courses.find(c => c.id === id);
+        if (!course) return;
+        this.registeringCourseId = id;
+        ModalView.open(course, 'details');
     }
 
     openRegister(courseId) {
-        // Find the course in the list to pass its info to the apply page
-        // Check for both id and slug as the parameter might be either
-        const course = this.courses.find(c => c.id === courseId || c.slug === courseId);
-        if (course) {
-            localStorage.setItem('selectedCourse', JSON.stringify(course));
-        }
-
-        // Use relative path to be more robust across different environments
-        window.location.href = `apply.html?id=${courseId}`;
+        const course = this.courses.find(c => c.id === courseId);
+        if (!course || course.seatsLeft === 0) return;
+        this.registeringCourseId = courseId;
+        ModalView.open(course, 'form');
     }
 
     async confirmRegister() {
-        // Handled in ApplyController.js
-    }
+        const data = ModalView.getRegisterData();
+        if (!ModalView.validate(data)) return;
 
-    shareCourseLink(courseId) {
-        const shareUrl = `${window.location.origin}/course/?id=${courseId}`;
-        UtilsService.copyToClipboard(shareUrl)
-            .then(() => {
-                this.showToast(window.i18n.t('toast.linkCopied'), 'success');
-            })
-            .catch(() => {
-                this.showToast(window.i18n.t('toast.linkCopyFailed'), 'error');
-            });
+        ModalView.setSubmitting(true);
+        try {
+            await CourseService.registerToCourse(this.registeringCourseId, data);
+            ModalView.showDone(data);
+            this.loadCourses();
+        } catch (error) {
+            this.showToast('تعذّر إكمال التسجيل: ' + error.message, 'error');
+        } finally {
+            ModalView.setSubmitting(false);
+        }
     }
 
     showToast(msg, type = 'info') {
