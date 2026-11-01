@@ -4,8 +4,8 @@ set -e
 rm -rf /var/www/Wazzifni-Website
 
 GITHUB_USERNAME="SamerAlHamwi"
-GITHUB_TOKEN="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" 
-BRANCH="main"  # Fixed: removed extra quote
+GITHUB_TOKEN="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"
+BRANCH="update"
 
 # Use HTTPS with token for authentication
 REPO="https://${GITHUB_USERNAME}:${GITHUB_TOKEN}@github.com/${GITHUB_USERNAME}/Wazzifni-Website.git"
