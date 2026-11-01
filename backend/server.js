@@ -44,6 +44,9 @@ const hrErrorHandler = require('./hr/middleware/errorMiddleware');
 
 const app = express();
 
+// Trust reverse proxy (Nginx) so req.ip and express-rate-limit work with X-Forwarded-For
+app.set('trust proxy', 1);
+
 // ==========================================
 // 🛡️ PRO ADVANCED SECURITY MIDDLEWARES 🛡️
 // ==========================================
