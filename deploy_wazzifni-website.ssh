@@ -37,5 +37,10 @@ docker compose build --no-cache  # Fixed: changed from docker-compose to docker 
 echo "== Running container =="
 docker compose up -d
 
+echo "== Reloading Nginx proxy =="
+if docker ps -q --filter "name=wazzifni-proxy-nginx" | grep -q .; then
+    docker exec wazzifni-proxy-nginx nginx -s reload 2>/dev/null || docker restart wazzifni-proxy-nginx
+fi
+
 echo "== Done =="
-echo "Backend containers are up and running."
+echo "Backend containers and Nginx proxy are up and running."
