@@ -2,11 +2,30 @@
 import { createOverlay } from './overlay.js';
 
 const ENDPOINTS = [
-  '/wazzifni-proxy/services/app/Job/GetAll?MaxResultCount=20',
-  'https://wazzifni.net/wazzifni-proxy/services/app/Job/GetAll?MaxResultCount=20',
-  'https://api.wazzifni.net/api/services/app/Job/GetAll?MaxResultCount=20'
+  '/wazzifni-proxy/services/app/Job/GetAll?JobStatus=2&Status=2&MaxResultCount=20',
+  'https://wazzifni.net/wazzifni-proxy/services/app/Job/GetAll?JobStatus=2&Status=2&MaxResultCount=20',
+  'https://api.wazzifni.net/api/services/app/Job/GetAll?JobStatus=2&Status=2&MaxResultCount=20'
 ];
 const PAGE_SIZE = 9;
+
+// JobStatus enum matching C# backend
+export const JOB_STATUS = {
+  Pending: 1,
+  Approved: 2,
+  Rejected: 3,
+  Hired: 4,
+  Closed: 5,
+};
+
+function isApprovedJob(job) {
+  const status = job.jobStatus ?? job.status ?? job.jobStatusId ?? job.statusId;
+  if (status !== undefined && status !== null) {
+    const num = Number(status);
+    if (!isNaN(num)) return num === JOB_STATUS.Approved;
+    return String(status).toLowerCase() === 'approved';
+  }
+  return true;
+}
 
 // Enums matching backend Wazzifni.Enums.Enum
 const JOB_TYPE = {
@@ -178,6 +197,7 @@ export class Jobs {
     this.render();
     try {
       this.jobs = this.demo ? (await import('../data/sample-jobs.js')).SAMPLE_JOBS : await this.fetchJobs();
+      this.jobs = this.jobs.filter(isApprovedJob);
       this.jobs.forEach(job => { job._categories = categoriesOf(job); });
       this.status = 'ready';
     } catch (error) {
@@ -214,6 +234,7 @@ export class Jobs {
     const { category, q } = this.filters;
     const needle = q.toLowerCase();
     return this.jobs
+      .filter(isApprovedJob)
       .map((job, index) => ({ job, index }))
       .filter(({ job }) => !category || job._categories.includes(category))
       .filter(({ job }) => {

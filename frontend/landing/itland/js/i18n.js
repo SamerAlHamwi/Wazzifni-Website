@@ -193,7 +193,7 @@
       'contact.whatsappLabel': 'واتساب — الأسرع للرد',
       'contact.emailLabel': 'البريد الإلكتروني',
       'contact.addressLabel': 'المقر',
-      'contact.addressValue': 'شارع الغدير، فرات، النجف — العراق',
+      'contact.addressValue': 'النجف / شارع الحزام / مجاور مطعم بهار',
       'contact.hoursLabel': 'أوقات العمل',
       'contact.hoursValue': 'الأحد - الخميس، 9:00 صباحاً - 5:00 مساءً',
       'contact.followHeading': 'تابعنا',

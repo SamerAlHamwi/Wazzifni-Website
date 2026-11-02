@@ -183,7 +183,7 @@ input[type=range]{padding:0;border:0;background:none;accent-color:var(--sky);box
 @media (max-width:900px){.stage{position:static}}
 
 /* Phones: the actions move to a bar fixed at the bottom of the screen, with a jump to the preview */
-@media (max-width:900px){
+@media screen and (max-width:900px){
   .wrap{padding-block:16px 40px}
   .panel{padding:16px}
   .desk{padding:10px}
@@ -199,7 +199,7 @@ input[type=range]{padding:0;border:0;background:none;accent-color:var(--sky);box
 
 /* Edit | Preview switch: phones only */
 .mode-switch{display:none}
-@media (max-width:900px){
+@media screen and (max-width:900px){
   .mode-switch{display:grid;grid-template-columns:1fr 1fr;flex:1;padding:3px;border-radius:999px;border:1px solid var(--hairline);background:rgba(255,255,255,.04)}
   .mode-switch button{min-height:36px;padding:0 8px;border:none;background:transparent;color:var(--body);font-size:13px}
   .mode-switch button svg{width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
@@ -340,19 +340,20 @@ input[type=range]{padding:0;border:0;background:none;accent-color:var(--sky);box
 .s-kv .kv{margin:0}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 
-/* ===== Print: only the CV, one A4 page ===== */
+/* ===== Print: only the CV, A4 pages ===== */
 @page{size:A4;margin:0}
 @media print{
   html,body{background:#fff!important;padding:0!important;margin:0!important}
   :root{padding:0!important}
-  .ambient,.panel,.toolbar,.actions-main,.status,.warn,.sample-note,.confirm{display:none!important}
-  .wrap{display:block;padding:0!important;margin:0;max-width:none}
-  .stage{position:static;display:block}
-  .desk{padding:0;border:0;background:none}
-  .viewport{height:auto!important;overflow:visible;border-radius:0;display:block}
-  .scaler{transform:none!important;display:block;width:auto}
-  .cv{width:210mm;height:297mm;box-shadow:none;break-after:page}
-  .cv:last-child{break-after:auto}
-  .ph-empty{visibility:hidden}
-  .cv,.cv *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .ambient,.panel,.toolbar,.actions-main,.status,.warn,.sample-note,.confirm,.site-header{display:none!important}
+  .wrap{display:block!important;padding:0!important;margin:0!important;max-width:none!important}
+  .stage{position:static!important;display:block!important}
+  .desk,.viewport,.scaler,.cv{display:block!important;position:static!important;visibility:visible!important;opacity:1!important}
+  .desk{padding:0!important;border:0!important;background:none!important}
+  .viewport{height:auto!important;overflow:visible!important;border-radius:0!important}
+  .scaler{transform:none!important;display:block!important;width:auto!important}
+  .cv{width:210mm!important;height:297mm!important;box-shadow:none!important;break-after:page;page-break-after:always}
+  .cv:last-child{break-after:auto!important;page-break-after:auto!important}
+  .ph-empty{visibility:hidden!important}
+  .cv,.cv *{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}
 }

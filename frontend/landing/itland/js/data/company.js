@@ -21,8 +21,8 @@ export const company = {
   /** Display form of the same number. */
   phoneLabel: '07875005001',
   email: 'info@wazzifni.net',
-  addressAr: 'شارع الغدير، فرات، النجف — العراق',
-  mapUrl: 'https://maps.app.goo.gl/uygd5NoXuiq14s2i9?g_st=ic',
+  addressAr: 'النجف / شارع الحزام / مجاور مطعم بهار',
+  mapUrl: 'https://maps.app.goo.gl/iyCbhZwp2L6yhNrN6?g_st=iw',
   workingHoursAr: 'الأحد - الخميس، 9:00 صباحاً - 5:00 مساءً',
 
   social: [

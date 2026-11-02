@@ -28,7 +28,7 @@ const view=()=>showSample?{...JSON.parse(JSON.stringify(SAMPLE)),template:S.temp
 
 const esc=t=>String(t??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 const lines=t=>String(t||"").split("\n").map(s=>s.trim()).filter(Boolean);
-const filled=list=>list.filter(j=>j.t||j.o);
+const filled=list=>(list||[]).filter(j=>j.t||j.o||j.d||j.p||j.n);
 const kv=(k,v)=>v?`<div class="kv"><div class="k">${k}</div><div class="v">${esc(v)}</div></div>`:"";
 const personal=D=>kv("سنة الميلاد",D.birth)+kv("الحالة الاجتماعية",D.marital)+kv("الخدمة العسكرية",D.military)+kv("إجازة السوق",D.license);
 const readiness=D=>kv("المباشرة",D.start)+kv("الدوام المناسب",D.shift)+kv("التنقل",D.move);
@@ -41,7 +41,7 @@ const E=(e,h)=>({e,h});
 // A titled section as page-flow blocks: the title travels with its first item so it is never left alone at a page end
 const titled=(title,items)=>items.length?[{...items[0],h:title+items[0].h},...items.slice(1)]:[];
 // Filled job/education entries as blocks, keeping each entry's index in the form
-const entries=(list,key,fn)=>list.map((j,i)=>[j,i]).filter(([j])=>j.t||j.o).map(([j,i])=>E(`${key}:${i}`,fn(j)));
+const entries=(list,key,fn)=>(list||[]).map((j,i)=>[j,i]).filter(([j])=>j.t||j.o||j.d||j.p).map(([j,i])=>E(`${key}:${i}`,fn(j)));
 const ICON={phone:'<path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 1.9.7 2.8a2 2 0 0 1-.5 2.1L8 9.9a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.8.7a2 2 0 0 1 1.7 2Z"/>',
   mail:'<rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-10 6L2 7"/>',
   pin:'<path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/>',
@@ -139,9 +139,10 @@ T.sidebar={
 /* ---------- Page flow: blocks fill page 1's columns, then move on to page 2; anything left over is flagged ---------- */
 function layout(D){
   const sc=$("scaler"),n=D.pages===2?2:1,tpl=T[D.template];
+  if(!sc || !tpl) return;
   sc.innerHTML=Array.from({length:n},(_,i)=>tpl.page(D,i,n)).join("");
   const pages=[...sc.querySelectorAll(".cv")],B=tpl.blocks(D);
-  const fits=box=>box.scrollHeight<=box.clientHeight+1;
+  const fits=box=>!box.clientHeight || box.scrollHeight<=box.clientHeight+1;
   let over=false;
   for(const col of ["main","side"]){
     let p=0;
@@ -149,18 +150,26 @@ function layout(D){
       const el=document.createElement("div");
       el.className="blk";
       if(typeof b==="object"){el.innerHTML=b.h;el.dataset.edit=b.e}else el.innerHTML=b;
-      let box=pages[p].querySelector(`[data-col="${col}"]`);
+      let box=pages[p] ? pages[p].querySelector(`[data-col="${col}"]`) : null;
+      if(!box)continue;
       box.appendChild(el);
-      while(!fits(box)&&p<n-1){p++;box=pages[p].querySelector(`[data-col="${col}"]`);box.appendChild(el)}
-      if(!fits(box))over=true;
+      while(!fits(box)&&p<n-1){
+        p++;
+        box=pages[p] ? pages[p].querySelector(`[data-col="${col}"]`) : null;
+        if(!box)break;
+        box.appendChild(el);
+      }
+      if(box && box.clientHeight && !fits(box))over=true;
     }
   }
-  const emptyLast=n===2&&[...pages[1].querySelectorAll("[data-col]")].every(c=>!c.children.length);
+  const emptyLast=n===2&&pages[1]&&[...pages[1].querySelectorAll("[data-col]")].every(c=>!c.children.length);
   const o=$("overflow");
-  o.hidden=!(over||emptyLast);
-  o.classList.toggle("info",!over);
-  o.textContent=over?(n===1?"المحتوى أطول من صفحة واحدة. اختصر النبذة أو المهام، أو اختر «صفحتان».":"المحتوى أطول من صفحتين. اختصر النبذة أو المهام حتى لا يُقص شيء.")
-    :"المحتوى يتسع لصفحة واحدة، لذا الصفحة الثانية فارغة. يمكنك اختيار «صفحة واحدة».";
+  if(o){
+    o.hidden=!(over||emptyLast);
+    o.classList.toggle("info",!over);
+    o.textContent=over?(n===1?"المحتوى أطول من صفحة واحدة. اختصر النبذة أو المهام، أو اختر «صفحتان».":"المحتوى أطول من صفحتين. اختصر النبذة أو المهام حتى لا يُقص شيء.")
+      :"المحتوى يتسع لصفحة واحدة، لذا الصفحة الثانية فارغة. يمكنك اختيار «صفحة واحدة».";
+  }
 }
 
 // Clicking a part of the preview opens its form section and puts the cursor in the matching field
@@ -181,18 +190,28 @@ const phone=matchMedia("(max-width:900px)");
 function setMode(m){
   document.body.dataset.mode=m;
   document.querySelectorAll("[data-mode]").forEach(b=>{if(b.tagName==="BUTTON")b.setAttribute("aria-pressed",b.dataset.mode===m)});
-  if(m==="preview"){fit();if(phone.matches)scrollTo(0,0)}
+  renderCV();
+  if(m==="preview"&&phone.matches)scrollTo(0,0);
 }
 document.querySelectorAll("button[data-mode]").forEach(b=>b.addEventListener("click",()=>setMode(b.dataset.mode)));
 setMode("edit");
-function fit(){const vp=$("viewport"),sc=$("scaler"),k=Math.min(1,vp.clientWidth/794);sc.style.transform=`scale(${k})`;vp.style.height=(sc.offsetHeight*k)+"px"}
+
+function fit(){
+  const vp=$("viewport"),sc=$("scaler");
+  if(!vp || !sc) return;
+  const k=Math.min(1,vp.clientWidth/794);
+  sc.style.transform=`scale(${k})`;
+  if(sc.offsetHeight > 0){
+    vp.style.height=(sc.offsetHeight*k)+"px";
+  }
+}
 
 /* ---------- Form ---------- */
-function fillForm(){FIELDS.forEach(k=>{$(k).value=S[k]||""});renderLists()}
+function fillForm(){FIELDS.forEach(k=>{if($(k))$(k).value=S[k]||""});renderLists()}
 function renderLists(){
-  $("jobs").innerHTML=S.jobs.map((j,i)=>`<div class="item"><div class="grid2"><label>المسمى الوظيفي<input data-l="jobs" data-i="${i}" data-k="t" value="${esc(j.t)}"></label><label>الفترة<input data-l="jobs" data-i="${i}" data-k="p" value="${esc(j.p)}" placeholder="2024 – حتى الآن"></label></div><label>الجهة والمدينة<input data-l="jobs" data-i="${i}" data-k="o" value="${esc(j.o)}"></label><label>المهام والإنجازات (كل واحدة بسطر، ابدأ بفعل)<textarea data-l="jobs" data-i="${i}" data-k="d" rows="3">${esc(j.d)}</textarea></label><button class="rm" type="button" data-rm="jobs" data-i="${i}">حذف الخبرة</button></div>`).join("");
-  $("edu").innerHTML=S.edu.map((j,i)=>`<div class="item"><label>الشهادة والاختصاص<input data-l="edu" data-i="${i}" data-k="t" value="${esc(j.t)}"></label><div class="grid2"><label>الجامعة / المعهد<input data-l="edu" data-i="${i}" data-k="o" value="${esc(j.o)}"></label><label>سنة التخرج والمعدل<input data-l="edu" data-i="${i}" data-k="p" value="${esc(j.p)}"></label></div><button class="rm" type="button" data-rm="edu" data-i="${i}">حذف</button></div>`).join("");
-  $("levels").innerHTML=S.levels.map((j,i)=>`<div class="lvl"><input aria-label="البرنامج أو اللغة" placeholder="مثال: Microsoft Word أو الإنجليزية" data-l="levels" data-i="${i}" data-k="n" value="${esc(j.n)}"><input type="range" min="1" max="5" aria-label="المستوى" data-l="levels" data-i="${i}" data-k="v" value="${j.v}"><output>${j.v}</output></div>`).join("");
+  if($("jobs"))$("jobs").innerHTML=S.jobs.map((j,i)=>`<div class="item"><div class="grid2"><label>المسمى الوظيفي<input data-l="jobs" data-i="${i}" data-k="t" value="${esc(j.t)}"></label><label>الفترة<input data-l="jobs" data-i="${i}" data-k="p" value="${esc(j.p)}" placeholder="2024 – حتى الآن"></label></div><label>الجهة والمدينة<input data-l="jobs" data-i="${i}" data-k="o" value="${esc(j.o)}"></label><label>المهام والإنجازات (كل واحدة بسطر، ابدأ بفعل)<textarea data-l="jobs" data-i="${i}" data-k="d" rows="3">${esc(j.d)}</textarea></label><button class="rm" type="button" data-rm="jobs" data-i="${i}">حذف الخبرة</button></div>`).join("");
+  if($("edu"))$("edu").innerHTML=S.edu.map((j,i)=>`<div class="item"><label>الشهادة والاختصاص<input data-l="edu" data-i="${i}" data-k="t" value="${esc(j.t)}"></label><div class="grid2"><label>الجامعة / المعهد<input data-l="edu" data-i="${i}" data-k="o" value="${esc(j.o)}"></label><label>سنة التخرج والمعدل<input data-l="edu" data-i="${i}" data-k="p" value="${esc(j.p)}"></label></div><button class="rm" type="button" data-rm="edu" data-i="${i}">حذف</button></div>`).join("");
+  if($("levels"))$("levels").innerHTML=S.levels.map((j,i)=>`<div class="lvl"><input aria-label="البرنامج أو اللغة" placeholder="مثال: Microsoft Word أو الإنجليزية" data-l="levels" data-i="${i}" data-k="n" value="${esc(j.n)}"><input type="range" min="1" max="5" aria-label="المستوى" data-l="levels" data-i="${i}" data-k="v" value="${j.v}"><output>${j.v}</output></div>`).join("");
 }
 
 // Template and page buttons, the photo thumbnail and section progress reflect the visitor's own data,
@@ -203,53 +222,78 @@ const DONE={basic:D=>D.name||D.title||D.phone||D.email||D.city,photo:D=>D.photo,
 function syncUI(){
   document.querySelectorAll("[data-tpl]").forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.tpl===S.template)));
   document.querySelectorAll("[data-pages]").forEach(b=>b.setAttribute("aria-pressed",String(+b.dataset.pages===(S.pages===2?2:1))));
-  $("photoThumb").innerHTML=S.photo?`<img src="${S.photo}" alt="الصورة الشخصية">`:'<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg>';
-  $("photoRm").hidden=!S.photo;
+  if($("photoThumb"))$("photoThumb").innerHTML=S.photo?`<img src="${S.photo}" alt="الصورة الشخصية">`:'<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg>';
+  if($("photoRm"))$("photoRm").hidden=!S.photo;
   let done=0,total=0;
   document.querySelectorAll("details[data-sec]").forEach(d=>{
     const na=d.dataset.sec==="photo"&&!TEMPLATES[S.template].photo,ok=!na&&!!DONE[d.dataset.sec](S);
     d.classList.toggle("is-na",na);d.classList.toggle("is-done",ok);
     if(!na){total++;if(ok)done++}});
-  $("progText").textContent=`${done} من ${total} أقسام`;
-  $("progBar").style.width=`${done/total*100}%`;
-  $("btnSample").textContent=showSample?"إخفاء المثال":"عرض مثال";
-  $("btnSample").setAttribute("aria-pressed",String(showSample));
-  $("sampleNote").hidden=!showSample;
+  if($("progText"))$("progText").textContent=`${done} من ${total} أقسام`;
+  if($("progBar"))$("progBar").style.width=`${total?done/total*100:0}%`;
+  if($("btnSample"))$("btnSample").textContent=showSample?"إخفاء المثال":"عرض مثال";
+  if($("btnSample"))$("btnSample").setAttribute("aria-pressed",String(showSample));
+  if($("sampleNote"))$("sampleNote").hidden=!showSample;
 }
 function renderCV(){layout(view());fit();syncUI()}
-let tm;function save(){clearTimeout(tm);tm=setTimeout(()=>{try{localStorage.setItem(KEY,JSON.stringify(S));$("saved").textContent="حُفظت المسودة على هذا الجهاز"}catch(e){$("saved").textContent=""}},400)}
+let tm;function save(){clearTimeout(tm);tm=setTimeout(()=>{try{localStorage.setItem(KEY,JSON.stringify(S));if($("saved"))$("saved").textContent="حُفظت المسودة على هذا الجهاز"}catch(e){if($("saved"))$("saved").textContent=""}},400)}
 
 document.addEventListener("input",e=>{const t=e.target;
   if(FIELDS.includes(t.id)){S[t.id]=t.value}
-  else if(t.dataset.l){const v=t.dataset.k==="v"?+t.value:t.value;S[t.dataset.l][+t.dataset.i][t.dataset.k]=v;if(t.type==="range")t.nextElementSibling.textContent=v}
+  else if(t.dataset.l){const v=t.dataset.k==="v"?+t.value:t.value;S[t.dataset.l][+t.dataset.i][t.dataset.k]=v;if(t.type==="range"&&t.nextElementSibling)t.nextElementSibling.textContent=v}
   else return;showSample=false;renderCV();save()});
-document.addEventListener("click",e=>{const a=e.target.dataset.add,r=e.target.dataset.rm;
+document.addEventListener("click",e=>{
   const tpl=e.target.closest("[data-tpl]"),pg=e.target.closest("[data-pages]");
+  const btnAdd=e.target.closest("[data-add]"),btnRm=e.target.closest("[data-rm]");
   if(tpl){S.template=tpl.dataset.tpl;renderCV();save()}
   if(pg){S.pages=+pg.dataset.pages;renderCV();save()}
-  if(a){showSample=false;S[a].push(a==="levels"?{n:"",v:3}:a==="jobs"?{t:"",o:"",p:"",d:""}:{t:"",o:"",p:""});renderLists();renderCV();save()}
-  if(r){showSample=false;S[r].splice(+e.target.dataset.i,1);renderLists();renderCV();save()}});
-$("photo").addEventListener("change",e=>{const f=e.target.files[0];if(!f)return;const rd=new FileReader();rd.onload=()=>{const im=new Image();im.onload=()=>{const c=document.createElement("canvas"),W=360,H=410,k=Math.max(W/im.width,H/im.height);c.width=W;c.height=H;const x=c.getContext("2d");x.drawImage(im,(W-im.width*k)/2,(H-im.height*k)/2,im.width*k,im.height*k);S.photo=c.toDataURL("image/jpeg",.88);showSample=false;renderCV();save()};im.src=rd.result};rd.readAsDataURL(f)});
-$("photoRm").onclick=()=>{S.photo="";$("photo").value="";renderCV();save()};
-$("btnSample").onclick=()=>{showSample=!showSample;renderCV()};
+  if(btnAdd){
+    const a=btnAdd.dataset.add;
+    showSample=false;
+    S[a].push(a==="levels"?{n:"",v:3}:a==="jobs"?{t:"",o:"",p:"",d:""}:{t:"",o:"",p:""});
+    renderLists();renderCV();save();
+  }
+  if(btnRm){
+    const r=btnRm.dataset.rm;
+    showSample=false;
+    S[r].splice(+btnRm.dataset.i,1);
+    renderLists();renderCV();save();
+  }
+});
+
+if($("photo"))$("photo").addEventListener("change",e=>{const f=e.target.files[0];if(!f)return;const rd=new FileReader();rd.onload=()=>{const im=new Image();im.onload=()=>{const c=document.createElement("canvas"),W=360,H=410,k=Math.max(W/im.width,H/im.height);c.width=W;c.height=H;const x=c.getContext("2d");x.drawImage(im,(W-im.width*k)/2,(H-im.height*k)/2,im.width*k,im.height*k);S.photo=c.toDataURL("image/jpeg",.88);showSample=false;renderCV();save()};im.onerror=()=>{};im.src=rd.result};rd.readAsDataURL(f)});
+if($("photoRm"))$("photoRm").onclick=()=>{S.photo="";if($("photo"))$("photo").value="";renderCV();save()};
+if($("btnSample"))$("btnSample").onclick=()=>{showSample=!showSample;renderCV()};
+
 // Clear: asks first in a dialog; keeps the chosen template and page count
 const dlg=$("confirmClear");
-$("btnClear").onclick=()=>dlg.showModal();
-dlg.addEventListener("click",e=>{if(e.target===dlg)dlg.close("cancel")});
-dlg.addEventListener("close",()=>{if(dlg.returnValue!=="clear")return;
-  S={...blank(),template:S.template,pages:S.pages};showSample=false;fillForm();$("photo").value="";renderCV();save();
-  $("status").textContent="تم مسح كل البيانات."});
+if($("btnClear")&&dlg)$("btnClear").onclick=()=>dlg.showModal();
+if(dlg){
+  dlg.addEventListener("click",e=>{if(e.target===dlg)dlg.close("cancel")});
+  dlg.addEventListener("close",()=>{if(dlg.returnValue!=="clear")return;
+    S={...blank(),template:S.template,pages:S.pages};showSample=false;fillForm();if($("photo"))$("photo").value="";renderCV();save();
+    if($("status"))$("status").textContent="تم مسح كل البيانات."});
+}
 
 // Print / Save as PDF: uses the browser's own print dialog (choose "Save as PDF").
-// The print stylesheet in cv-builder.css prints only the CV pages, one per A4 sheet, with vector text.
-// A copy also goes to the Wazzifni server in the background (cv-upload.js); printing doesn't wait for it.
-$("btnPdf").onclick=()=>{if(showSample){showSample=false;renderCV()}
+if($("btnPdf"))$("btnPdf").onclick=()=>{
+  if(showSample){showSample=false}
+  const prevMode=document.body.dataset.mode;
+  document.body.dataset.mode="preview"; // Ensure preview mode is active for accurate print layout calculation
+  renderCV();
   if(window.WZ_CV_UPLOAD)WZ_CV_UPLOAD.submit(S);
-  const t=document.title;document.title="السيرة الذاتية - "+(S.name||"مرشح").trim();
-  $("status").textContent="اختر «حفظ بتنسيق PDF» من نافذة الطباعة.";
-  window.print();setTimeout(()=>{document.title=t},1000)};
-$("scaler").addEventListener("click",e=>{const t=e.target.closest("[data-edit]");if(t)goEdit(t.dataset.edit)});
+  const t=document.title;
+  document.title="السيرة الذاتية - "+(S.name||"مرشح").trim();
+  if($("status"))$("status").textContent="اختر «حفظ بتنسيق PDF» من نافذة الطباعة.";
+  window.print();
+  setTimeout(()=>{
+    document.title=t;
+    if(prevMode && prevMode !== "preview") setMode(prevMode);
+  },1000);
+};
+
+if($("scaler"))$("scaler").addEventListener("click",e=>{const t=e.target.closest("[data-edit]");if(t)goEdit(t.dataset.edit)});
 fillForm();renderCV();addEventListener("resize",fit);
-if(window.ResizeObserver)new ResizeObserver(fit).observe($("viewport"));
+if(window.ResizeObserver && $("viewport"))new ResizeObserver(fit).observe($("viewport"));
 // Page flow measures text, so lay out again once the web fonts have arrived
 if(document.fonts)document.fonts.ready.then(renderCV);

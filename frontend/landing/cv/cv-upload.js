@@ -21,7 +21,7 @@
   function clientId(){
     let id=store.get(CLIENT_KEY);
     if(!id){
-      id=(crypto.randomUUID?crypto.randomUUID():Date.now().toString(36)+Math.random().toString(36).slice(2));
+      id=(typeof crypto !== "undefined" && crypto.randomUUID ? crypto.randomUUID() : Date.now().toString(36)+Math.random().toString(36).slice(2));
       store.set(CLIENT_KEY,id);
     }
     return id;
