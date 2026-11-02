@@ -39,6 +39,9 @@ const courseRegistrationRoutes = require('./course/routes/registrationRoutes');
 const courseUserRoutes = require('./course/routes/userRoutes');
 const courseInquiryRoutes = require('./course/routes/inquiryRoutes');
 
+// CV Routes
+const cvRoutes = require('./routes/cvRoutes');
+
 // HR Error Middleware
 const hrErrorHandler = require('./hr/middleware/errorMiddleware');
 
@@ -159,6 +162,9 @@ app.use('/api/course/courses', courseRoutes);
 app.use('/api/course/registrations', courseRegistrationRoutes);
 app.use('/api/course/users', courseUserRoutes);
 app.use('/api/course/inquiries', courseInquiryRoutes);
+
+// CV API Routes
+app.use('/api/cv', cvRoutes);
 
 // Static files for uploads
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));

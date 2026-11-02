@@ -270,7 +270,7 @@ window.WZ_EN = {
   "المنصة": "Platform",
   "أحدث الوظائف": "Latest jobs",
   "تواصل معنا": "Contact us",
-  "شارع الغدير، فرات، النجف": "Al-Ghadeer Street, Furat, Najaf",
+  "النجف / شارع الحزام / مجاور مطعم بهار": "Al-Ghadeer Street, Furat, Najaf",
   "قانوني": "Legal",
   "شروط الاستخدام": "Terms of Use",
   "© 2025 وظّفني | Wazzifni — جميع الحقوق محفوظة": "© 2025 Wazzifni — All rights reserved",

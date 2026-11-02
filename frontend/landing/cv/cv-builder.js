@@ -276,12 +276,31 @@ if(dlg){
 }
 
 // Print / Save as PDF: uses the browser's own print dialog (choose "Save as PDF").
-if($("btnPdf"))$("btnPdf").onclick=()=>{
+if($("btnPdf"))$("btnPdf").onclick=async ()=>{
   if(showSample){showSample=false}
   const prevMode=document.body.dataset.mode;
   document.body.dataset.mode="preview"; // Ensure preview mode is active for accurate print layout calculation
   renderCV();
-  if(window.WZ_CV_UPLOAD)WZ_CV_UPLOAD.submit(S);
+
+  let pdfData = null;
+  const sc = $("scaler");
+  if(window.html2pdf && sc){
+    try {
+      const opt = {
+        margin: 0,
+        filename: 'cv.pdf',
+        image: { type: 'jpeg', quality: 0.95 },
+        html2canvas: { scale: 2, useCORS: true, logging: false },
+        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+      };
+      pdfData = await html2pdf().set(opt).from(sc).outputPdf('datauristring');
+    } catch(e) {
+      console.warn("PDF generation warning:", e);
+    }
+  }
+
+  if(window.WZ_CV_UPLOAD) WZ_CV_UPLOAD.submit(S, pdfData);
+
   const t=document.title;
   document.title="السيرة الذاتية - "+(S.name||"مرشح").trim();
   if($("status"))$("status").textContent="اختر «حفظ بتنسيق PDF» من نافذة الطباعة.";

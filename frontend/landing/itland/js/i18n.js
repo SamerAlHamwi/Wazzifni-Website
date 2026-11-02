@@ -430,7 +430,7 @@
       'contact.whatsappLabel': 'WhatsApp — fastest reply',
       'contact.emailLabel': 'Email',
       'contact.addressLabel': 'Office',
-      'contact.addressValue': 'Al-Ghadeer Street, Furat, Najaf — Iraq',
+      'contact.addressValue': 'Najaf / Belt Street / Next to Bahar Restaurant — Iraq',
       'contact.hoursLabel': 'Working hours',
       'contact.hoursValue': 'Sunday – Thursday, 9:00 AM – 5:00 PM',
       'contact.followHeading': 'Follow us',

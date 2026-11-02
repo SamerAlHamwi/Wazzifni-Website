@@ -1,12 +1,9 @@
-// Sends a copy of the CV to the Wazzifni server when it's printed. If the server doesn't accept it, the latest
-// copy waits in localStorage and is retried on the next visit or print. Request format: docs/cv-backend.md.
+// Sends a copy of the CV and rendered PDF to the Wazzifni backend DB when printed/saved.
 (function(){
-  // Through the site's nginx proxy to https://api.wazzifni.net/api/ (same route the jobs list uses).
-  // Agree the final path with the backend and change it here only.
-  const ENDPOINT="/wazzifni-proxy/services/app/Cv/Submit";
+  const ENDPOINT="/api/cv/submit";
   const ENABLED=true;
   const SCHEMA_VERSION=1;
-  const TIMEOUT_MS=15000;
+  const TIMEOUT_MS=30000;
 
   const CLIENT_KEY="wazzifni-cv-client-id";  // stable random id, so the server can update one CV per device
   const PENDING_KEY="wazzifni-cv-pending";   // the latest copy that hasn't reached the server yet
@@ -30,8 +27,8 @@
   // Small non-cryptographic fingerprint, only to skip re-sending an unchanged CV
   function hash(str){let h=5381;for(let i=0;i<str.length;i++)h=(h*33^str.charCodeAt(i))>>>0;return h.toString(36)}
 
-  // The CV as the builder holds it, minus empty list rows; the photo travels as a JPEG data URL (or null)
-  function payload(S){
+  // The CV as the builder holds it, plus the rendered PDF base64 string
+  function payload(S, pdfData){
     const {template,pages,photo,jobs,edu,levels,...fields}=S;
     const rows=(list,keys)=>(list||[]).filter(r=>keys.some(k=>String(r[k]||"").trim()));
     return {
@@ -42,7 +39,8 @@
       template,
       pages,
       cv:{...fields,jobs:rows(jobs,["t","o","p","d"]),edu:rows(edu,["t","o","p"]),levels:rows(levels,["n"])},
-      photo:photo||null
+      photo:photo||null,
+      pdfData:pdfData||null
     };
   }
 
@@ -75,9 +73,9 @@
     return ok;
   }
 
-  function submit(S){
+  function submit(S, pdfData){
     if(!ENABLED||!hasContent(S))return Promise.resolve(false);
-    store.set(PENDING_KEY,JSON.stringify(payload(S)));
+    store.set(PENDING_KEY,JSON.stringify(payload(S, pdfData)));
     return flush();
   }
 
