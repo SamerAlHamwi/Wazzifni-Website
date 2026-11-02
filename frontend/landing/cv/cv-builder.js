@@ -185,6 +185,7 @@ function goEdit(key){
   if(f)f.focus({preventScroll:true});
   d.classList.remove("flash");void d.offsetWidth;d.classList.add("flash");
 }
+
 // Phones show the form or the preview, switched from the bottom bar
 const phone=matchMedia("(max-width:900px)");
 function setMode(m){
@@ -193,8 +194,6 @@ function setMode(m){
   renderCV();
   if(m==="preview"&&phone.matches)scrollTo(0,0);
 }
-document.querySelectorAll("button[data-mode]").forEach(b=>b.addEventListener("click",()=>setMode(b.dataset.mode)));
-setMode("edit");
 
 function fit(){
   const vp=$("viewport"),sc=$("scaler");
@@ -214,11 +213,11 @@ function renderLists(){
   if($("levels"))$("levels").innerHTML=S.levels.map((j,i)=>`<div class="lvl"><input aria-label="البرنامج أو اللغة" placeholder="مثال: Microsoft Word أو الإنجليزية" data-l="levels" data-i="${i}" data-k="n" value="${esc(j.n)}"><input type="range" min="1" max="5" aria-label="المستوى" data-l="levels" data-i="${i}" data-k="v" value="${j.v}"><output>${j.v}</output></div>`).join("");
 }
 
-// Template and page buttons, the photo thumbnail and section progress reflect the visitor's own data,
-// also while the sample is shown
+// Section progress and UI synchronization
 const DONE={basic:D=>D.name||D.title||D.phone||D.email||D.city,photo:D=>D.photo,personal:D=>D.birth||D.marital||D.military||D.license,
   about:D=>D.about,jobs:D=>filled(D.jobs).length,edu:D=>filled(D.edu).length,skills:D=>D.skills||D.courses,
   levels:D=>D.levels.some(l=>l.n),ready:D=>D.start||D.shift||D.move||D.fileNo};
+
 function syncUI(){
   document.querySelectorAll("[data-tpl]").forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.tpl===S.template)));
   document.querySelectorAll("[data-pages]").forEach(b=>b.setAttribute("aria-pressed",String(+b.dataset.pages===(S.pages===2?2:1))));
@@ -235,6 +234,7 @@ function syncUI(){
   if($("btnSample"))$("btnSample").setAttribute("aria-pressed",String(showSample));
   if($("sampleNote"))$("sampleNote").hidden=!showSample;
 }
+
 function renderCV(){layout(view());fit();syncUI()}
 let tm;function save(){clearTimeout(tm);tm=setTimeout(()=>{try{localStorage.setItem(KEY,JSON.stringify(S));if($("saved"))$("saved").textContent="حُفظت المسودة على هذا الجهاز"}catch(e){if($("saved"))$("saved").textContent=""}},400)}
 
@@ -242,6 +242,7 @@ document.addEventListener("input",e=>{const t=e.target;
   if(FIELDS.includes(t.id)){S[t.id]=t.value}
   else if(t.dataset.l){const v=t.dataset.k==="v"?+t.value:t.value;S[t.dataset.l][+t.dataset.i][t.dataset.k]=v;if(t.type==="range"&&t.nextElementSibling)t.nextElementSibling.textContent=v}
   else return;showSample=false;renderCV();save()});
+
 document.addEventListener("click",e=>{
   const tpl=e.target.closest("[data-tpl]"),pg=e.target.closest("[data-pages]");
   const btnAdd=e.target.closest("[data-add]"),btnRm=e.target.closest("[data-rm]");
@@ -312,7 +313,12 @@ if($("btnPdf"))$("btnPdf").onclick=async ()=>{
 };
 
 if($("scaler"))$("scaler").addEventListener("click",e=>{const t=e.target.closest("[data-edit]");if(t)goEdit(t.dataset.edit)});
-fillForm();renderCV();addEventListener("resize",fit);
+
+// Initialize page mode and state after all declarations
+document.querySelectorAll("button[data-mode]").forEach(b=>b.addEventListener("click",()=>setMode(b.dataset.mode)));
+setMode("edit");
+fillForm();
+renderCV();
+addEventListener("resize",fit);
 if(window.ResizeObserver && $("viewport"))new ResizeObserver(fit).observe($("viewport"));
-// Page flow measures text, so lay out again once the web fonts have arrived
 if(document.fonts)document.fonts.ready.then(renderCV);
