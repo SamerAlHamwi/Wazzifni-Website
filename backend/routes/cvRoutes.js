@@ -22,16 +22,19 @@ router.post('/submit', async (req, res) => {
       const base64Data = pdfData.replace(/^data:application\/pdf;base64,/, '');
       pdfBuffer = Buffer.from(base64Data, 'base64');
 
-      // Save a copy on disk under uploads/cvs/
-      const uploadsDir = path.join(__dirname, '../uploads/cvs');
-      if (!fs.existsSync(uploadsDir)) {
-        fs.mkdirSync(uploadsDir, { recursive: true });
+      // Attempt to save a copy on disk under uploads/cvs/ (optional fallback)
+      try {
+        const uploadsDir = path.join(__dirname, '../uploads/cvs');
+        if (!fs.existsSync(uploadsDir)) {
+          fs.mkdirSync(uploadsDir, { recursive: true });
+        }
+        const filename = `cv-${clientId}-${Date.now()}.pdf`;
+        const filePath = path.join(uploadsDir, filename);
+        fs.writeFileSync(filePath, pdfBuffer);
+        pdfUrl = `/uploads/cvs/${filename}`;
+      } catch (fsErr) {
+        console.warn('Could not write PDF to disk, storing exclusively in MongoDB:', fsErr.message);
       }
-
-      const filename = `cv-${clientId}-${Date.now()}.pdf`;
-      const filePath = path.join(uploadsDir, filename);
-      fs.writeFileSync(filePath, pdfBuffer);
-      pdfUrl = `/uploads/cvs/${filename}`;
     }
 
     // Find existing document for this device/clientId or create new
@@ -58,6 +61,9 @@ router.post('/submit', async (req, res) => {
         contentType: 'application/pdf',
         size: pdfBuffer.length
       };
+      if (!pdfUrl) {
+        pdfUrl = `/api/cv/${cvDoc._id}/pdf`;
+      }
       cvDoc.pdfUrl = pdfUrl;
     }
 
@@ -67,7 +73,7 @@ router.post('/submit', async (req, res) => {
       success: true,
       message: 'CV and PDF saved successfully to database',
       cvId: cvDoc._id,
-      pdfUrl: cvDoc.pdfUrl
+      pdfUrl: `/api/cv/${cvDoc._id}/pdf`
     });
   } catch (error) {
     console.error('Error saving CV to DB:', error);
