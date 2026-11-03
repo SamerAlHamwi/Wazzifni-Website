@@ -287,9 +287,16 @@ async function buildPdf(){
   const pdf=new jspdf.jsPDF({unit:"mm",format:"a4",orientation:"portrait"});
   const pages=[...$("scaler").querySelectorAll(".cv")];
   for(let i=0;i<pages.length;i++){
-    // Draw the page at full A4 size: in the copy, drop the preview scaling
+    // Draw the page at full A4 size. In the copy, the page leaves the scaled preview (#viewport clips it to
+    // the screen width and the scaled height, which on phones cut the page) and sits alone at the top left.
     const canvas=await html2canvas(pages[i],{scale:2,useCORS:true,backgroundColor:"#fff",logging:false,
-      onclone:doc=>{doc.body.dataset.mode="preview";doc.getElementById("scaler").style.transform="none";
+      windowWidth:794,windowHeight:1123,scrollX:0,scrollY:0,
+      onclone:doc=>{doc.body.dataset.mode="preview";
+        const page=doc.getElementById("scaler").querySelectorAll(".cv")[i],host=doc.createElement("div");
+        host.className="scaler";host.style.cssText="position:absolute;top:0;left:0;width:794px;transform:none;margin:0";
+        [...doc.body.children].forEach(c=>c.style.setProperty("display","none","important"));
+        host.appendChild(page);doc.body.appendChild(host);
+        doc.body.style.cssText+=";padding:0;margin:0;background:#fff";doc.documentElement.style.padding="0";
         doc.querySelectorAll(".ph-empty").forEach(e=>e.style.visibility="hidden")}});
     if(i)pdf.addPage();
     pdf.addImage(canvas.toDataURL("image/jpeg",.92),"JPEG",0,0,210,297);
