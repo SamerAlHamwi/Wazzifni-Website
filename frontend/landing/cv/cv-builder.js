@@ -276,40 +276,50 @@ if(dlg){
     if($("status"))$("status").textContent="تم مسح كل البيانات."});
 }
 
-// Print / Save as PDF: uses the browser's own print dialog (choose "Save as PDF").
-if($("btnPdf"))$("btnPdf").onclick=async ()=>{
-  if(showSample){showSample=false}
-  const prevMode=document.body.dataset.mode;
-  document.body.dataset.mode="preview"; // Ensure preview mode is active for accurate print layout calculation
-  renderCV();
-
-  let pdfData = null;
-  const sc = $("scaler");
-  if(window.html2pdf && sc){
-    try {
-      const opt = {
-        margin: 0,
-        filename: 'cv.pdf',
-        image: { type: 'jpeg', quality: 0.95 },
-        html2canvas: { scale: 2, useCORS: true, logging: false },
-        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
-      };
-      pdfData = await html2pdf().set(opt).from(sc).outputPdf('datauristring');
-    } catch(e) {
-      console.warn("PDF generation warning:", e);
-    }
+// Download PDF: draws each CV page with html2canvas and saves them as one A4 PDF (jsPDF), no print dialog.
+// The same PDF goes to the Wazzifni server in the background (cv-upload.js), where admins can see it.
+// The libraries load on the first click; if they can't load, it falls back to the browser's print dialog.
+const PDF_LIBS=["https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js","https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"];
+const loadScript=src=>new Promise((ok,fail)=>{const s=document.createElement("script");s.src=src;s.onload=ok;s.onerror=fail;document.head.appendChild(s)});
+let pdfLibs;const loadPdfLibs=()=>pdfLibs||(pdfLibs=Promise.all(PDF_LIBS.map(loadScript)).catch(e=>{pdfLibs=null;throw e}));
+async function buildPdf(){
+  await loadPdfLibs();
+  const pdf=new jspdf.jsPDF({unit:"mm",format:"a4",orientation:"portrait"});
+  const pages=[...$("scaler").querySelectorAll(".cv")];
+  for(let i=0;i<pages.length;i++){
+    // Draw the page at full A4 size: in the copy, drop the preview scaling
+    const canvas=await html2canvas(pages[i],{scale:2,useCORS:true,backgroundColor:"#fff",logging:false,
+      onclone:doc=>{doc.body.dataset.mode="preview";doc.getElementById("scaler").style.transform="none";
+        doc.querySelectorAll(".ph-empty").forEach(e=>e.style.visibility="hidden")}});
+    if(i)pdf.addPage();
+    pdf.addImage(canvas.toDataURL("image/jpeg",.92),"JPEG",0,0,210,297);
   }
-
-  if(window.WZ_CV_UPLOAD) WZ_CV_UPLOAD.submit(S, pdfData);
-
-  const t=document.title;
-  document.title="السيرة الذاتية - "+(S.name||"مرشح").trim();
-  if($("status"))$("status").textContent="اختر «حفظ بتنسيق PDF» من نافذة الطباعة.";
-  window.print();
-  setTimeout(()=>{
-    document.title=t;
-    if(prevMode && prevMode !== "preview") setMode(prevMode);
-  },1000);
+  return pdf;
+}
+let busy=false;
+if($("btnPdf"))$("btnPdf").onclick=async ()=>{
+  if(busy)return;busy=true;$("btnPdf").disabled=true;
+  showSample=false;
+  const prevMode=document.body.dataset.mode;
+  document.body.dataset.mode="preview"; // the page flow needs the preview on screen to measure it (phones)
+  renderCV();
+  const title="السيرة الذاتية - "+(S.name||"مرشح").trim();
+  if($("status"))$("status").textContent="جارٍ تجهيز ملف PDF…";
+  try{
+    const pdf=await buildPdf();
+    pdf.save(title.replace(/[\\/:*?"<>|]/g,"")+".pdf");
+    if($("status"))$("status").textContent="تم تنزيل ملف PDF.";
+    if(window.WZ_CV_UPLOAD)WZ_CV_UPLOAD.submit(S,pdf.output("datauristring"));
+  }catch(e){
+    console.warn("Wazzifni CV: PDF download failed, opening print instead",e);
+    if(window.WZ_CV_UPLOAD)WZ_CV_UPLOAD.submit(S,null);
+    const t=document.title;document.title=title;
+    if($("status"))$("status").textContent="اختر «حفظ بتنسيق PDF» من نافذة الطباعة.";
+    window.print();setTimeout(()=>{document.title=t},1000);
+  }finally{
+    busy=false;$("btnPdf").disabled=false;
+    if(prevMode&&prevMode!=="preview")setMode(prevMode);
+  }
 };
 
 if($("scaler"))$("scaler").addEventListener("click",e=>{const t=e.target.closest("[data-edit]");if(t)goEdit(t.dataset.edit)});

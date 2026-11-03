@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>وظِّفني – السير الذاتية المحفوظة</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&family=Tajawal:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #2563eb;
+            --secondary-color: #4f46e5;
+            --bg-color: #f8fafc;
+            --text-color: #1e293b;
+            --muted: #64748b;
+            --line: #e2e8f0;
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            font-family: 'Cairo', 'Tajawal', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 1.5rem;
+        }
+
+        [hidden] { display: none !important; }
+
+        .container {
+            background: white;
+            padding: 2rem;
+            border-radius: 1.5rem;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        .top {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        h1 { margin: 0; font-size: 1.6rem; }
+
+        a.back, a.btn-link { color: var(--primary-color); text-decoration: none; font-weight: 700; }
+
+        button, input {
+            font: inherit;
+        }
+
+        button {
+            border: 1px solid var(--line);
+            background: white;
+            border-radius: .6rem;
+            padding: .4rem .9rem;
+            cursor: pointer;
+            transition: all .2s;
+        }
+
+        button:hover { border-color: var(--primary-color); color: var(--primary-color); }
+
+        button.primary {
+            background: var(--primary-color);
+            border-color: var(--primary-color);
+            color: white;
+        }
+
+        button.primary:hover { background: var(--secondary-color); color: white; }
+
+        button:disabled { opacity: .5; cursor: default; }
+
+        input {
+            border: 1px solid var(--line);
+            border-radius: .6rem;
+            padding: .5rem .8rem;
+            width: 100%;
+        }
+
+        input:focus { outline: 2px solid var(--primary-color); outline-offset: -1px; }
+
+        .login { max-width: 360px; margin: 2rem auto; display: grid; gap: .8rem; }
+
+        .toolbar { display: flex; gap: .8rem; margin-bottom: 1rem; }
+        .toolbar input { flex: 1; }
+
+        .count { color: var(--muted); margin-bottom: .6rem; }
+
+        .error { color: #dc2626; margin: .5rem 0; }
+
+        table { width: 100%; border-collapse: collapse; }
+        th, td { text-align: start; padding: .7rem .5rem; border-bottom: 1px solid var(--line); vertical-align: middle; }
+        th { color: var(--muted); font-weight: 700; font-size: .9rem; }
+        td .sub { color: var(--muted); font-size: .85rem; }
+        td.actions { white-space: nowrap; }
+        td.actions button + button { margin-inline-start: .4rem; }
+        .ltr { direction: ltr; unicode-bidi: embed; }
+
+        .pager { display: flex; justify-content: center; align-items: center; gap: 1rem; margin-top: 1rem; }
+
+        dialog {
+            width: min(900px, 95vw);
+            height: 92vh;
+            border: none;
+            border-radius: 1rem;
+            padding: 0;
+        }
+
+        dialog::backdrop { background: rgba(15, 23, 42, .6); }
+
+        .dlg { display: flex; flex-direction: column; height: 100%; }
+        .dlg-head { display: flex; align-items: center; gap: .5rem; padding: .7rem 1rem; border-bottom: 1px solid var(--line); }
+        .dlg-head strong { flex: 1; }
+        .dlg iframe { flex: 1; border: none; width: 100%; }
+
+        @media (max-width: 720px) {
+            body { padding: .5rem; }
+            .container { padding: 1rem; }
+            thead { display: none; }
+            tr { display: block; border-bottom: 1px solid var(--line); padding: .5rem 0; }
+            td { display: block; border: none; padding: .2rem 0; }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="top">
+        <h1>📄 السير الذاتية المحفوظة</h1>
+        <div>
+            <a class="back" href="index.html">→ رجوع</a>
+            <button id="btnLogout" type="button" hidden>تسجيل الخروج</button>
+        </div>
+    </div>
+
+    <!-- Same account as the HR admin; the token is shared with /hr/ (localStorage wz_token) -->
+    <form class="login" id="login" hidden>
+        <p>سجّل الدخول بحساب إدارة التوظيف (HR Admin).</p>
+        <input id="username" aria-label="اسم المستخدم" placeholder="اسم المستخدم" autocomplete="username" required>
+        <input id="password" type="password" aria-label="كلمة المرور" placeholder="كلمة المرور" autocomplete="current-password" required>
+        <button class="primary" type="submit">دخول</button>
+        <div class="error" id="loginError"></div>
+    </form>
+
+    <section id="list" hidden>
+        <form class="toolbar" id="search">
+            <input id="q" type="search" aria-label="بحث" placeholder="ابحث بالاسم أو المسمى أو الهاتف أو البريد أو المدينة">
+            <button class="primary" type="submit">بحث</button>
+        </form>
+        <div class="count" id="count"></div>
+        <div class="error" id="listError"></div>
+        <table>
+            <thead><tr><th>الاسم</th><th>الهاتف / البريد</th><th>المدينة</th><th>تاريخ الحفظ</th><th></th></tr></thead>
+            <tbody id="rows"></tbody>
+        </table>
+        <div class="pager">
+            <button id="prev" type="button">السابق</button>
+            <span id="pageInfo"></span>
+            <button id="next" type="button">التالي</button>
+        </div>
+    </section>
+</div>
+
+<dialog id="viewer">
+    <div class="dlg">
+        <div class="dlg-head">
+            <strong id="viewerTitle"></strong>
+            <a id="viewerOpen" class="btn-link" target="_blank" rel="noopener">فتح في نافذة جديدة</a>
+            <button id="viewerDownload" type="button">تنزيل</button>
+            <button id="viewerClose" type="button">إغلاق</button>
+        </div>
+        <iframe id="viewerFrame" title="معاينة السيرة الذاتية"></iframe>
+    </div>
+</dialog>
+
+<script>
+(function () {
+    const TOKEN_KEY = 'wz_token';
+    const $ = id => document.getElementById(id);
+    const esc = t => String(t ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+    let page = 1, pages = 1, q = '', cvs = [], viewerUrl = null, viewerCv = null;
+
+    class AuthError extends Error {}
+
+    async function api(path, asBlob) {
+        const token = localStorage.getItem(TOKEN_KEY);
+        if (!token) throw new AuthError();
+        const res = await fetch('/api/cv' + path, { headers: { Authorization: 'Bearer ' + token } });
+        if (res.status === 401) throw new AuthError();
+        if (!res.ok) {
+            const body = await res.json().catch(() => ({}));
+            throw new Error(body.message || body.error || 'حدث خطأ ما');
+        }
+        return asBlob ? res.blob() : res.json();
+    }
+
+    function showLogin() {
+        localStorage.removeItem(TOKEN_KEY);
+        $('list').hidden = true;
+        $('btnLogout').hidden = true;
+        $('login').hidden = false;
+        $('username').focus();
+    }
+
+    function fail(e) {
+        if (e instanceof AuthError) return showLogin();
+        $('listError').textContent = e.message;
+    }
+
+    const fmtDate = d => d ? new Date(d).toLocaleString('ar-IQ', { dateStyle: 'medium', timeStyle: 'short' }) : '';
+
+    async function load() {
+        $('listError').textContent = '';
+        try {
+            const data = await api('?' + new URLSearchParams({ page, q }));
+            cvs = data.cvs; pages = data.pages;
+            $('login').hidden = true;
+            $('list').hidden = false;
+            $('btnLogout').hidden = false;
+            $('count').textContent = `${data.total} سيرة ذاتية`;
+            $('pageInfo').textContent = `صفحة ${data.page} من ${data.pages}`;
+            $('prev').disabled = page <= 1;
+            $('next').disabled = page >= pages;
+            $('rows').innerHTML = cvs.length ? cvs.map((cv, i) => {
+                const hasPdf = cv.pdfFile && cv.pdfFile.size;
+                return `<tr>
+                    <td><strong>${esc(cv.name || '—')}</strong><div class="sub">${esc(cv.title)}</div></td>
+                    <td><div class="ltr">${esc(cv.phone)}</div><div class="sub ltr">${esc(cv.email)}</div></td>
+                    <td>${esc(cv.city)}</td>
+                    <td>${esc(fmtDate(cv.submittedAt))}</td>
+                    <td class="actions">${hasPdf
+                        ? `<button type="button" data-view="${i}">معاينة</button><button class="primary" type="button" data-dl="${i}">تنزيل</button>`
+                        : '<span class="sub">لا يوجد ملف PDF</span>'}</td>
+                </tr>`;
+            }).join('') : '<tr><td colspan="5" class="sub">لا توجد سير ذاتية.</td></tr>';
+        } catch (e) { fail(e); }
+    }
+
+    const fileName = cv => `السيرة الذاتية - ${(cv.name || 'مرشح').trim()}.pdf`.replace(/[\\/:*?"<>|]/g, '');
+
+    function saveBlob(url, cv) {
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = fileName(cv);
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+    }
+
+    // The PDF route needs the token, so the file is fetched and shown/saved from a local blob URL
+    async function pdfUrl(cv) {
+        const blob = await api(`/${cv._id}/pdf`, true);
+        return URL.createObjectURL(blob);
+    }
+
+    async function download(cv, btn) {
+        btn.disabled = true;
+        try {
+            const url = await pdfUrl(cv);
+            saveBlob(url, cv);
+            setTimeout(() => URL.revokeObjectURL(url), 10000);
+        } catch (e) { fail(e); }
+        finally { btn.disabled = false; }
+    }
+
+    async function preview(cv, btn) {
+        btn.disabled = true;
+        try {
+            closeViewer();
+            viewerUrl = await pdfUrl(cv);
+            viewerCv = cv;
+            $('viewerTitle').textContent = cv.name || 'سيرة ذاتية';
+            $('viewerFrame').src = viewerUrl;
+            $('viewerOpen').href = viewerUrl;
+            $('viewer').showModal();
+        } catch (e) { fail(e); }
+        finally { btn.disabled = false; }
+    }
+
+    function closeViewer() {
+        if ($('viewer').open) $('viewer').close();
+        $('viewerFrame').removeAttribute('src');
+        if (viewerUrl) URL.revokeObjectURL(viewerUrl);
+        viewerUrl = null;
+        viewerCv = null;
+    }
+
+    $('rows').addEventListener('click', e => {
+        const v = e.target.closest('[data-view]'), d = e.target.closest('[data-dl]');
+        if (v) preview(cvs[+v.dataset.view], v);
+        if (d) download(cvs[+d.dataset.dl], d);
+    });
+    $('viewerClose').onclick = closeViewer;
+    $('viewer').addEventListener('cancel', e => { e.preventDefault(); closeViewer(); });
+    $('viewerDownload').onclick = () => { if (viewerUrl) saveBlob(viewerUrl, viewerCv); };
+
+    $('search').addEventListener('submit', e => { e.preventDefault(); q = $('q').value.trim(); page = 1; load(); });
+    $('prev').onclick = () => { if (page > 1) { page--; load(); } };
+    $('next').onclick = () => { if (page < pages) { page++; load(); } };
+    $('btnLogout').onclick = showLogin;
+
+    $('login').addEventListener('submit', async e => {
+        e.preventDefault();
+        $('loginError').textContent = '';
+        try {
+            const res = await fetch('/api/hr/auth/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ username: $('username').value.trim(), password: $('password').value })
+            });
+            const body = await res.json().catch(() => ({}));
+            if (!res.ok || !body.token) throw new Error(body.message || body.error || 'بيانات الدخول غير صحيحة');
+            localStorage.setItem(TOKEN_KEY, body.token);
+            $('password').value = '';
+            load();
+        } catch (err) {
+            $('loginError').textContent = err.message;
+        }
+    });
+
+    if (localStorage.getItem(TOKEN_KEY)) load(); else showLogin();
+})();
+</script>
+</body>
+</html>

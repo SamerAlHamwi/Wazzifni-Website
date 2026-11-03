@@ -3,6 +3,8 @@ const router = express.Router();
 const fs = require('fs');
 const path = require('path');
 const Cv = require('../models/Cv');
+// Reading saved CVs is for admins only: the same login as the HR admin (token in wz_token)
+const { protect } = require('../hr/middleware/authMiddleware');
 
 // Submit / Save CV and PDF to MongoDB and disk
 router.post('/submit', async (req, res) => {
@@ -19,7 +21,8 @@ router.post('/submit', async (req, res) => {
 
     // Convert base64 PDF data to Buffer if provided
     if (pdfData && typeof pdfData === 'string') {
-      const base64Data = pdfData.replace(/^data:application\/pdf;base64,/, '');
+      // jsPDF data URIs look like "data:application/pdf;filename=generated.pdf;base64,..."
+      const base64Data = pdfData.replace(/^data:application\/pdf[^,]*,/, '');
       pdfBuffer = Buffer.from(base64Data, 'base64');
 
       // Attempt to save a copy on disk under uploads/cvs/ (optional fallback)
@@ -81,18 +84,19 @@ router.post('/submit', async (req, res) => {
   }
 });
 
-// Stream/Download PDF by CV ID directly from MongoDB
-router.get('/:id/pdf', async (req, res) => {
+// Stream/Download PDF by CV ID directly from MongoDB (?download=1 saves it instead of showing it)
+router.get('/:id/pdf', protect, async (req, res) => {
   try {
     const cvDoc = await Cv.findById(req.params.id);
     if (!cvDoc || !cvDoc.pdfFile || !cvDoc.pdfFile.data) {
       return res.status(404).json({ error: 'PDF file not found in database' });
     }
 
+    const fileName = `cv-${cvDoc.name || 'document'}.pdf`;
     res.set({
       'Content-Type': cvDoc.pdfFile.contentType || 'application/pdf',
       'Content-Length': cvDoc.pdfFile.data.length,
-      'Content-Disposition': `inline; filename="cv-${cvDoc.name || 'document'}.pdf"`
+      'Content-Disposition': `${req.query.download ? 'attachment' : 'inline'}; filename="cv.pdf"; filename*=UTF-8''${encodeURIComponent(fileName)}`
     });
 
     res.send(cvDoc.pdfFile.data);
@@ -102,7 +106,7 @@ router.get('/:id/pdf', async (req, res) => {
 });
 
 // Get single CV by ID
-router.get('/:id', async (req, res) => {
+router.get('/:id', protect, async (req, res) => {
   try {
     const cvDoc = await Cv.findById(req.params.id).select('-pdfFile.data');
     if (!cvDoc) {
@@ -114,11 +118,23 @@ router.get('/:id', async (req, res) => {
   }
 });
 
-// List all saved CVs
-router.get('/', async (req, res) => {
+// List saved CVs, newest first: ?q= searches name, title, phone, email and city; ?page= (50 per page)
+router.get('/', protect, async (req, res) => {
   try {
-    const cvs = await Cv.find().select('-pdfFile.data').sort({ updatedAt: -1 }).limit(100);
-    res.json(cvs);
+    const limit = 50;
+    const page = Math.max(1, parseInt(req.query.page, 10) || 1);
+    const q = String(req.query.q || '').trim();
+    const filter = {};
+    if (q) {
+      const rx = new RegExp(q.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'i');
+      filter.$or = ['name', 'title', 'phone', 'email', 'city'].map(k => ({ [k]: rx }));
+    }
+    const [cvs, total] = await Promise.all([
+      Cv.find(filter).select('-pdfFile.data -photo -cvData').sort({ submittedAt: -1 })
+        .skip((page - 1) * limit).limit(limit),
+      Cv.countDocuments(filter)
+    ]);
+    res.json({ cvs, total, page, pages: Math.max(1, Math.ceil(total / limit)) });
   } catch (error) {
     res.status(500).json({ error: 'Failed to list CVs' });
   }
