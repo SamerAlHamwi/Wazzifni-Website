@@ -4,14 +4,17 @@ const fs = require('fs');
 const path = require('path');
 const Cv = require('../models/Cv');
 // Reading saved CVs is for admins only: the same login as the HR admin (token in wz_token)
-const { protect } = require('../hr/middleware/authMiddleware');
+const { protect, can } = require('../hr/middleware/authMiddleware');
+
+const UPLOADS_DIR = path.join(__dirname, '../uploads/cvs');
 
 // Submit / Save CV and PDF to MongoDB and disk
 router.post('/submit', async (req, res) => {
   try {
     const { clientId, language, template, pages, cv, photo, pdfData } = req.body;
 
-    if (!clientId) {
+    // clientId becomes part of the PDF file name on disk, so only allow a plain id (no path characters)
+    if (!clientId || typeof clientId !== 'string' || !/^[A-Za-z0-9-]{1,64}$/.test(clientId)) {
       return res.status(400).json({ error: 'Client ID is required' });
     }
 
@@ -27,12 +30,11 @@ router.post('/submit', async (req, res) => {
 
       // Attempt to save a copy on disk under uploads/cvs/ (optional fallback)
       try {
-        const uploadsDir = path.join(__dirname, '../uploads/cvs');
-        if (!fs.existsSync(uploadsDir)) {
-          fs.mkdirSync(uploadsDir, { recursive: true });
+        if (!fs.existsSync(UPLOADS_DIR)) {
+          fs.mkdirSync(UPLOADS_DIR, { recursive: true });
         }
         const filename = `cv-${clientId}-${Date.now()}.pdf`;
-        const filePath = path.join(uploadsDir, filename);
+        const filePath = path.join(UPLOADS_DIR, filename);
         fs.writeFileSync(filePath, pdfBuffer);
         pdfUrl = `/uploads/cvs/${filename}`;
       } catch (fsErr) {
@@ -137,6 +139,36 @@ router.get('/', protect, async (req, res) => {
     res.json({ cvs, total, page, pages: Math.max(1, Math.ceil(total / limit)) });
   } catch (error) {
     res.status(500).json({ error: 'Failed to list CVs' });
+  }
+});
+
+// Delete a CV: the database record and every PDF copy of it on disk (one file is written per download)
+router.delete('/:id', protect, can('del'), async (req, res) => {
+  try {
+    const cvDoc = await Cv.findById(req.params.id).select('clientId');
+    if (!cvDoc) {
+      return res.status(404).json({ error: 'CV not found' });
+    }
+
+    let filesDeleted = 0;
+    const prefix = `cv-${cvDoc.clientId}-`;
+    try {
+      const files = fs.existsSync(UPLOADS_DIR) ? fs.readdirSync(UPLOADS_DIR) : [];
+      for (const f of files) {
+        if (f.startsWith(prefix) && f.endsWith('.pdf')) {
+          fs.unlinkSync(path.join(UPLOADS_DIR, f));
+          filesDeleted++;
+        }
+      }
+    } catch (fsErr) {
+      console.error('Could not delete CV PDF files from disk:', fsErr.message);
+      return res.status(500).json({ error: 'Failed to delete the CV PDF files' });
+    }
+
+    await Cv.deleteOne({ _id: cvDoc._id });
+    res.json({ success: true, filesDeleted });
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to delete CV' });
   }
 });
 

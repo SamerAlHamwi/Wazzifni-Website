@@ -24,6 +24,9 @@
         .modal.pdf .mh { padding: 1rem 1.4rem .8rem; margin-bottom: 0; gap: .5rem; }
         .modal.pdf .mh-t { flex: 1; min-width: 0; }
         .modal.pdf .mh-t span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .del-txt { font-size: .85rem; color: var(--tx2); line-height: 1.8; }
+        .del-txt strong { color: var(--navy); }
+        .del-acts { display: flex; gap: .5rem; justify-content: flex-end; margin-top: 1.3rem; }
         .modal.pdf iframe { flex: 1; border: none; width: 100%; background: var(--surf3); }
         @media (max-width: 600px) {
             .modal.pdf .mh { flex-wrap: wrap; }
@@ -110,19 +113,35 @@
     </div>
 </div>
 
+<!-- DELETE CONFIRMATION -->
+<div class="overlay" id="delModal">
+    <div class="modal modal-sm" role="alertdialog" aria-modal="true" aria-labelledby="delTitle">
+        <div class="mh">
+            <div class="mh-t"><div class="mh-ico">🗑</div><span id="delTitle">حذف السيرة الذاتية</span></div>
+            <div class="mx" id="delClose" role="button" tabindex="0" aria-label="إغلاق">✕</div>
+        </div>
+        <p class="del-txt">سيتم حذف سيرة <strong id="delName"></strong> وملف PDF الخاص بها من الخادم نهائياً، ولا يمكن التراجع عن ذلك.</p>
+        <div class="err-msg" id="delError" hidden></div>
+        <div class="del-acts">
+            <button class="btn btn-ghost" id="delCancel" type="button">إلغاء</button>
+            <button class="btn btn-danger" id="delConfirm" type="button">🗑 نعم، احذف</button>
+        </div>
+    </div>
+</div>
+
 <script>
 (function () {
     const TOKEN_KEY = 'wz_token';
     const $ = id => document.getElementById(id);
     const esc = t => String(t ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
-    let page = 1, pages = 1, q = '', cvs = [], viewerUrl = null, viewerCv = null;
+    let page = 1, pages = 1, q = '', cvs = [], viewerUrl = null, viewerCv = null, delCv = null;
 
     class AuthError extends Error {}
 
-    async function api(path, asBlob) {
+    async function api(path, asBlob, method) {
         const token = localStorage.getItem(TOKEN_KEY);
         if (!token) throw new AuthError();
-        const res = await fetch('/api/cv' + path, { headers: { Authorization: 'Bearer ' + token } });
+        const res = await fetch('/api/cv' + path, { method: method || 'GET', headers: { Authorization: 'Bearer ' + token } });
         if (res.status === 401) throw new AuthError();
         if (!res.ok) {
             const body = await res.json().catch(() => ({}));
@@ -164,7 +183,7 @@
                     <td>${esc(fmtDate(cv.submittedAt))}</td>
                     <td class="actions">${hasPdf
                         ? `<button class="btn btn-ghost btn-sm" type="button" data-view="${i}">👁 معاينة</button><button class="btn btn-primary btn-sm" type="button" data-dl="${i}">⬇ تنزيل</button>`
-                        : '<span class="badge b-gy">لا يوجد ملف PDF</span>'}</td>
+                        : '<span class="badge b-gy">لا يوجد ملف PDF</span>'}<button class="btn btn-danger btn-sm" type="button" data-del="${i}">🗑 حذف</button></td>
                 </tr>`;
             }).join('') : '<tr><td colspan="5"><div class="empty"><div class="ei">📄</div><p>لا توجد سير ذاتية.</p></div></td></tr>';
         } catch (e) { fail(e); }
@@ -220,14 +239,51 @@
     }
 
     $('rows').addEventListener('click', e => {
-        const v = e.target.closest('[data-view]'), d = e.target.closest('[data-dl]');
+        const v = e.target.closest('[data-view]'), d = e.target.closest('[data-dl]'), x = e.target.closest('[data-del]');
         if (v) preview(cvs[+v.dataset.view], v);
         if (d) download(cvs[+d.dataset.dl], d);
+        if (x) askDelete(cvs[+x.dataset.del]);
     });
+
+    function askDelete(cv) {
+        delCv = cv;
+        $('delName').textContent = cv.name || 'بدون اسم';
+        $('delError').hidden = true;
+        $('delConfirm').disabled = false;
+        $('delModal').classList.add('open');
+        $('delCancel').focus();
+    }
+    function closeDelete() {
+        $('delModal').classList.remove('open');
+        delCv = null;
+    }
+    $('delConfirm').onclick = async () => {
+        if (!delCv) return;
+        $('delConfirm').disabled = true;
+        try {
+            await api('/' + delCv._id, false, 'DELETE');
+            closeDelete();
+            // Step back a page if this was the last CV on it
+            if (cvs.length === 1 && page > 1) page--;
+            load();
+        } catch (e) {
+            if (e instanceof AuthError) { closeDelete(); return showLogin(); }
+            $('delError').textContent = e.message;
+            $('delError').hidden = false;
+            $('delConfirm').disabled = false;
+        }
+    };
+    $('delCancel').onclick = closeDelete;
+    $('delClose').onclick = closeDelete;
+    $('delClose').addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') closeDelete(); });
+    $('delModal').addEventListener('click', e => { if (e.target === $('delModal')) closeDelete(); });
     $('viewerClose').onclick = closeViewer;
     $('viewerClose').addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') closeViewer(); });
     $('viewer').addEventListener('click', e => { if (e.target === $('viewer')) closeViewer(); });
-    document.addEventListener('keydown', e => { if (e.key === 'Escape' && viewerUrl) closeViewer(); });
+    document.addEventListener('keydown', e => {
+        if (e.key !== 'Escape') return;
+        if (delCv) closeDelete(); else if (viewerUrl) closeViewer();
+    });
     $('viewerDownload').onclick = () => { if (viewerUrl) saveBlob(viewerUrl, viewerCv); };
 
     $('search').addEventListener('submit', e => { e.preventDefault(); q = $('q').value.trim(); page = 1; load(); });
