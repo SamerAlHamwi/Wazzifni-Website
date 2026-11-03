@@ -2,7 +2,7 @@
 .site-footer {
   padding: var(--s-section) 0 var(--s-xl);
   /* Continues the sections' translucent fill, so there is no edge where the last section ends */
-  background: rgba(20, 21, 25, 0.65);
+  background: rgba(27, 35, 52, 0.5);
 }
 
 .footer-grid {

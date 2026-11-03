@@ -15,13 +15,13 @@
   --accent-1: #FFB43C;
   --accent-2: #34D399;
   --accent-3: #00B6E7;
-  --canvas: #0F1012;
-  --surface: #17181B;
-  --surface-raised: #2A2A2D;
-  --surface-subtle: rgba(32, 32, 40, 0.4);
-  --ink: #F5F6F8;
-  --body: #9AA0AB;
-  --hairline: #2A2C31;
+  --canvas: #131A27;          /* soft navy-charcoal instead of near-black */
+  --surface: #1B2334;
+  --surface-raised: #27324A;
+  --surface-subtle: rgba(39, 50, 74, 0.45);
+  --ink: #F4F7FC;
+  --body: #B3BDCD;            /* brighter body text for easier reading */
+  --hairline: #2E3A52;
   --on-primary: #FFFFFF;
   --primary-tint: color-mix(in oklab, var(--primary) 10%, transparent);
   --primary-line: color-mix(in oklab, var(--primary) 30%, transparent);
@@ -59,7 +59,7 @@
   /* Gradients */
   --glow-hero: radial-gradient(closest-side, rgba(0, 182, 231, 0.16), transparent 72%);
   --dots: radial-gradient(circle at 1px 1px, rgba(255, 255, 255, 0.05) 1px, transparent 0) 0 0 / 20px 20px;
-  --band-bg: var(--dots), linear-gradient(0deg, #231F31, #17181B);
+  --band-bg: var(--dots), linear-gradient(0deg, #22304A, #1B2334);
   --line-primary: linear-gradient(to right, #00B6E7 0%, #0087C6 50%, #00B6E7 100%);
 
   --ease: cubic-bezier(0.2, 0.8, 0.2, 1);
@@ -169,7 +169,7 @@ ul, ol { list-style: none; }
 }
 
 .section--alt {
-  background: linear-gradient(180deg, rgba(23, 24, 27, 0.6), rgba(23, 24, 27, 0) 70%);
+  background: linear-gradient(180deg, rgba(27, 35, 52, 0.6), rgba(27, 35, 52, 0) 70%);
 }
 
 .section-head {
@@ -512,7 +512,7 @@ ul, ol { list-style: none; }
   position: fixed;
   inset: 0;
   z-index: 52;
-  background: rgba(0, 0, 0, 0.6);
+  background: rgba(8, 12, 20, 0.55);
   backdrop-filter: blur(4px);
   -webkit-backdrop-filter: blur(4px);
   opacity: 0;

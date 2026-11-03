@@ -20,8 +20,8 @@
   z-index: -1;
   pointer-events: none;
   background:
-    radial-gradient(70% 45% at 50% -8%, color-mix(in oklab, var(--ambient) 10%, transparent), transparent 70%),
-    radial-gradient(45% 40% at 100% 105%, color-mix(in oklab, var(--ambient) 5%, transparent), transparent 70%);
+    radial-gradient(70% 45% at 50% -8%, color-mix(in oklab, var(--ambient) 18%, transparent), transparent 70%),
+    radial-gradient(45% 40% at 100% 105%, color-mix(in oklab, var(--ambient) 10%, transparent), transparent 70%);
   transition: --ambient 1.2s ease;
 }
 
@@ -43,7 +43,7 @@
 
 /* Section dividers: a thin line in the section's tone, brightest at the centre. One even translucent fill. */
 .section {
-  --sec-fill: rgba(20, 21, 25, 0.65);
+  --sec-fill: rgba(27, 35, 52, 0.5);
   position: relative;
   isolation: isolate;
   border-top: none;
@@ -69,7 +69,7 @@
 .section::after { content: none; }
 
 /* The stats + category strip under the hero starts the translucent fill, fading in so it has no hard top edge */
-.hero-stats { background: linear-gradient(rgba(20, 21, 25, 0), rgba(20, 21, 25, 0.65) 96px); }
+.hero-stats { background: linear-gradient(rgba(27, 35, 52, 0), rgba(27, 35, 52, 0.5) 96px); }
 
 /* Feature cards each get their own colour, with a corner glow */
 .bento-card:nth-child(1) { --tone: #00B6E7; }
@@ -157,7 +157,7 @@
   gap: var(--s-md);
   padding: var(--s-lg) var(--s-xl);
   border-radius: var(--r-lg);
-  background: rgba(23, 24, 27, 0.7);
+  background: rgba(31, 40, 59, 0.75);
   border: 1px solid color-mix(in oklab, var(--tone) 18%, var(--hairline));
   box-shadow: var(--shadow-md);
   overflow: hidden;
