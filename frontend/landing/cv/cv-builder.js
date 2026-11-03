@@ -303,9 +303,34 @@ async function buildPdf(){
   }
   return pdf;
 }
+// iPhone/iPad: Safari only saves a file straight from a tap, and building the PDF takes too long for the
+// first tap to still count. So when that tap has expired, the ready PDF waits on the button ("حفظ PDF")
+// and the next tap opens the share sheet (Save to Files, WhatsApp…), or a plain download if there's none.
+const isIOS=/iP(hone|ad|od)/.test(navigator.userAgent)||(navigator.platform==="MacIntel"&&navigator.maxTouchPoints>1);
+const pdfBtnHTML=$("btnPdf")?$("btnPdf").innerHTML:"";
+let ready=null; // {blob,name,at}: a built PDF waiting for the next tap
+const clearReady=()=>{if(!ready)return;ready=null;$("btnPdf").innerHTML=pdfBtnHTML};
+document.addEventListener("input",clearReady);
+async function deliverPdf(blob,name){
+  const file=typeof File==="function"?new File([blob],name,{type:"application/pdf"}):null;
+  if(isIOS&&file&&navigator.canShare&&navigator.canShare({files:[file]})){
+    try{await navigator.share({files:[file]});return true}
+    catch(e){if(e.name==="AbortError")return true;if(e.name==="NotAllowedError")return false}
+  }
+  const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download=name;
+  document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),60000);
+  return true;
+}
 let busy=false;
 if($("btnPdf"))$("btnPdf").onclick=async ()=>{
-  if(busy)return;busy=true;$("btnPdf").disabled=true;
+  if(busy)return;
+  if(ready&&Date.now()-ready.at<5*60000){
+    const r=ready;clearReady();
+    if(await deliverPdf(r.blob,r.name)){if($("status"))$("status").textContent="تم حفظ ملف PDF."}
+    return;
+  }
+  clearReady();
+  busy=true;$("btnPdf").disabled=true;
   showSample=false;
   const prevMode=document.body.dataset.mode;
   document.body.dataset.mode="preview"; // the page flow needs the preview on screen to measure it (phones)
@@ -314,8 +339,15 @@ if($("btnPdf"))$("btnPdf").onclick=async ()=>{
   if($("status"))$("status").textContent="جارٍ تجهيز ملف PDF…";
   try{
     const pdf=await buildPdf();
-    pdf.save(title.replace(/[\\/:*?"<>|]/g,"")+".pdf");
-    if($("status"))$("status").textContent="تم تنزيل ملف PDF.";
+    const name=title.replace(/[\\/:*?"<>|]/g,"")+".pdf",blob=pdf.output("blob");
+    const tapStillValid=!isIOS||(navigator.userActivation&&navigator.userActivation.isActive);
+    if(tapStillValid&&await deliverPdf(blob,name)){
+      if($("status"))$("status").textContent="تم تنزيل ملف PDF.";
+    }else{
+      ready={blob,name,at:Date.now()};
+      $("btnPdf").innerHTML=pdfBtnHTML.replace(/<span class="pdf-long">[^<]*<\/span>/,"<span>حفظ</span>");
+      if($("status"))$("status").textContent="الملف جاهز، اضغط «حفظ PDF» لحفظه.";
+    }
     if(window.WZ_CV_UPLOAD)WZ_CV_UPLOAD.submit(S,pdf.output("datauristring"));
   }catch(e){
     console.warn("Wazzifni CV: PDF download failed, opening print instead",e);
