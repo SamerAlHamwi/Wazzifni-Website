@@ -274,7 +274,8 @@
   .footer-col ul { flex-direction: row; flex-wrap: wrap; align-items: center; justify-content: center; gap: 4px var(--s-md); }
   .footer-col a { font-size: 12px; }
   .footer-col a .icon { width: 13px; height: 13px; }
-  .footer-bottom { padding-top: var(--s-sm); font-size: 11px; flex-direction: row; flex-wrap: wrap; justify-content: center; gap: 2px var(--s-sm); }
+  .footer-owner { padding: var(--s-sm) 0; font-size: 11px; line-height: 1.7; }
+.footer-bottom { padding-top: var(--s-sm); font-size: 11px; flex-direction: row; flex-wrap: wrap; justify-content: center; gap: 2px var(--s-sm); }
 }
 
 /* Store buttons stack when two can't fit side by side */
