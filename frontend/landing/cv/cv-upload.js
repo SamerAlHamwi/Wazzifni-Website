@@ -3,7 +3,7 @@
   const ENDPOINT="/api/cv/submit";
   const ENABLED=true;
   const SCHEMA_VERSION=1;
-  const TIMEOUT_MS=30000;
+  const TIMEOUT_MS=45000;
 
   const CLIENT_KEY="wazzifni-cv-client-id";  // stable random id, so the server can update one CV per device
   const PENDING_KEY="wazzifni-cv-pending";   // the latest copy that hasn't reached the server yet
@@ -11,15 +11,17 @@
 
   const store={
     get(k){try{return localStorage.getItem(k)}catch(e){return null}},
-    set(k,v){try{localStorage.setItem(k,v)}catch(e){}},
+    set(k,v){try{localStorage.setItem(k,v);return true}catch(e){return false}},
     del(k){try{localStorage.removeItem(k)}catch(e){}}
   };
 
   function clientId(){
     let id=store.get(CLIENT_KEY);
-    if(!id){
-      id=(typeof crypto !== "undefined" && crypto.randomUUID ? crypto.randomUUID() : Date.now().toString(36)+Math.random().toString(36).slice(2));
-      store.set(CLIENT_KEY,id);
+    if(!id || typeof id !== "string" || !/^[A-Za-z0-9-]{1,64}$/.test(id)){
+      let rawId = (typeof crypto !== "undefined" && crypto.randomUUID ? crypto.randomUUID() : Date.now().toString(36)+Math.random().toString(36).slice(2));
+      id = String(rawId).replace(/[^A-Za-z0-9-]/g, "").slice(0, 64);
+      if(!id) id = "client-" + Date.now().toString(36);
+      store.set(CLIENT_KEY, id);
     }
     return id;
   }
@@ -52,7 +54,17 @@
     const ctrl=window.AbortController?new AbortController():null;
     const timer=ctrl&&setTimeout(()=>ctrl.abort(),TIMEOUT_MS);
     try{
-      const res=await fetch(ENDPOINT,{method:"POST",headers:{"Content-Type":"application/json",Accept:"application/json"},body,signal:ctrl&&ctrl.signal});
+      const opts = {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Accept: "application/json" },
+        body,
+        signal: ctrl && ctrl.signal
+      };
+      // keepalive is allowed by Fetch API spec only if request body < 64KB
+      if (body && body.length < 60000) {
+        opts.keepalive = true;
+      }
+      const res = await fetch(ENDPOINT, opts);
       return res.ok;
     }catch(e){
       return false;
@@ -67,18 +79,68 @@
     if(!body)return true;
     const fp=hash(body.replace(/"submittedAt":"[^"]*",/,""));
     if(fp===store.get(SENT_KEY)){store.del(PENDING_KEY);return true}
-    const ok=await post(body);
-    if(ok){store.set(SENT_KEY,fp);store.del(PENDING_KEY)}
-    else console.info("Wazzifni CV: the server didn't accept the CV yet; it will be retried on the next visit or print.");
+
+    let ok=await post(body);
+    // If flush failed and body contains large pdfData, try light fallback without PDF binary
+    if(!ok && body.includes('"pdfData":')){
+      try {
+        const parsed = JSON.parse(body);
+        parsed.pdfData = null;
+        ok = await post(JSON.stringify(parsed));
+      } catch(e) {}
+    }
+
+    if(ok){
+      store.set(SENT_KEY, fp);
+      store.del(PENDING_KEY);
+    } else {
+      console.info("Wazzifni CV: pending upload retry postponed.");
+    }
     return ok;
   }
 
-  function submit(S, pdfData){
-    if(!ENABLED||!hasContent(S))return Promise.resolve(false);
-    store.set(PENDING_KEY,JSON.stringify(payload(S, pdfData)));
-    return flush();
+  // Direct send first (doesn't fail if localStorage quota is exceeded by large base64 PDF)
+  async function submit(S, pdfData){
+    if(!ENABLED||!hasContent(S))return false;
+
+    const data = payload(S, pdfData);
+    const bodyStr = JSON.stringify(data);
+    const fp = hash(bodyStr.replace(/"submittedAt":"[^"]*",/,""));
+
+    if(fp === store.get(SENT_KEY)){
+      store.del(PENDING_KEY);
+      return true;
+    }
+
+    // Try posting full CV + PDF directly
+    let ok = await post(bodyStr);
+
+    // If direct upload failed and pdfData was present, fallback to uploading CV without PDF binary
+    if(!ok && pdfData){
+      console.warn("Wazzifni CV: Full upload failed, attempting fallback submission without PDF binary...");
+      const fallbackData = payload(S, null);
+      const fallbackBodyStr = JSON.stringify(fallbackData);
+      ok = await post(fallbackBodyStr);
+    }
+
+    if(ok){
+      store.set(SENT_KEY, fp);
+      store.del(PENDING_KEY);
+      return true;
+    }
+
+    // If upload failed (e.g. offline), try queuing in localStorage for later flush
+    if (!store.set(PENDING_KEY, bodyStr)) {
+      // If full body exceeds localStorage quota (common on iOS Safari), store light payload for retry
+      const lightData = payload(S, null);
+      store.set(PENDING_KEY, JSON.stringify(lightData));
+    }
+
+    console.info("Wazzifni CV: Server didn't accept the CV yet; queued for retry.");
+    return false;
   }
 
   window.WZ_CV_UPLOAD={submit,flush};
   if(ENABLED)setTimeout(flush,3000);
 })();
+

@@ -24,8 +24,7 @@ router.post('/submit', async (req, res) => {
 
     // Convert base64 PDF data to Buffer if provided
     if (pdfData && typeof pdfData === 'string') {
-      // jsPDF data URIs look like "data:application/pdf;filename=generated.pdf;base64,..."
-      const base64Data = pdfData.replace(/^data:application\/pdf[^,]*,/, '');
+      const base64Data = pdfData.includes(',') ? pdfData.split(',')[1] : pdfData;
       pdfBuffer = Buffer.from(base64Data, 'base64');
 
       // Attempt to save a copy on disk under uploads/cvs/ (optional fallback)

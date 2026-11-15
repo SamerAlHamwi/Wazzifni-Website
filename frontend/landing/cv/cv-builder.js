@@ -299,7 +299,7 @@ async function buildPdf(){
         doc.body.style.cssText+=";padding:0;margin:0;background:#fff";doc.documentElement.style.padding="0";
         doc.querySelectorAll(".ph-empty").forEach(e=>e.style.visibility="hidden")}});
     if(i)pdf.addPage();
-    pdf.addImage(canvas.toDataURL("image/jpeg",.92),"JPEG",0,0,210,297);
+    pdf.addImage(canvas.toDataURL("image/jpeg",.78),"JPEG",0,0,210,297,undefined,'FAST');
   }
   return pdf;
 }
@@ -308,7 +308,7 @@ async function buildPdf(){
 // and the next tap opens the share sheet (Save to Files, WhatsApp…), or a plain download if there's none.
 const isIOS=/iP(hone|ad|od)/.test(navigator.userAgent)||(navigator.platform==="MacIntel"&&navigator.maxTouchPoints>1);
 const pdfBtnHTML=$("btnPdf")?$("btnPdf").innerHTML:"";
-let ready=null; // {blob,name,at}: a built PDF waiting for the next tap
+let ready=null; // {blob,name,pdfData,at}: a built PDF waiting for the next tap
 const clearReady=()=>{if(!ready)return;ready=null;$("btnPdf").innerHTML=pdfBtnHTML};
 document.addEventListener("input",clearReady);
 async function deliverPdf(blob,name){
@@ -326,6 +326,7 @@ if($("btnPdf"))$("btnPdf").onclick=async ()=>{
   if(busy)return;
   if(ready&&Date.now()-ready.at<5*60000){
     const r=ready;clearReady();
+    if(window.WZ_CV_UPLOAD && r.pdfData) WZ_CV_UPLOAD.submit(S, r.pdfData);
     if(await deliverPdf(r.blob,r.name)){if($("status"))$("status").textContent="تم حفظ ملف PDF."}
     return;
   }
@@ -340,15 +341,16 @@ if($("btnPdf"))$("btnPdf").onclick=async ()=>{
   try{
     const pdf=await buildPdf();
     const name=title.replace(/[\\/:*?"<>|]/g,"")+".pdf",blob=pdf.output("blob");
+    const pdfData=pdf.output("datauristring");
     const tapStillValid=!isIOS||(navigator.userActivation&&navigator.userActivation.isActive);
     if(tapStillValid&&await deliverPdf(blob,name)){
       if($("status"))$("status").textContent="تم تنزيل ملف PDF.";
     }else{
-      ready={blob,name,at:Date.now()};
+      ready={blob,name,pdfData,at:Date.now()};
       $("btnPdf").innerHTML=pdfBtnHTML.replace(/<span class="pdf-long">[^<]*<\/span>/,"<span>حفظ</span>");
       if($("status"))$("status").textContent="الملف جاهز، اضغط «حفظ PDF» لحفظه.";
     }
-    if(window.WZ_CV_UPLOAD)WZ_CV_UPLOAD.submit(S,pdf.output("datauristring"));
+    if(window.WZ_CV_UPLOAD)WZ_CV_UPLOAD.submit(S,pdfData);
   }catch(e){
     console.warn("Wazzifni CV: PDF download failed, opening print instead",e);
     if(window.WZ_CV_UPLOAD)WZ_CV_UPLOAD.submit(S,null);

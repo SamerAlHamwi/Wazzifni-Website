@@ -93,8 +93,8 @@ app.use('/api/hr/auth/login', loginLimiter);
 app.use('/api/course/auth/login', loginLimiter);
 
 // 4. Body Parser with Size Limits
-app.use(bodyParser.json({ limit: '10mb' }));
-app.use(express.urlencoded({ extended: true, limit: '10mb' }));
+app.use(bodyParser.json({ limit: '15mb' }));
+app.use(express.urlencoded({ extended: true, limit: '15mb' }));
 
 // 5. Data Sanitization against NoSQL Query Injection
 app.use(mongoSanitize());
